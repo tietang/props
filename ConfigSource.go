@@ -6,58 +6,26 @@ import (
 	"time"
 	"github.com/samuel/go-zookeeper/zk"
 	"regexp"
-	log "github.com/sirupsen/logrus"
 )
 
 var reg = regexp.MustCompile("\\$\\{(.*)}")
 
 type ConfigSource interface {
 	Name() string
+	//
 	Get(key string) (string, error)
 	GetInt(key string) (int, error)
 	GetBool(key string) (bool, error)
 	GetFloat64(key string) (float64, error)
+	//
+	GetDefault(key, defaultValue string) string
+	GetIntDefault(key string, defaultValue int) int
+	GetBoolDefault(key string, defaultValue bool) bool
+	GetFloat64Default(key string, defaultValue float64) float64
+	//
 	Set(key, val string)
 	SetAll(values map[string]string)
 	Keys() []string
-}
-
-type PropertiesConfigSource struct {
-	MapProperties
-	name string
-}
-
-func NewPropertiesConfigSource(fileName string) *PropertiesConfigSource {
-	return NewPropertiesConfigSourceByFile(fileName, fileName)
-}
-
-func NewPropertiesConfigSourceByFile(name, file string) *PropertiesConfigSource {
-	p, err := ReadPropertyFile(file)
-	var m map[string]string
-	if err == nil {
-		m = p.values
-	} else {
-		log.WithField("error", err.Error()).Info("read file: ")
-	}
-	s := &PropertiesConfigSource{}
-	s.name = name
-	s.values = m
-	return s
-}
-
-func NewPropertiesConfigSourceByMap(name string, kv map[string]string) *PropertiesConfigSource {
-	s := &PropertiesConfigSource{}
-	s.name = name
-	if kv == nil {
-		s.values = make(map[string]string)
-	} else {
-		s.values = kv
-	}
-	return s
-}
-
-func (s *PropertiesConfigSource) Name() string {
-	return s.name
 }
 
 //
@@ -66,9 +34,18 @@ type CompositeConfigSource struct {
 	ConfigSources []ConfigSource //Set
 }
 
-func NewCompositeConfigSource(mapSources []ConfigSource) *CompositeConfigSource {
+func NewDefaultCompositeConfigSource(configSources []ConfigSource) *CompositeConfigSource {
 	s := &CompositeConfigSource{
-		ConfigSources: mapSources,
+		ConfigSources: configSources,
+	}
+	s.name = "CompositeConfigSource"
+
+	return s
+}
+
+func NewCompositeConfigSource(name string,configSources []ConfigSource) *CompositeConfigSource {
+	s := &CompositeConfigSource{
+		ConfigSources: configSources,
 	}
 	s.name = "CompositeConfigSource"
 
@@ -108,6 +85,7 @@ func (s *CompositeConfigSource) Add(ms ConfigSource) {
 	s.ConfigSources = append(s.ConfigSources, ms)
 
 }
+
 func (s *CompositeConfigSource) Get(key string) (string, error) {
 	//var value string;
 	//var found bool;
@@ -164,6 +142,40 @@ func (s *CompositeConfigSource) GetFloat64(key string) (float64, error) {
 		}
 	}
 	return 0.0, errors.New("not exists for key: " + key)
+}
+
+func (s *CompositeConfigSource) GetDefault(key string, defaultValue string) string {
+	v, err := s.Get(key)
+	if err != nil {
+		return defaultValue
+	}
+	return v
+
+}
+
+func (s *CompositeConfigSource) GetIntDefault(key string, defaultValue int) int {
+	v, err := s.GetInt(key)
+	if err != nil {
+		return defaultValue
+	}
+	return v
+
+}
+
+func (s *CompositeConfigSource) GetBoolDefault(key string, defaultValue bool) bool {
+	v, err := s.GetBool(key)
+	if err != nil {
+		return defaultValue
+	}
+	return v
+}
+
+func (s *CompositeConfigSource) GetFloat64Default(key string, defaultValue float64) float64 {
+	v, err := s.GetFloat64(key)
+	if err != nil {
+		return defaultValue
+	}
+	return v
 }
 
 func (s *CompositeConfigSource) Set(key, val string) {
