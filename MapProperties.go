@@ -98,9 +98,13 @@ func (p *MapProperties) GetFloat64Default(key string, defVal float64) float64 {
     return defVal
 }
 
+// 1ms 1mS 1MS 1Ms -> 1*time.Millisecond
+//1s 1 1S -> 1*time.Second
+//无单位默认为second
 func (p *MapProperties) GetDuration(key string) (time.Duration, error) {
     v, err := p.Get(key)
     if err != nil {
+
         return time.Duration(0), err
     }
     return toDuration(v)
