@@ -15,6 +15,7 @@ func NewPropertiesConfigSource(fileName string) *PropertiesConfigSource {
 	return NewPropertiesConfigSourceByFile(name, fileName)
 }
 
+
 func NewPropertiesConfigSourceByFile(name, file string) *PropertiesConfigSource {
 	p, err := ReadPropertyFile(file)
 	var m map[string]string

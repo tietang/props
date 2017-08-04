@@ -6,6 +6,7 @@ import (
 	"time"
 	"github.com/samuel/go-zookeeper/zk"
 	"regexp"
+	log "github.com/sirupsen/logrus"
 )
 
 var reg = regexp.MustCompile("\\$\\{(.*)}")
@@ -34,6 +35,13 @@ type CompositeConfigSource struct {
 	ConfigSources []ConfigSource //Set
 }
 
+func NewEmptyCompositeConfigSource() *CompositeConfigSource {
+	s := &CompositeConfigSource{
+	}
+	s.name = "CompositeConfigSource"
+
+	return s
+}
 func NewDefaultCompositeConfigSource(configSources []ConfigSource) *CompositeConfigSource {
 	s := &CompositeConfigSource{
 		ConfigSources: configSources,
@@ -43,7 +51,7 @@ func NewDefaultCompositeConfigSource(configSources []ConfigSource) *CompositeCon
 	return s
 }
 
-func NewCompositeConfigSource(name string,configSources []ConfigSource) *CompositeConfigSource {
+func NewCompositeConfigSource(name string, configSources []ConfigSource) *CompositeConfigSource {
 	s := &CompositeConfigSource{
 		ConfigSources: configSources,
 	}
@@ -79,6 +87,7 @@ func (s *CompositeConfigSource) Name() string {
 func (s *CompositeConfigSource) Add(ms ConfigSource) {
 	for _, s := range s.ConfigSources {
 		if ms.Name() == s.Name() {
+			log.Info("exits ConfigSource: " + s.Name())
 			return
 		}
 	}
@@ -113,6 +122,10 @@ func (s *CompositeConfigSource) Get(key string) (string, error) {
 	}
 	return "", errors.New("not exists for key: " + key)
 }
+//
+//func (s *CompositeConfigSource) evalValue(val string) string {
+//	if strings.(val,)
+//}
 
 func (s *CompositeConfigSource) GetInt(key string) (int, error) {
 	for _, s := range s.ConfigSources {
