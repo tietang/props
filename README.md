@@ -23,6 +23,8 @@ config tools for golang, support properties file and zookeeper
 	intDefaultValue := p.GetIntDefault("prefix.key1", 1)
 	floatValue, err := p.GetFloat64("prefix.key1")
 	floatDefaultValue := p.GetFloat64Default("prefix.key1", 1.2)
+	v, err := p.GetDuration("k9")
+	v := p.GetDurationDefault("k12", 1*time.Second)
 
 ```
 
