@@ -33,8 +33,8 @@ func NewProperties() *Properties {
 func readProperties(r io.Reader) (*Properties, error) {
     p := NewProperties()
     err := p.Load(r)
-    fmt.Println(err)
     if err != nil {
+        log.Error(err)
         return nil, err
     }
     return p, nil

@@ -4,6 +4,7 @@ import (
     "github.com/samuel/go-zookeeper/zk"
     "strings"
     "errors"
+    "path"
 )
 
 const (
@@ -39,17 +40,17 @@ func (s *ZookeeperConfigSource) Close() {
     s.conn.Close()
 }
 
-func (s *ZookeeperConfigSource) findProperties(path string, children []string) {
+func (s *ZookeeperConfigSource) findProperties(parentPath string, children []string) {
 
     if len(children) == 0 {
-        children = s.getChildren(path)
+        children = s.getChildren(parentPath)
     }
     if len(children) == 0 {
         return
     }
     for _, p := range children {
 
-        fp := path + "/" + p
+        fp := path.Join(parentPath, p)
         //fmt.Println(fp)
         chpath := s.getChildren(fp)
         value, err := s.getPropertiesValue(fp)
@@ -80,7 +81,7 @@ func (s *ZookeeperConfigSource) getChildren(childPath string) []string {
 }
 
 func (s *ZookeeperConfigSource) sanitizeKey(path string, context string) string {
-    key := strings.Replace(path, context + "/", "", -1)
+    key := strings.Replace(path, context+"/", "", -1)
     key = strings.Replace(key, "/", ".", -1)
     return key
 }
@@ -94,5 +95,3 @@ func (s *ZookeeperConfigSource) registerKeyValue(path, value string) {
 func (s *ZookeeperConfigSource) Name() string {
     return s.name
 }
-
-

@@ -1,6 +1,7 @@
 package props
 
 import (
+	log "github.com/sirupsen/logrus"
 	"errors"
 	"strings"
 	"time"
@@ -8,7 +9,6 @@ import (
 	"regexp"
 	"github.com/valyala/fasttemplate"
 	"io"
-	"fmt"
 )
 
 const (
@@ -77,7 +77,7 @@ func NewZookeeperCompositeConfigSource(contexts []string, connStr []string, time
 
 	conn, _, err := zk.Connect(connStr, timeout)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		panic(err)
 	}
 	return NewZookeeperCompositeConfigSourceByConn(contexts, conn)
