@@ -32,11 +32,11 @@ func init() {
 
     fmt.Println(event)
     //fmt.Println("d:  ", conn.State().String(), err, contexts[0])
-    initData()
+    initZkData()
     zs = NewZookeeperCompositeConfigSourceByConn(contexts, conn)
 }
 
-func initData() {
+func initZkData() {
     for i := 0; i < size; i++ {
         key := "key-" + strconv.Itoa(i)
         value := "value-" + strconv.Itoa(i)
