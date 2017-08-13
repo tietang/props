@@ -13,7 +13,7 @@ type ServerProperties struct {
 	Enabled bool
 	Foo     int `val:"1"`
 	Time    time.Duration `val:"1s"`
-	Float float32 `val:"0.000001"`
+	Float   float32 `val:"0.000001"`
 }
 
 func main() {

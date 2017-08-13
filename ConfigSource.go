@@ -38,7 +38,7 @@ type ConfigSource interface {
 	Set(key, val string)
 	SetAll(values map[string]string)
 	Keys() []string
-	//Unmarshal(t interface{}) error
+	Unmarshal(t interface{}) error
 }
 
 //
@@ -226,13 +226,16 @@ func (ccs *CompositeConfigSource) GetFloat64Default(key string, defaultValue flo
 	}
 	return v
 }
-
 func (ccs *CompositeConfigSource) Set(key, val string) {
 	panic(errors.New("Unsupported operation"))
 }
 
 func (ccs *CompositeConfigSource) SetAll(values map[string]string) {
 	panic(errors.New("Unsupported operation"))
+}
+
+func (ccs *CompositeConfigSource) Unmarshal(obj interface{}) error {
+	return Unmarshal(ccs, obj)
 }
 
 func (ccs *CompositeConfigSource) Keys() []string {

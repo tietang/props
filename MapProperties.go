@@ -32,6 +32,10 @@ func NewMapPropertiesByMap(kv map[string]string) *MapProperties {
 	return p
 }
 
+func (p *MapProperties) Name() string {
+	return "MapProperties"
+}
+
 //--get key/value
 
 // Get retrieves the value of a property. If the property does not exist, an
@@ -165,6 +169,10 @@ func (p *MapProperties) Clear() {
 }
 
 func (p *MapProperties) Unmarshal(obj interface{}) error {
+	return Unmarshal(p, obj)
+}
+
+func Unmarshal(p ConfigSource, obj interface{}) error {
 
 	//t := reflect.TypeOf(obj)
 	//num := t.NumField()
@@ -189,7 +197,7 @@ func (p *MapProperties) Unmarshal(obj interface{}) error {
 		if sf.Name == PREFIX_FIELD {
 			continue
 		}
-		keys := p.toKeys(sf.Name)
+		keys := toKeys(sf.Name)
 		key1 := strings.Join([]string{prefix, keys[0]}, ".")
 		key2 := strings.Join([]string{prefix, keys[1]}, ".")
 		//fmt.Println(sf.Name)
@@ -212,12 +220,12 @@ func (p *MapProperties) Unmarshal(obj interface{}) error {
 			value.SetString(val1)
 			break
 		case "int", "int32", "int64":
-			val := p.getInt(key1, key2, defVal)
+			val := getInt(p, key1, key2, defVal)
 			//fmt.Println("setInt", val, value.CanSet(), reflect.ValueOf(&value).Elem().CanSet())
 			value.SetInt(int64(val))
 			break
 		case "uint", "uint32", "uint64":
-			val := p.getInt(key1, key2, defVal)
+			val := getInt(p, key1, key2, defVal)
 			//fmt.Println("-----", val)
 			value.SetUint(uint64(val))
 			break
@@ -266,11 +274,10 @@ func (p *MapProperties) Unmarshal(obj interface{}) error {
 	}
 	return nil
 }
-func (p *MapProperties) getInt(key1, key2, defVal string) int {
+func getInt(p ConfigSource, key1, key2, defVal string) int {
 	defaultValue, err := strconv.Atoi(defVal)
 	if err != nil {
 	}
-
 	val1 := p.GetIntDefault(key1, defaultValue)
 	val2 := p.GetIntDefault(key2, defaultValue)
 	if val1 == 0 {
@@ -281,7 +288,7 @@ func (p *MapProperties) getInt(key1, key2, defVal string) int {
 }
 
 //
-func (p *MapProperties) toKeys(str string) [2]string {
+func toKeys(str string) [2]string {
 	keys := [2]string{"", ""}
 	keys[1] = strings.ToLower(str[0:1]) + str[1:]
 	r := []rune(str)
