@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+type ServerProperties struct {
+	_prefix string `prefix:"http.server"`
+	Port    int
+}
+
 func TestRead(t *testing.T) {
 
 	Convey("properties 文件载入", t, func() {

@@ -6,6 +6,7 @@ import (
     "strconv"
     . "github.com/smartystreets/goconvey/convey"
     "path"
+    "encoding/json"
 )
 
 func TestConsulKeyValueConfigSource(t *testing.T) {
@@ -19,6 +20,7 @@ func TestConsulKeyValueConfigSource(t *testing.T) {
         keys := c.Keys()
         So(len(keys), ShouldEqual, size)
     })
+
 
 }
 

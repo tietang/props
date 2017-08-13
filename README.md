@@ -1,8 +1,8 @@
 # props
-config tools for golang, support properties file and zookeeper
+config tools for golang, support properties file 、 zookeeper、consul
 
 
-# 使用方法
+## 使用方法
 
 ## properties 文件读取
 
@@ -61,7 +61,22 @@ contexts := []string{"/configs/apps","/configs/users"}
 cs = props.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
 
 ```
+### by consul key/value store
 
+```
+    例如：
+
+    config101/test/demo1/server/port=8080
+    获取的属性和值是：
+    server.port=8080
+
+    address := "127.0.0.1:8500"
+    root := "config101/test/demo1"
+    c := NewConsulKeyValueConfigSource("consul", address, root)
+    stringValue, err := cs.Get("prefix.key1")
+    stringDefaultValue := cs.GetDefault("prefix.key1", "default value")
+
+```
 
 ### 组合多个
 
