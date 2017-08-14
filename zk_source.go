@@ -5,10 +5,14 @@ import (
     "strings"
     "errors"
     "path"
+    "fmt"
+    log "github.com/sirupsen/logrus"
 )
 
 const (
     ENCODING = "UTF-8"
+
+    KEY_NOTIFY_NODE = "notify"
 )
 
 type ZookeeperConfigSource struct {
@@ -30,10 +34,6 @@ func NewZookeeperConfigSource(name string, context string, conn *zk.Conn) *Zooke
 
 func (s *ZookeeperConfigSource) init() {
     s.findProperties(s.context, nil)
-}
-
-func (s *ZookeeperConfigSource) watchContext() {
-
 }
 
 func (s *ZookeeperConfigSource) Close() {
@@ -94,4 +94,52 @@ func (s *ZookeeperConfigSource) registerKeyValue(path, value string) {
 
 func (s *ZookeeperConfigSource) Name() string {
     return s.name
+}
+
+func (s *ZookeeperConfigSource) Watch(key string, handlers ... func([]string, zk.Event)) {
+    go s.watchGet(path.Join(s.context, key, KEY_NOTIFY_NODE), handlers...)
+}
+
+func (s *ZookeeperConfigSource) WatchChildren(key string, handlers ... func([]string, zk.Event)) {
+    pathStr := path.Join(s.context, key)
+    s.watchChildren(pathStr, handlers...)
+}
+
+func (s *ZookeeperConfigSource) watchChildren(pathStr string, handlers ... func([]string, zk.Event)) {
+    children, stat, ch, err := s.conn.ChildrenW(pathStr)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Printf("%+v %+v\n", children, stat)
+    e := <-ch
+
+    s.findProperties(path.Dir(e.Path), nil)
+    for _, handler := range handlers {
+        handler(children, e)
+    }
+    fmt.Printf("%+v\n", e)
+    s.watchChildren(pathStr, handlers...)
+}
+
+func (g *ZookeeperConfigSource) watchGet(pathStr string, handlers ... func([]string, zk.Event)) {
+    log.Info(pathStr)
+    exists, _, _ := g.conn.Exists(pathStr)
+    if !exists {
+        g.conn.Create(pathStr, []byte("1"), 1, nil)
+    }
+    _, stat, ch, err := g.conn.GetW(pathStr)
+    children, _, err := g.conn.Children(pathStr)
+    if err != nil {
+        panic(err)
+    }
+    log.Infof("watch: %+v %+v\n", children, stat)
+    e := <-ch
+
+    //pPath:=path.Dir(e.Path)
+    g.findProperties(path.Dir(e.Path), nil)
+    for _, handler := range handlers {
+        handler(children, e)
+    }
+    log.Infof("notify event: %+v\n ", e)
+    g.watchGet(pathStr, handlers...)
 }
