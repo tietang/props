@@ -16,14 +16,18 @@ var keyPrefix string
 var kv map[string]string
 var conn *zk.Conn
 var size int
+var isInit bool
 
-func init() {
+func initData() {
+    if isInit {
+        return
+    }
     size = 10
     contexts = []string{"/configurations/demo/dev/app1", "/configurations/demo/dev/apps"}
     keyPrefix = "app.xx."
 
     kv = make(map[string]string)
-    c, ch, err := zk.Connect([]string{"172.16.1.248:2181"}, 2 * time.Second)
+    c, ch, err := zk.Connect([]string{"172.16.1.248:2181"}, 2*time.Second)
     conn = c
     if err != nil {
         panic(err)
@@ -34,9 +38,11 @@ func init() {
     //fmt.Println("d:  ", conn.State().String(), err, contexts[0])
     initZkData()
     zs = NewZookeeperCompositeConfigSourceByConn(contexts, conn)
+    isInit = true
 }
 
 func initZkData() {
+    initData()
     for i := 0; i < size; i++ {
         key := "key-" + strconv.Itoa(i)
         value := "value-" + strconv.Itoa(i)

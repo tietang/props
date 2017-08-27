@@ -3,6 +3,11 @@ package props
 import (
     log "github.com/sirupsen/logrus"
     "path"
+    "path/filepath"
+)
+
+const (
+    KEY_PROPS_CURRENT_DIR = "current.dir"
 )
 
 type PropertiesConfigSource struct {
@@ -19,6 +24,7 @@ func NewPropertiesConfigSource(fileName string) *PropertiesConfigSource {
 func NewPropertiesConfigSourceByFile(name, file string) *PropertiesConfigSource {
 
     p, err := ReadPropertyFile(file)
+
     var m map[string]string
     if err == nil {
         m = p.values
@@ -29,6 +35,7 @@ func NewPropertiesConfigSourceByFile(name, file string) *PropertiesConfigSource 
     s.name = name
     s.values = m
     s.fileName = file
+    s.Set(KEY_PROPS_CURRENT_DIR, filepath.Dir(file))
     return s
 }
 

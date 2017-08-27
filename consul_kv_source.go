@@ -3,6 +3,7 @@ package props
 import (
     "strings"
     "github.com/hashicorp/consul/api"
+    log "github.com/sirupsen/logrus"
 )
 
 //
@@ -15,8 +16,15 @@ type ConsulKeyValueConfigSource struct {
     config *api.Config
 }
 
-func NewConsulKeyValueConfigSource(name, address, root string) *ConsulKeyValueConfigSource {
+func NewConsulKeyValueConfigSource(address, root string) *ConsulKeyValueConfigSource {
+    return NewConsulKeyValueConfigSourceByName("", address, root)
+}
+
+func NewConsulKeyValueConfigSourceByName(name, address, root string) *ConsulKeyValueConfigSource {
     s := &ConsulKeyValueConfigSource{}
+    if name == "" {
+        name = strings.Join([]string{"consul", address, root}, ":")
+    }
     s.name = name
     s.values = make(map[string]string)
     s.root = root
@@ -48,11 +56,13 @@ func (s *ConsulKeyValueConfigSource) findProperties(parentPath string, children 
     q := &api.QueryOptions{}
     keys, _, err := s.kv.Keys(prefix, "", q)
     if err != nil {
+        log.Error(err)
         return
     }
     for _, k := range keys {
         kv, _, err := s.kv.Get(k, q)
         if err != nil {
+            log.Error(err)
             continue
         }
         value := string(kv.Value)
