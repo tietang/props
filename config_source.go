@@ -23,16 +23,18 @@ type ConfigSource interface {
     Name() string
     //
     Get(key string) (string, error)
-    GetInt(key string) (int, error)
-    GetDuration(key string) (time.Duration, error)
-    GetBool(key string) (bool, error)
-    GetFloat64(key string) (float64, error)
-    //
     GetDefault(key, defaultValue string) string
+    //
+    GetInt(key string) (int, error)
     GetIntDefault(key string, defaultValue int) int
+    //
+    GetDuration(key string) (time.Duration, error)
     GetDurationDefault(key string, defaultValue time.Duration) time.Duration
-
+    //
+    GetBool(key string) (bool, error)
     GetBoolDefault(key string, defaultValue bool) bool
+    //
+    GetFloat64(key string) (float64, error)
     GetFloat64Default(key string, defaultValue float64) float64
     //
     Set(key, val string)
