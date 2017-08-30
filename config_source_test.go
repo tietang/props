@@ -11,10 +11,10 @@ func TestNewPropertiesConfigSourceByFile(t *testing.T) {
     kv2 := []string{"go.app.key2", "value2"}
     Convey("TestNewPropertiesConfigSourceByFile", t, func() {
         file, _ := os.Getwd()
-        ps := NewPropertiesConfigSourceByFile("props", file + "/t.test")
+        ps := NewPropertiesConfigSourceByFile("props", file+"/t.test")
         keys := ps.Keys()
         Convey("key len", func() {
-            So(2, ShouldEqual, len(keys))
+            So(len(keys), ShouldEqual, 2+1)
         })
         Convey("key/value", func() {
             for k, v := range ps.values {
