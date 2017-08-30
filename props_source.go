@@ -50,6 +50,17 @@ func NewPropertiesConfigSourceByMap(name string, kv map[string]string) *Properti
     return s
 }
 
+func NewEmptyMapConfigSource(name string) *PropertiesConfigSource {
+    s := &PropertiesConfigSource{}
+    if name == "" {
+        s.name = "Map"
+    } else {
+        s.name = name
+    }
+
+    s.values = make(map[string]string)
+    return s
+}
 func (s *PropertiesConfigSource) Name() string {
     return s.name
 }
