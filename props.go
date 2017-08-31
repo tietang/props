@@ -8,6 +8,8 @@ import (
     "os"
     "fmt"
     log "github.com/sirupsen/logrus"
+    "github.com/tietang/go-utils"
+    "sync"
 )
 
 const (
@@ -18,6 +20,8 @@ const (
 type Properties struct {
     MapProperties
     //values map[string]string
+    file string
+    lock *sync.Mutex
 }
 
 func NewProperties() *Properties {
@@ -42,6 +46,21 @@ func readProperties(r io.Reader) (*Properties, error) {
 
 func ReadPropertyFile(f string) (*Properties, error) {
 
+    file, err := fileReader(f)
+    p, err := readProperties(file)
+    p.file = f
+    if err == nil && p != nil {
+        utils.Notify(func() {
+            file, err := fileReader(f)
+            if err == nil {
+                p.Load(file)
+            }
+        })
+    }
+    return p, err
+}
+
+func fileReader(f string) (*os.File, error) {
     file, err := os.Open(f)
     defer file.Close()
 
@@ -50,7 +69,7 @@ func ReadPropertyFile(f string) (*Properties, error) {
         log.WithField("error", err.Error()).Info("read file: ", d, "  ", f)
         return nil, err
     }
-    return readProperties(file)
+    return file, err
 }
 
 func (p *Properties) Load(r io.Reader) error {
