@@ -10,18 +10,18 @@ const (
     KEY_INI_CURRENT_DIR = "ini.current.dir"
 )
 
-type IniConfigSource struct {
+type IniFileConfigSource struct {
     MapProperties
     name     string
     fileName string
 }
 
-func NewIniConfigSource(fileName string) *IniConfigSource {
+func NewIniFileConfigSource(fileName string) *IniFileConfigSource {
     name := path.Base(fileName)
-    return NewIniConfigSourceByFile(name, fileName)
+    return NewIniFileConfigSourceByFile(name, fileName)
 }
 
-func NewIniConfigSourceByFile(name, file string) *IniConfigSource {
+func NewIniFileConfigSourceByFile(name, file string) *IniFileConfigSource {
 
     p, err := ReadIniFile(file)
 
@@ -31,7 +31,7 @@ func NewIniConfigSourceByFile(name, file string) *IniConfigSource {
     } else {
         log.WithField("error", err.Error()).Info("read file: ")
     }
-    s := &IniConfigSource{}
+    s := &IniFileConfigSource{}
     s.name = name
     s.values = m
     s.fileName = file
@@ -39,21 +39,11 @@ func NewIniConfigSourceByFile(name, file string) *IniConfigSource {
     return s
 }
 
-func NewIniConfigSourceByMap(name string, kv map[string]string) *IniConfigSource {
-    s := &IniConfigSource{}
-    s.name = name
-    if kv == nil {
-        s.values = make(map[string]string)
-    } else {
-        s.values = kv
-    }
-    return s
-}
 
-func (s *IniConfigSource) Name() string {
+func (s *IniFileConfigSource) Name() string {
     return s.name
 }
 
-func (s *IniConfigSource) FileName() string {
+func (s *IniFileConfigSource) FileName() string {
     return s.fileName
 }

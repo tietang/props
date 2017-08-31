@@ -4,10 +4,11 @@ import (
     "strings"
     "github.com/hashicorp/consul/api"
     log "github.com/sirupsen/logrus"
+    "bytes"
 )
 
-//通过key/value来组织，过滤root prefix后，替换/为.作为properties key
-type ConsulKeyValueConfigSource struct {
+//通过key/value, key所谓section，value为props格式内容，类似ini文件格式
+type ConsulIniConfigSource struct {
     MapProperties
     name   string
     root   string
@@ -16,12 +17,12 @@ type ConsulKeyValueConfigSource struct {
     config *api.Config
 }
 
-func NewConsulKeyValueConfigSource(address, root string) *ConsulKeyValueConfigSource {
-    return NewConsulKeyValueConfigSourceByName("", address, root)
+func NewConsulIniConfigSource(address, root string) *ConsulIniConfigSource {
+    return NewConsulIniConfigSourceByName("", address, root)
 }
 
-func NewConsulKeyValueConfigSourceByName(name, address, root string) *ConsulKeyValueConfigSource {
-    s := &ConsulKeyValueConfigSource{}
+func NewConsulIniConfigSourceByName(name, address, root string) *ConsulIniConfigSource {
+    s := &ConsulIniConfigSource{}
     if name == "" {
         name = strings.Join([]string{"consul", address, root}, ":")
     }
@@ -40,18 +41,18 @@ func NewConsulKeyValueConfigSourceByName(name, address, root string) *ConsulKeyV
     return s
 }
 
-func (s *ConsulKeyValueConfigSource) init() {
+func (s *ConsulIniConfigSource) init() {
     s.findProperties(s.root, nil)
 }
 
-func (s *ConsulKeyValueConfigSource) watchContext() {
+func (s *ConsulIniConfigSource) watchContext() {
 
 }
 
-func (s *ConsulKeyValueConfigSource) Close() {
+func (s *ConsulIniConfigSource) Close() {
 }
 
-func (s *ConsulKeyValueConfigSource) findProperties(parentPath string, children []string) {
+func (s *ConsulIniConfigSource) findProperties(parentPath string, children []string) {
     prefix := s.root
     q := &api.QueryOptions{}
     keys, _, err := s.kv.Keys(prefix, "", q)
@@ -65,24 +66,31 @@ func (s *ConsulKeyValueConfigSource) findProperties(parentPath string, children 
             log.Error(err)
             continue
         }
-        value := string(kv.Value)
-        s.registerKeyValue(k, value)
+        //value := string(kv.Value)
+        props := NewProperties()
+        props.Load(bytes.NewReader(kv.Value))
+        for _, key := range props.Keys() {
+            val := props.GetDefault(key, "")
+            pkey := strings.Join([]string{k, key}, ".")
+            s.registerKeyValue(pkey, val)
+        }
+
     }
 
 }
 
-func (s *ConsulKeyValueConfigSource) sanitizeKey(path string, context string) string {
+func (s *ConsulIniConfigSource) sanitizeKey(path string, context string) string {
     key := strings.Replace(path, context+"/", "", -1)
     key = strings.Replace(key, "/", ".", -1)
     return key
 }
 
-func (s *ConsulKeyValueConfigSource) registerKeyValue(path, value string) {
+func (s *ConsulIniConfigSource) registerKeyValue(path, value string) {
     key := s.sanitizeKey(path, s.root)
     s.Set(key, value)
 
 }
 
-func (s *ConsulKeyValueConfigSource) Name() string {
+func (s *ConsulIniConfigSource) Name() string {
     return s.name
 }
