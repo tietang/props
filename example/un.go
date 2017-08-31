@@ -41,6 +41,7 @@ func main() {
 	s := &ServerProperties{}
 	p.Unmarshal(s)
 	fmt.Println(s)
+
 }
 
 //}

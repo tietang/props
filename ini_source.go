@@ -39,16 +39,6 @@ func NewIniFileConfigSourceByFile(name, file string) *IniFileConfigSource {
     return s
 }
 
-func NewIniFileConfigSourceByMap(name string, kv map[string]string) *IniFileConfigSource {
-    s := &IniFileConfigSource{}
-    s.name = name
-    if kv == nil {
-        s.values = make(map[string]string)
-    } else {
-        s.values = kv
-    }
-    return s
-}
 
 func (s *IniFileConfigSource) Name() string {
     return s.name
