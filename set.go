@@ -9,7 +9,7 @@ type Set struct {
     sync.RWMutex
 }
 
-func New() *Set {
+func NewSet() *Set {
     return &Set{
         m: map[interface{}]bool{},
     }
@@ -64,4 +64,3 @@ func (s *Set) List() []interface{} {
     }
     return list
 }
-

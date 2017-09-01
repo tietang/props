@@ -10,6 +10,7 @@ import (
     log "github.com/sirupsen/logrus"
     "github.com/tietang/go-utils"
     "sync"
+    "io/ioutil"
 )
 
 const (
@@ -46,14 +47,26 @@ func readProperties(r io.Reader) (*Properties, error) {
 
 func ReadPropertyFile(f string) (*Properties, error) {
 
-    file, err := fileReader(f)
-    p, err := readProperties(file)
+    //file, err := fileReader(f)
+    //if err != nil {
+    //    panic(err)
+    //}
+    data, err := ioutil.ReadFile(f)
+    if err != nil {
+        panic(err)
+    }
+    p, err := readProperties(bytes.NewReader(data))
+    if err != nil {
+        panic(err)
+    }
     p.file = f
     if err == nil && p != nil {
         utils.Notify(func() {
-            file, err := fileReader(f)
+            data, err := ioutil.ReadFile(f)
             if err == nil {
-                p.Load(file)
+                p.Load(bytes.NewReader(data))
+            } else {
+                log.Error(err)
             }
         })
     }

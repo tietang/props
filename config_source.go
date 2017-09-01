@@ -115,7 +115,8 @@ func (ccs *CompositeConfigSource) Size() int {
     return len(ccs.ConfigSources)
 }
 func (ccs *CompositeConfigSource) Add(ms ConfigSource) {
-    for _, s := range ccs.ConfigSources {
+    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
+        s := ccs.ConfigSources[i]
         if ms.Name() == s.Name() {
             return
         }
@@ -143,7 +144,8 @@ func (ccs *CompositeConfigSource) Get(key string) (string, error) {
     //    return value, nil
     //}
     //
-    for _, s := range ccs.ConfigSources {
+    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
+        s := ccs.ConfigSources[i]
         v, err := s.Get(key)
         if err == nil {
             return v, nil
@@ -152,7 +154,8 @@ func (ccs *CompositeConfigSource) Get(key string) (string, error) {
     return "", errors.New("not exists for key: " + key)
 }
 func (ccs *CompositeConfigSource) GetInt(key string) (int, error) {
-    for _, s := range ccs.ConfigSources {
+    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
+        s := ccs.ConfigSources[i]
         v, err := s.GetInt(key)
         if err == nil {
             return v, nil
@@ -161,14 +164,16 @@ func (ccs *CompositeConfigSource) GetInt(key string) (int, error) {
     return 0, errors.New("not exists for key: " + key)
 }
 func (ccs *CompositeConfigSource) GetDuration(key string) (time.Duration, error) {
-    for _, s := range ccs.ConfigSources {
+    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
+        s := ccs.ConfigSources[i]
         return s.GetDuration(key)
     }
     return time.Duration(0), errors.New("not exists for key: " + key)
 }
 
 func (ccs *CompositeConfigSource) GetBool(key string) (bool, error) {
-    for _, s := range ccs.ConfigSources {
+    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
+        s := ccs.ConfigSources[i]
         v, err := s.GetBool(key)
         if err == nil {
             return v, nil
@@ -178,7 +183,8 @@ func (ccs *CompositeConfigSource) GetBool(key string) (bool, error) {
 }
 
 func (ccs *CompositeConfigSource) GetFloat64(key string) (float64, error) {
-    for _, s := range ccs.ConfigSources {
+    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
+        s := ccs.ConfigSources[i]
         v, err := s.GetFloat64(key)
         if err == nil {
             return v, nil
@@ -241,14 +247,20 @@ func (ccs *CompositeConfigSource) Unmarshal(obj interface{}) error {
 }
 
 func (ccs *CompositeConfigSource) Keys() []string {
-    keys := make([]string, 0)
-    for _, s := range ccs.ConfigSources {
+
+    set := NewSet()
+    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
+        s := ccs.ConfigSources[i]
         ks := s.Keys()
         for _, k := range ks {
-            keys = append(keys, k)
+            set.Add(k)
         }
-
     }
+    keys := make([]string, 0)
+    set.ForEach(func(i interface{}, i2 bool) int {
+        keys = append(keys, i.(string))
+        return 1
+    })
     return keys
 }
 

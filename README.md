@@ -52,21 +52,21 @@
 
 ```golang
 
-	p, err := props.ReadPropertyFile("config.properties")
-	if err != nil {
-		panic(err)
-	}
-	stringValue, err := p.Get("prefix.key1")
-	//如果不存在，则返回默认值
-	stringDefaultValue := p.GetDefault("prefix.key1", "default value")
-	boolValue, err := p.GetBool("prefix.key1")
-	boolDefaultValue := p.GetBoolDefault("prefix.key1", false)
-	intValue, err := p.GetInt("prefix.key1")
-	intDefaultValue := p.GetIntDefault("prefix.key1", 1)
-	floatValue, err := p.GetFloat64("prefix.key1")
-	floatDefaultValue := p.GetFloat64Default("prefix.key1", 1.2)
-	v, err := p.GetDuration("k9")
-	v := p.GetDurationDefault("k12", 1*time.Second)
+p, err := props.ReadPropertyFile("config.properties")
+if err != nil {
+	panic(err)
+}
+stringValue, err := p.Get("prefix.key1")
+//如果不存在，则返回默认值
+stringDefaultValue := p.GetDefault("prefix.key1", "default value")
+boolValue, err := p.GetBool("prefix.key1")
+boolDefaultValue := p.GetBoolDefault("prefix.key1", false)
+intValue, err := p.GetInt("prefix.key1")
+intDefaultValue := p.GetIntDefault("prefix.key1", 1)
+floatValue, err := p.GetFloat64("prefix.key1")
+floatDefaultValue := p.GetFloat64Default("prefix.key1", 1.2)
+v, err := p.GetDuration("k9")
+v := p.GetDurationDefault("k12", 1*time.Second)
 
 ```
 
@@ -81,34 +81,34 @@
 #### 通过props.NewPropertiesConfigSource()
 
 ```
-	file := "/path/to/config.properties"
-    p := props.NewPropertiesConfigSource(file)
-    p = props.NewPropertiesConfigSourceByFile("name", file)
-    //通过map构造内存型
-    m := make(map[string]string)
-    m["key"]="value"
-    p = props.NewPropertiesConfigSourceByMap("name", m)
+file := "/path/to/config.properties"
+p := props.NewPropertiesConfigSource(file)
+p = props.NewPropertiesConfigSourceByFile("name", file)
+//通过map构造内存型
+m := make(map[string]string)
+m["key"]="value"
+p = props.NewPropertiesConfigSourceByMap("name", m)
 
 ```
 #### Properties ConfigSource
 
 ```golang
 
-	var cs props.ConfigSource
-	//
-	cs = props.NewPropertiesConfigSource("config.properties")
-	cs = props.NewPropertiesConfigSourceByFile("config", "config.properties")
+var cs props.ConfigSource
+//
+cs = props.NewPropertiesConfigSource("config.properties")
+cs = props.NewPropertiesConfigSourceByFile("config", "config.properties")
 
 
-	stringValue, err := cs.Get("prefix.key1")
-	//如果不存在，则返回默认值
-	stringDefaultValue := cs.GetDefault("prefix.key1", "default value")
-	boolValue, err := cs.GetBool("prefix.key2")
-	boolDefaultValue := cs.GetBoolDefault("prefix.key2", false)
-	intValue, err := cs.GetInt("prefix.key3")
-	intDefaultValue := cs.GetIntDefault("prefix.key3", 1)
-	floatValue, err := cs.GetFloat64("prefix.key4")
-	floatDefaultValue := cs.GetFloat64Default("prefix.key4", 1.2)
+stringValue, err := cs.Get("prefix.key1")
+//如果不存在，则返回默认值
+stringDefaultValue := cs.GetDefault("prefix.key1", "default value")
+boolValue, err := cs.GetBool("prefix.key2")
+boolDefaultValue := cs.GetBoolDefault("prefix.key2", false)
+intValue, err := cs.GetInt("prefix.key3")
+intDefaultValue := cs.GetIntDefault("prefix.key3", 1)
+floatValue, err := cs.GetFloat64("prefix.key4")
+floatDefaultValue := cs.GetFloat64Default("prefix.key4", 1.2)
 
 ```
 
@@ -119,12 +119,13 @@
 
 格式：参考 [wiki百科：INI_file](<https://en.wikipedia.org/wiki/INI_file>)
 	
-	```
-	[section]
-	[key1][=|:][value1] 
-	[key1][=|:][value1]
-	...
-	```
+```
+[section]
+[key1][=|:][value1] 
+[key1][=|:][value1]
+...
+```
+
 不支持sub section
 
 例子：
@@ -141,10 +142,10 @@ query.timeout=6000
 	
 #### 使用方法：
 	
-```
-	file := "/path/to/config.ini"
-    p := props.NewIniFileConfigSource(file)
-    p = props.NewIniFileConfigSourceByFile("name", file)
+```golang
+file := "/path/to/config.ini"
+p := props.NewIniFileConfigSource(file)
+p = props.NewIniFileConfigSourceByFile("name", file)
 ```
 	
 ### zookeeper 
@@ -157,7 +158,7 @@ key/properties形式，在root path下读取所有子节点，将子节点名称
 
 ##### 基本例子
 
-```
+```golang
 root := "/config/kv/app1/dev"
 var conn *zk.Conn
 p := props.NewZookeeperConfigSource("zookeeper-kv", root, conn)
@@ -165,7 +166,7 @@ p := props.NewZookeeperConfigSource("zookeeper-kv", root, conn)
 
 ##### CompositeConfigSource多context例子
 
-```
+```golang
 var cs props.ConfigSource
 urls := []string{"172.16.1.248:2181"}
 contexts := []string{"/configs/apps","/configs/users"}
@@ -177,7 +178,7 @@ cs = props.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
 
 value值为properties格式内容, 整体设计类似ini格式
 
-```
+```golang
 root := "/config/kv/app1/dev"
 var conn *zk.Conn
 p := props.NewZookeeperIniConfigSource("zookeeper-kv", root, conn)
@@ -190,18 +191,20 @@ p := props.NewZookeeperIniConfigSource("zookeeper-kv", root, conn)
 
 #### by consul key/value
 
-```
-    例如：
+```golang
+例如：
 
-    config101/test/demo1/server/port=8080
-    获取的属性和值是：
-    server.port=8080
+config101/test/demo1/server/port=8080
 
-    address := "127.0.0.1:8500"
-    root := "config101/test/demo1"
-    c := NewConsulKeyValueConfigSource("consul", address, root)
-    stringValue, err := cs.Get("prefix.key1")
-    stringDefaultValue := cs.GetDefault("prefix.key1", "default value")
+获取的属性和值是：
+
+server.port=8080
+
+address := "127.0.0.1:8500"
+root := "config101/test/demo1"
+c := NewConsulKeyValueConfigSource("consul", address, root)
+stringValue, err := cs.Get("prefix.key1")
+stringDefaultValue := cs.GetDefault("prefix.key1", "default value")
 
 ```
 #### 用properties来配置： key/properties
@@ -245,24 +248,28 @@ func main() {
 
 ### 多种配置源组合使用
 
-优先级以追加顺序。
+优先级以追加相反的顺序,最后添加优先级最高。
 
-```
+```golang
 
-	var pcs props.ConfigSource
-	//通过文件名，文件名作为ConfigSource name
-	pcs = props.NewPropertiesConfigSource("config.properties")
+kv1 := []string{"go.app.key1", "value1", "value1-2"}
+kv2 := []string{"go.app.key2", "value2", "value2-2"}
 
+p1 := NewEmptyMapConfigSource("map1")
+p1.Set(kv1[0], kv1[1])
+p1.Set(kv2[0], kv2[1])
+p2 := NewEmptyMapConfigSource("map2")
+p2.Set(kv1[0], kv1[2])
+p2.Set(kv2[0], kv2[2])
+conf.Add(p1)
+conf.Add(p2)
 
-
-	//指定名称和文件名
-	pcs2 := props.NewPropertiesConfigSourceByFile("config", "config.properties")
-	//from zookeeper
-	urls := []string{"172.16.1.248:2181"}
-	contexts := []string{"/configs/apps", "/configs/users"}
-	zccs := props.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
-	configSources := []props.ConfigSource{pcs, pcs2, zccs, }
-	ccs := props.NewDefaultCompositeConfigSource(configSources)
+//value1==value1-2
+value1, err := conf.Get(kv1[0])
+fmt.Println(value1)
+//value2=value2-2
+value2, err := conf.Get(kv2[0])
+fmt.Println(value2)
 
 	
 ```
