@@ -3,6 +3,15 @@
  
 统一的配置工具库，将各种配置源抽象或转换为类似properties格式的key/value，并提供统一的API来访问这些key/value。支持 properties文件、ini文件、zookeeper k/v或者k/props、consul k/v或者k/props.
 
+## Install
+
+运行deps.sh安装依赖。
+
+**或者**
+
+参考 [golang dep](<https://github.com/golang/dep>)使用dep命令来安装。
+
+
 ## 配置源和配置形式：
 
 ### properties格式文件
