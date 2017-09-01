@@ -1,7 +1,25 @@
 # props
  
  
-统一的配置工具库，将各种配置源抽象或转换为类似properties格式的key/value，并提供统一的API来访问这些key/value。支持 properties文件、ini文件、zookeeper k/v或者k/props、consul k/v或者k/props.
+统一的配置工具库，将各种配置源抽象或转换为类似properties格式的key/value，并提供统一的API来访问这些key/value。
+支持的配置源：
+- properties文件
+- ini文件
+- zookeeper k/v
+- zookeeper k/props 
+- consul k/v
+- consul k/props
+
+## key/value支持的数据类型：
+
+- key只支持string
+- value 5种支持：
+	- string
+	- int
+	- float64
+	- bool
+	- time.Duration：支持ms和s级配置
+
 
 ## Install
 
@@ -246,16 +264,4 @@ func main() {
 
 	
 ```
-
-
-#### key/value支持的数据类型：
-
-- key只支持string
-- value 5种支持：
-	- string
-	- int
-	- float64
-	- bool
-	- time.Duration：支持ms和s级配置
-
 
