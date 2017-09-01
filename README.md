@@ -119,7 +119,7 @@ floatDefaultValue := cs.GetFloat64Default("prefix.key4", 1.2)
 
 格式：参考 [wiki百科：INI_file](<https://en.wikipedia.org/wiki/INI_file>)
 	
-```
+```ini
 [section]
 [key1][=|:][value1] 
 [key1][=|:][value1]
@@ -130,7 +130,7 @@ floatDefaultValue := cs.GetFloat64Default("prefix.key4", 1.2)
 
 例子：
 
-```
+```ini
 [server]
 port: 8080
 read.timeout=6000
@@ -211,7 +211,7 @@ stringDefaultValue := cs.GetDefault("prefix.key1", "default value")
 
 value值为properties格式内容, 整体设计类似ini格式
 
-```
+```golang
 root := "config/app1/dev"
 address := "127.0.0.1:8500"
 p := props.NewConsulIniConfigSourceByName("consul-ini", address, root)
@@ -221,7 +221,7 @@ p := props.NewConsulIniConfigSourceByName("consul-ini", address, root)
 
 在struct中规定命名为`_prefix `、类型为`string `、并且指定了`prefix`tag, 使用feild `_prefix `的`prefix`tag作为前缀，将struct feild名称转换后组合成完整的key，并从ConfigSource中获取数据并注入struct实例，feild类型只支持ConfigSource所支持的数据类型（string、int、float、bool、time.Duration）。
 
-```
+```golang
 
 type ServerProperties struct {
 	_prefix string `prefix:"http.server"`
