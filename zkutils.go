@@ -60,7 +60,7 @@ func ZkWatchNodeDataChange(conn *zk.Conn, path string) {
     for {
         _, _, ch, _ := conn.GetW(path)
         e := <-ch
-        log.Println("GetW('" + path + "'):", e.Type, "Event:", e)
+        log.Println("GetW('"+path+"'):", e.Type, "Event:", e)
     }
 }
 
