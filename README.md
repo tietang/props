@@ -15,12 +15,12 @@
 ## key/value支持的数据类型：
 
 - key只支持string
-- value 5种支持：
+- value 5种数据类型的支持：
 	- string
 	- int
 	- float64
 	- bool
-	- time.Duration：支持ms和s级配置
+	- time.Duration：支持ms和s级配置,默认为ms
 
 
 ## Install
@@ -133,11 +133,11 @@ floatDefaultValue := cs.GetFloat64Default("prefix.key4", 1.2)
 ```ini
 [server]
 port: 8080
-read.timeout=6000
+read.timeout=6000ms
 
 [client]
-connection.timeout=6000
-query.timeout=6000
+connection.timeout=6s
+query.timeout=6s
 ```
 	
 #### 使用方法：
