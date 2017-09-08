@@ -132,15 +132,16 @@ func (p *MapProperties) GetDurationDefault(key string, defaultValue time.Duratio
 
 func toDuration(v string) (time.Duration, error) {
 
-    v = strings.ToUpper(v)
+    //v = strings.ToUpper(v)
+    return time.ParseDuration(v)
 
-    if strings.LastIndex(v, TIME_MS) > 0 {
-        i, err := strconv.ParseInt(strings.TrimSuffix(v, TIME_MS), 10, 0)
-        return time.Duration(i) * time.Millisecond, err
-    } else {
-        i, err := strconv.ParseInt(strings.TrimSuffix(v, TIME_S), 10, 0)
-        return time.Duration(i) * time.Second, err
-    }
+    //if strings.LastIndex(v, TIME_MS) > 0 {
+    //    i, err := strconv.ParseInt(strings.TrimSuffix(v, TIME_MS), 10, 0)
+    //    return time.Duration(i) * time.Millisecond, err
+    //} else {
+    //    i, err := strconv.ParseInt(strings.TrimSuffix(v, TIME_S), 10, 0)
+    //    return time.Duration(i) * time.Second, err
+    //}
 }
 
 // Names returns the keys for all properties in the set.
@@ -172,7 +173,11 @@ func (p *MapProperties) Unmarshal(obj interface{}) error {
     return Unmarshal(p, obj)
 }
 
-func Unmarshal(p ConfigSource, obj interface{}) error {
+func Unmarshal(p ConfigSource, obj interface{}, parentKeys ...string) error {
+    v := reflect.ValueOf(obj).Elem()
+    return unmarshalInner(p, v, parentKeys...)
+}
+func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) error {
 
     //t := reflect.TypeOf(obj)
     //num := t.NumField()
@@ -180,26 +185,48 @@ func Unmarshal(p ConfigSource, obj interface{}) error {
     //	sf := t.Field(i)
     //	fmt.Println(sf.Name)
     //}
-    v := reflect.ValueOf(obj).Elem()
+
     t := v.Type()
     num := v.NumField()
     sf, ok := t.FieldByName(PREFIX_FIELD)
     prefix := ""
-    if ok {
+
+    if ok && (parentKeys == nil || len(parentKeys) == 0) {
         //fmt.Println(err)
         //fmt.Println(sf.Name)
         prefix = sf.Tag.Get(STRUCT_PREFIX_TAG)
-        //fmt.Println(prefix)
+        //fmt.Println("prefix: ", prefix)
     }
-
+    prefix = strings.TrimSpace(prefix)
     for i := 0; i < num; i++ {
         sf := t.Field(i)
         if sf.Name == PREFIX_FIELD {
             continue
         }
-        keys := toKeys(sf.Name)
-        key1 := strings.Join([]string{prefix, keys[0]}, ".")
-        key2 := strings.Join([]string{prefix, keys[1]}, ".")
+        ks := toKeys(sf.Name)
+        //fmt.Println(ks)
+        keys := make([]string, 0)
+        for _, k := range ks {
+            if k == "" {
+                continue
+            }
+            if parentKeys != nil && len(parentKeys) > 0 {
+                for _, pk := range parentKeys {
+                    keys = append(keys, strings.Join([]string{pk, k}, "."))
+                }
+            } else {
+                if prefix != "" {
+                    keys = append(keys, strings.Join([]string{prefix, k}, "."))
+                } else {
+                    keys = append(keys, k)
+                }
+                //fmt.Println(keys)
+
+            }
+        }
+
+        //key1 := strings.Join([]string{prefix, keys[0]}, ".")
+        //key2 := strings.Join([]string{prefix, keys[1]}, ".")
         //fmt.Println(sf.Name)
         defVal := sf.Tag.Get(FIELD_DEFAULT_VALUE_TAG)
 
@@ -208,65 +235,121 @@ func Unmarshal(p ConfigSource, obj interface{}) error {
             continue
         }
         //value := reflect.ValueOf(&value1).Elem()
-        //fmt.Println("value: ", key1, key2, value.CanSet(), value.Type().Name(), value.Kind().String())
-        switch value.Type().Name() {
-        case "string":
-            //fmt.Println(value)
-            val1 := p.GetDefault(key1, defVal)
-            val2 := p.GetDefault(key2, defVal)
-            if val1 == "" {
-                val1 = val2
+        //fmt.Println("value: ", keys, value.CanSet(), value.Type().Name(), value.Kind().String())
+        //switch value.Type().Name() {
+        //fmt.Println(value.Type().Kind() == value.Kind())
+        switch value.Kind() {
+        case reflect.String:
+            //case "string":
+            if value.String() != "" {
+                defVal = value.String()
             }
-            value.SetString(val1)
+            val := defVal
+            for _, key := range keys {
+                val1 := p.GetDefault(key, defVal)
+                if val1 != "" {
+                    val = val1
+                }
+            }
+            value.SetString(val)
             break
-        case "int", "int32", "int64":
-            val := getInt(p, key1, key2, defVal)
-            //fmt.Println("setInt", val, value.CanSet(), reflect.ValueOf(&value).Elem().CanSet())
-            value.SetInt(int64(val))
+        case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+
+            if value.Type().Name() == "Duration" {
+                defaultValue, err := toDuration(defVal)
+                if err != nil {
+                }
+                if value.Int() != 0 {
+                    defaultValue = time.Nanosecond * time.Duration(value.Int())
+                }
+                val := defaultValue
+                for _, key := range keys {
+                    val1 := p.GetDurationDefault(key, defaultValue)
+                    if val1 <= 0 {
+                        val = val1
+                    }
+                }
+                value.SetInt(val.Nanoseconds())
+
+            } else {
+                //case "int", "int32", "int64":
+                val := getInt(p, keys, value.Int(), defVal)
+
+                //fmt.Println("setInt", val, value.CanSet(), reflect.ValueOf(&value).Elem().CanSet())
+                value.SetInt(int64(val))
+            }
+
             break
-        case "uint", "uint32", "uint64":
-            val := getInt(p, key1, key2, defVal)
+            //case "uint", "uint32", "uint64":
+        case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+            val := getInt(p, keys, int64(value.Uint()), defVal)
             //fmt.Println("-----", val)
             value.SetUint(uint64(val))
             break
-        case "float32", "float64":
+            //case "float32", "float64":
+        case reflect.Float32, reflect.Float64:
 
             defaultValue, err := strconv.ParseFloat(defVal, 64)
             if err != nil {
             }
-
-            val1 := p.GetFloat64Default(key1, defaultValue)
-            val2 := p.GetFloat64Default(key2, defaultValue)
-            //fmt.Println("ff  ", sf.Name, "	", val1, val2)
-            if val1 == 0 {
-                val1 = val2
+            if value.Float() != 0 {
+                defaultValue = value.Float()
             }
-            value.SetFloat(val1)
+
+            val := defaultValue
+            for _, key := range keys {
+                val1 := p.GetFloat64Default(key, defaultValue)
+                if val1 != 0 {
+                    val = val1
+                }
+            }
+            value.SetFloat(val)
             break
-        case "bool":
+            //case "bool":
+        case reflect.Bool:
             defaultValue, err := strconv.ParseBool(defVal)
             if err != nil {
             }
+            if value.Bool() {
+                defaultValue = value.Bool()
+            }
 
-            val1 := p.GetBoolDefault(key1, defaultValue)
-            val2 := p.GetBoolDefault(key2, defaultValue)
-            //fmt.Println("ff  ", sf.Name, "	", val1, val2)
-            value.SetBool(val1 || val2)
+            val := defaultValue
+            for _, key := range keys {
+                val1 := p.GetBoolDefault(key, defaultValue)
+                if val1 {
+                    val = val1
+                }
+            }
+            value.SetBool(val)
+
             break
-        case "Duration":
-            defaultValue, err := toDuration(defVal)
-            if err != nil {
-            }
+        case reflect.Map:
 
-            val1 := p.GetDurationDefault(key1, defaultValue)
-            val2 := p.GetDurationDefault(key2, defaultValue)
-            //fmt.Println("duration:   ", defaultValue, val1, val2)
-
-            if val2 <= 0 {
-                val1 = val2
+            t := value.Type()
+            typ := t.Elem()
+            if value.IsNil() || !value.IsValid() {
+                value.Set(reflect.MakeMap(value.Type()))
             }
-            val1.Nanoseconds()
-            value.SetInt(val1.Nanoseconds())
+            for _, key := range p.Keys() {
+                for _, k := range keys {
+                    if strings.HasPrefix(key, k) {
+                        mk := strings.TrimPrefix(key, k+".")
+                        mv := p.GetDefault(key, defVal)
+                        kv := NewKeyValue(mk, mv)
+                        v, err := marshalSimple(kv, typ)
+                        if err == nil {
+
+                            value.SetMapIndex(reflect.ValueOf(mk), reflect.ValueOf(v))
+                        }
+                    }
+                }
+            }
+            break
+            break
+        case reflect.Struct:
+            //fmt.Println("---")
+            unmarshalInner(p, value, keys...)
             break
         default:
 
@@ -274,16 +357,44 @@ func Unmarshal(p ConfigSource, obj interface{}) error {
     }
     return nil
 }
-func getInt(p ConfigSource, key1, key2, defVal string) int {
-    defaultValue, err := strconv.Atoi(defVal)
+
+func marshalSimple(kv *KeyValue, typ reflect.Type) (interface{}, error) {
+    switch typ.Kind() {
+    case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+        if typ.Name() == "Duration" {
+            return kv.Duration()
+        } else {
+            return kv.Int64()
+        }
+    case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+        return kv.Uint64()
+    case reflect.Float32, reflect.Float64:
+        return kv.Float64()
+    case reflect.String:
+        return kv.String(), nil
+    case reflect.Bool:
+        return kv.Bool()
+    }
+    return "", nil
+}
+
+func getInt(p ConfigSource, keys []string, originValue int64, defVal string) int {
+    defaultValue := originValue
+    defV, err := strconv.Atoi(defVal)
     if err != nil {
     }
-    val1 := p.GetIntDefault(key1, defaultValue)
-    val2 := p.GetIntDefault(key2, defaultValue)
-    if val1 == 0 {
-        val1 = val2
+    if defaultValue == 0 {
+        defaultValue = int64(defV)
     }
-    return val1
+
+    val := defaultValue
+    for _, key := range keys {
+        val1 := p.GetIntDefault(key, int(defaultValue))
+        if val1 != 0 {
+            val = int64(val1)
+        }
+    }
+    return int(val)
 
 }
 
@@ -292,16 +403,17 @@ func toKeys(str string) [2]string {
     keys := [2]string{"", ""}
     keys[1] = strings.ToLower(str[0:1]) + str[1:]
     r := []rune(str)
-    for i := 0; i < len(str); i++ {
-        if i == 0 {
-            keys[0] += strings.ToLower(string(r[i])) // + string(vv[i+1])
-        } else {
-            if r[i] >= 65 && r[i] < 91 {
-                keys[0] += "-"
+    if strings.Index(str, "-") >= 0 {
+        for i := 0; i < len(str); i++ {
+            if i == 0 {
+                keys[0] += strings.ToLower(string(r[i])) // + string(vv[i+1])
+            } else {
+                if r[i] >= 65 && r[i] < 91 {
+                    keys[0] += "-"
+                }
+                keys[0] += strings.ToLower(string(r[i]))
             }
-            keys[0] += strings.ToLower(string(r[i]))
         }
     }
-
     return keys
 }
