@@ -283,6 +283,7 @@ func TestIni_GetIntDefault(t *testing.T) {
 
 	})
 }
+
 func TestIni_toDuration(t *testing.T) {
 	Convey("测试get bool", t, func() {
 

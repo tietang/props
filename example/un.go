@@ -23,6 +23,8 @@ type ServerProperties struct {
 }
 
 func main() {
+    str:="12321s"
+    fmt.Println(str[len(str)-1:])
     //t := ServerProperties{}
     //s := reflect.ValueOf(&t).Elem()
     //typeOfT := s.Type()

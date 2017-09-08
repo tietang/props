@@ -59,7 +59,7 @@ func NewEmptyCompositeConfigSource() *CompositeConfigSource {
     return s
 }
 
-func NewDefaultCompositeConfigSource(configSources []ConfigSource) *CompositeConfigSource {
+func NewDefaultCompositeConfigSource(configSources ...ConfigSource) *CompositeConfigSource {
     s := &CompositeConfigSource{
         ConfigSources: configSources,
     }
@@ -68,7 +68,7 @@ func NewDefaultCompositeConfigSource(configSources []ConfigSource) *CompositeCon
     return s
 }
 
-func NewCompositeConfigSource(name string, configSources []ConfigSource) *CompositeConfigSource {
+func NewCompositeConfigSource(name string, configSources ...ConfigSource) *CompositeConfigSource {
     s := &CompositeConfigSource{
         ConfigSources: configSources,
     }
@@ -127,113 +127,112 @@ func (ccs *CompositeConfigSource) Add(ms ConfigSource) {
 }
 
 func (ccs *CompositeConfigSource) Get(key string) (string, error) {
-    //var value string;
-    //var found bool;
-    //s.ConfigSources.ForEach(func(mapSource interface{}, ok bool) {
-    //    if ok {
-    //        ms := mapSource.(ConfigSource)
-    //        v, err := ms.Get(key)
-    //        if err == nil {
-    //            value = v
-    //            found = ok
-    //            return -1
-    //        }
-    //    }
-    //})
-    //
-    //if found {
-    //    return value, nil
-    //}
-    //
-    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
-        s := ccs.ConfigSources[i]
-        v, err := s.Get(key)
-        if err == nil {
-            return v, nil
-        }
-    }
-    return "", errors.New("not exists for key: " + key)
-}
-func (ccs *CompositeConfigSource) GetInt(key string) (int, error) {
-    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
-        s := ccs.ConfigSources[i]
-        v, err := s.GetInt(key)
-        if err == nil {
-            return v, nil
-        }
-    }
-    return 0, errors.New("not exists for key: " + key)
-}
-func (ccs *CompositeConfigSource) GetDuration(key string) (time.Duration, error) {
-    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
-        s := ccs.ConfigSources[i]
-        return s.GetDuration(key)
-    }
-    return time.Duration(0), errors.New("not exists for key: " + key)
-}
-
-func (ccs *CompositeConfigSource) GetBool(key string) (bool, error) {
-    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
-        s := ccs.ConfigSources[i]
-        v, err := s.GetBool(key)
-        if err == nil {
-            return v, nil
-        }
-    }
-    return false, errors.New("not exists for key: " + key)
-}
-
-func (ccs *CompositeConfigSource) GetFloat64(key string) (float64, error) {
-    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
-        s := ccs.ConfigSources[i]
-        v, err := s.GetFloat64(key)
-        if err == nil {
-            return v, nil
-        }
-    }
-    return 0.0, errors.New("not exists for key: " + key)
+    return ccs.GetValue(key)
 }
 
 func (ccs *CompositeConfigSource) GetDefault(key string, defaultValue string) string {
-    v, err := ccs.Get(key)
+    v, err := ccs.GetValue(key)
     if err != nil {
         return defaultValue
     }
     return v
+}
+func (ccs *CompositeConfigSource) GetInt(key string) (int, error) {
+    val, err := ccs.GetValue(key)
+    if err == nil {
+        return NewKeyValue(key, val).Int()
+    } else {
+        return 0, err
+    }
 
+}
+func (ccs *CompositeConfigSource) GetDuration(key string) (time.Duration, error) {
+    val, err := ccs.GetValue(key)
+    if err == nil {
+        return NewKeyValue(key, val).Duration()
+    } else {
+        return time.Duration(0), err
+    }
+}
+
+func (ccs *CompositeConfigSource) GetBool(key string) (bool, error) {
+
+    val, err := ccs.GetValue(key)
+    if err == nil {
+        return NewKeyValue(key, val).Bool()
+    } else {
+        return false, err
+    }
+}
+
+func (ccs *CompositeConfigSource) GetFloat64(key string) (float64, error) {
+    val, err := ccs.GetValue(key)
+    if err == nil {
+        return NewKeyValue(key, val).Float64()
+    } else {
+        return 0.0, err
+    }
 }
 
 func (ccs *CompositeConfigSource) GetIntDefault(key string, defaultValue int) int {
-    v, err := ccs.GetInt(key)
-    if err != nil {
+
+    val, err := ccs.GetValue(key)
+    if err == nil {
+        v, err := NewKeyValue(key, val).Int()
+        if err == nil {
+            return v
+        } else {
+            return defaultValue
+        }
+    } else {
         return defaultValue
     }
-    return v
 
 }
 func (ccs *CompositeConfigSource) GetDurationDefault(key string, defaultValue time.Duration) time.Duration {
-    v, err := ccs.GetDuration(key)
-    if err != nil {
+
+    val, err := ccs.GetValue(key)
+    if err == nil {
+        v, err := NewKeyValue(key, val).Duration()
+        if err == nil {
+            return v
+        } else {
+            return defaultValue
+        }
+    } else {
         return defaultValue
     }
-    return v
 
 }
 
 func (ccs *CompositeConfigSource) GetBoolDefault(key string, defaultValue bool) bool {
-    v, err := ccs.GetBool(key)
-    if err != nil {
+
+    val, err := ccs.GetValue(key)
+    if err == nil {
+        v, err := NewKeyValue(key, val).Bool()
+        if err == nil {
+            return v
+        } else {
+            return defaultValue
+        }
+    } else {
         return defaultValue
     }
-    return v
 }
 
 func (ccs *CompositeConfigSource) GetFloat64Default(key string, defaultValue float64) float64 {
-    v, err := ccs.GetFloat64(key)
-    if err != nil {
+
+    val, err := ccs.GetValue(key)
+    if err == nil {
+        v, err := NewKeyValue(key, val).Float64()
+        if err == nil {
+            return v
+        } else {
+            return defaultValue
+        }
+    } else {
         return defaultValue
     }
-    return v
 }
 func (ccs *CompositeConfigSource) Set(key, val string) {
     panic(errors.New("Unsupported operation"))
@@ -266,14 +265,26 @@ func (ccs *CompositeConfigSource) Keys() []string {
 }
 
 func (ccs *CompositeConfigSource) GetValue(key string) (string, error) {
-    v, err := ccs.Get(key)
-    if err == nil {
-        if reg.MatchString(v) {
-            return ccs.evalValue(v)
+    val := ""
+    hasExists := false
+    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
+        s := ccs.ConfigSources[i]
+        v, err := s.Get(key)
+        if err == nil {
+            val = v
+            hasExists = true
+            break
         }
-        return v, nil
     }
-    return v, err
+
+    if reg.MatchString(val) {
+        return ccs.evalValue(val)
+    }
+    if hasExists {
+        return val, nil
+    } else {
+        return val, errors.New("not exists for key: " + key)
+    }
 }
 
 func (ccs *CompositeConfigSource) evalValue(value string) (string, error) {

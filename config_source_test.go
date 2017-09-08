@@ -63,3 +63,59 @@ func TestCompositeConfigSource_Order(t *testing.T) {
 
     })
 }
+
+func TestPlaceholder_String(t *testing.T) {
+    p := NewEmptyMapConfigSource("map2")
+    p.Set("orign.key1", "v1")
+    p.Set("orign.key2", "v2")
+    p.Set("ph.key1", "${orign.key1}")
+    p.Set("ph.key2", "${orign.key1}:${orign.key2}")
+    conf := NewDefaultCompositeConfigSource(p)
+    Convey("Test CompositeConfigSource Placeholder", t, func() {
+        Convey("ph simple", func() {
+            ov1, err := conf.Get("orign.key1")
+            So(err, ShouldBeNil)
+            phv1, err := conf.Get("ph.key1")
+            So(err, ShouldBeNil)
+            So(phv1, ShouldEqual, ov1)
+        })
+        Convey("ph muti composite", func() {
+            ov1, err := conf.Get("orign.key1")
+            So(err, ShouldBeNil)
+            ov2, err := conf.Get("orign.key2")
+            So(err, ShouldBeNil)
+            phv2, err := conf.Get("ph.key2")
+            So(err, ShouldBeNil)
+            So(phv2, ShouldEqual, ov1+":"+ov2)
+        })
+    })
+
+}
+
+func TestPlaceholder_Int(t *testing.T) {
+    p := NewEmptyMapConfigSource("map2")
+    p.Set("orign.key1", "1")
+    p.Set("orign.key2", "2")
+    p.Set("ph.key1", "${orign.key1}")
+    p.Set("ph.key2", "${orign.key1}+${orign.key2}")
+    conf := NewDefaultCompositeConfigSource(p)
+    Convey("Test CompositeConfigSource Placeholder", t, func() {
+        Convey("ph simple", func() {
+            ov1, err := conf.GetInt("orign.key1")
+            So(err, ShouldBeNil)
+            phv1, err := conf.GetInt("ph.key1")
+            So(err, ShouldBeNil)
+            So(phv1, ShouldEqual, ov1)
+        })
+        Convey("ph muti composite", func() {
+            ov1, err := conf.Get("orign.key1")
+            So(err, ShouldBeNil)
+            ov2, err := conf.Get("orign.key2")
+            So(err, ShouldBeNil)
+            phv2, err := conf.Get("ph.key2")
+            So(err, ShouldBeNil)
+            So(phv2, ShouldEqual, ov1+"+"+ov2)
+        })
+    })
+
+}

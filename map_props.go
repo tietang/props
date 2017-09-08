@@ -132,7 +132,11 @@ func (p *MapProperties) GetDurationDefault(key string, defaultValue time.Duratio
 
 func toDuration(v string) (time.Duration, error) {
 
-    //v = strings.ToUpper(v)
+    v = strings.ToLower(v)
+    i, err := strconv.ParseInt(v, 10, 64)
+    if err == nil {
+        return time.Duration(i) * time.Second, nil
+    }
     return time.ParseDuration(v)
 
     //if strings.LastIndex(v, TIME_MS) > 0 {

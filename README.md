@@ -280,6 +280,27 @@ func main() {
 
 ```
 
+
+### 上下文变量表达式（或者占位符）的支持
+
+支持在props上下文中替换占位符：`${}` 
+
+```
+p := NewEmptyMapConfigSource("map2")
+p.Set("orign.key1", "v1")
+p.Set("orign.key2", "v2")
+p.Set("orign.key3", "2")
+p.Set("ph.key1", "${orign.key1}")
+p.Set("ph.key2", "${orign.key1}:${orign.key2}")
+p.Set("ph.key3", "${orign.key3}")
+conf := NewDefaultCompositeConfigSource(p)
+phv1, err := conf.GetInt("ph.key1")//v1
+phv2, err := conf.Get("ph.key2")//v1:v1
+phv3, err := conf.GetInt("ph.key3")//2
+
+```
+
+
 ### 多种配置源组合使用
 
 优先级以追加相反的顺序,最后添加优先级最高。
