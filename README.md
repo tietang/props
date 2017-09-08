@@ -3,7 +3,8 @@
  
 统一的配置工具库，将各种配置源抽象或转换为类似properties格式的key/value，并提供统一的API来访问这些key/value。
 
-## 支持的配置源：
+## 特性
+### 支持的配置源：
 
 - properties文件
 - ini文件
@@ -12,7 +13,7 @@
 - consul k/v
 - consul k/props
 
-## key/value支持的数据类型：
+### key/value支持的数据类型：
 
 - key只支持string
 - value 5种数据类型的支持：
@@ -24,6 +25,11 @@
 	    - 比如 "300ms", "-1.5h" or "2h45m". 
 	    - 合法的时间单位： "ns", "us" (or "µs"), "ms", "s", "m", "h".
 
+### 其他特性
+
+- Unmarshal支持
+- 上下文变量eval支持，`${}`形式
+- 支持多配置源组合
 
 ## Install
 
