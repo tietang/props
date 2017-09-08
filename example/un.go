@@ -6,16 +6,6 @@ import (
     "time"
 )
 
-const (
-    PREFIX_FIELD            = "_prefix"
-    STRUCT_PREFIX_TAG       = "prefix"
-    FIELD_DEFAULT_VALUE_TAG = "val"
-)
-const (
-    TIME_S  = "S"
-    TIME_MS = "MS"
-)
-
 type Port struct {
     Port    int  `val:"8080"`
     Enabled bool `val:"true"`
@@ -29,7 +19,7 @@ type ServerProperties struct {
     Time    time.Duration `val:"1s"`
     Float   float32       `val:"0.000001"`
     Params  map[string]string
-    Ms      map[string]time.Duration
+    Times      map[string]time.Duration
 }
 
 func main() {
@@ -52,15 +42,15 @@ func main() {
     p.Set("http.server.port.port", "8080")
     p.Set("http.server.params.k1", "v1")
     p.Set("http.server.params.k2", "v2")
-    p.Set("http.server.ms.m1", "1s")
-    p.Set("http.server.ms.m2", "1h")
-    p.Set("http.server.ms.m3", "1us")
-    //p.Set("http.server.port.enabled", "false")
-    //p.Set("http.server.timeout", "1234")
-    //p.Set("http.server.enabled", "true")
-    //p.Set("http.server.time", "10s")
-    //p.Set("http.server.float", "23.45")
-    //p.Set("http.server.foo", "23")
+    p.Set("http.server.Times.m1", "1s")
+    p.Set("http.server.Times.m2", "1h")
+    p.Set("http.server.Times.m3", "1us")
+    p.Set("http.server.port.enabled", "false")
+    p.Set("http.server.timeout", "1234")
+    p.Set("http.server.enabled", "true")
+    p.Set("http.server.time", "10s")
+    p.Set("http.server.float", "23.45")
+    p.Set("http.server.foo", "23")
     s := &ServerProperties{
         Foo:   1234,
         Float: 1234.5,

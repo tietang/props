@@ -20,7 +20,9 @@
 	- int
 	- float64
 	- bool
-	- time.Duration：支持ms和s级配置,默认为ms
+	- time.Duration：
+	    - 比如 "300ms", "-1.5h" or "2h45m". 
+	    - 合法的时间单位： "ns", "us" (or "µs"), "ms", "s", "m", "h".
 
 
 ## Install
@@ -219,27 +221,59 @@ p := props.NewConsulIniConfigSourceByName("consul-ini", address, root)
 
 ### 支持Unmarshal
 
+支持的数据类型：
+- int,int8,int16,int32,int64
+- uint,uint8,uint16,uint32,uint64
+- string
+- bool
+- float32,float64
+- time.Duration
+- 嵌套struct
+- map：key只支持string，value支持以上除struct的基本类型
+
+
 在struct中规定命名为`_prefix `、类型为`string `、并且指定了`prefix`tag, 使用feild `_prefix `的`prefix`tag作为前缀，将struct feild名称转换后组合成完整的key，并从ConfigSource中获取数据并注入struct实例，feild类型只支持ConfigSource所支持的数据类型（string、int、float、bool、time.Duration）。
 
 ```golang
 
+
+type Port struct {
+    Port    int  `val:"8080"`
+    Enabled bool `val:"true"`
+}
 type ServerProperties struct {
-	_prefix string `prefix:"http.server"`
-	Port    int
-	Timeout int `val:"1"`
-	Enabled bool
-	Foo     int `val:"1"`
-	Time    time.Duration `val:"1s"`
-	Float   float32 `val:"0.000001"`
+    _prefix string        `prefix:"http.server"`
+    Port    Port
+    Timeout int           `val:"1"`
+    Enabled bool
+    Foo     int           `val:"1"`
+    Time    time.Duration `val:"1s"`
+    Float   float32       `val:"0.000001"`
+    Params  map[string]string
+    Times      map[string]time.Duration
 }
 
 func main() {
-
-	p := props.NewMapProperties()
-	p.Set("http.server.port", "8080")
-	s := &ServerProperties{}
-	p.Unmarshal(s)
-	fmt.Println(s)
+   
+    p := props.NewMapProperties()
+    p.Set("http.server.port.port", "8080")
+    p.Set("http.server.params.k1", "v1")
+    p.Set("http.server.params.k2", "v2")
+    p.Set("http.server.Times.m1", "1s")
+    p.Set("http.server.Times.m2", "1h")
+    p.Set("http.server.Times.m3", "1us")
+    p.Set("http.server.port.enabled", "false")
+    p.Set("http.server.timeout", "1234")
+    p.Set("http.server.enabled", "true")
+    p.Set("http.server.time", "10s")
+    p.Set("http.server.float", "23.45")
+    p.Set("http.server.foo", "23")
+    s := &ServerProperties{
+        Foo:   1234,
+        Float: 1234.5,
+    }
+    p.Unmarshal(s)
+    fmt.Println(s)
 
 }
 
