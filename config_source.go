@@ -1,11 +1,9 @@
 package props
 
 import (
-    log "github.com/sirupsen/logrus"
     "errors"
     "strings"
     "time"
-    "github.com/samuel/go-zookeeper/zk"
     "regexp"
     "github.com/valyala/fasttemplate"
     "io"
@@ -51,61 +49,25 @@ type CompositeConfigSource struct {
 }
 
 func NewEmptyCompositeConfigSource() *CompositeConfigSource {
-    s := &CompositeConfigSource{
-        ConfigSources: make([]ConfigSource, 0),
-    }
-    s.name = "CompositeConfigSource"
-
-    return s
+    return NewCompositeConfigSource("CompositeConfigSource")
 }
 
 func NewDefaultCompositeConfigSource(configSources ...ConfigSource) *CompositeConfigSource {
-    s := &CompositeConfigSource{
-        ConfigSources: configSources,
-    }
-    s.name = "CompositeConfigSource"
-
-    return s
+    return NewCompositeConfigSource("CompositeConfigSource", configSources...)
 }
 
 func NewCompositeConfigSource(name string, configSources ...ConfigSource) *CompositeConfigSource {
     s := &CompositeConfigSource{
-        ConfigSources: configSources,
+        ConfigSources: make([]ConfigSource, 0),
+        name:          name,
     }
-    s.name = "CompositeConfigSource"
-
-    return s
-}
-
-func NewConsulKeyValueCompositeConfigSource(contexts []string, address string) *CompositeConfigSource {
-    s := &CompositeConfigSource{}
-    for _, context := range contexts {
-        c := NewConsulKeyValueConfigSource(address, context)
-        s.Add(c)
+    if name == "" {
+        s.name = "CompositeConfigSource"
     }
-    s.name = "ConsulKevValue"
-    return s
-}
-
-func NewZookeeperCompositeConfigSource(contexts []string, connStr []string, timeout time.Duration) *CompositeConfigSource {
-
-    conn, _, err := zk.Connect(connStr, timeout)
-    if err != nil {
-        log.Error(err)
-        panic(err)
+    s.ConfigSources = append(s.ConfigSources, newEnvConfigSource())
+    for _, cs := range configSources {
+        s.ConfigSources = append(s.ConfigSources, cs)
     }
-    return NewZookeeperCompositeConfigSourceByConn(contexts, conn)
-}
-
-func NewZookeeperCompositeConfigSourceByConn(contexts []string, conn *zk.Conn) *CompositeConfigSource {
-
-    s := &CompositeConfigSource{}
-    for _, context := range contexts {
-        zkms := NewZookeeperConfigSource("zk:"+context, context, conn)
-        s.Add(zkms)
-    }
-    s.name = "Zookeeper"
-
     return s
 }
 

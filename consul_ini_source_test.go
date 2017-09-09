@@ -10,8 +10,8 @@ import (
 )
 
 func TestConsulIniConfigSource(t *testing.T) {
-    //address := "127.0.0.1:8500"
-    address := "172.16.1.248:8500"
+    address := "127.0.0.1:8500"
+    //address := "172.16.1.248:8500"
     root := "config101/test/inidemo"
     size := 10
     inilen := 3

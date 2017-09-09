@@ -50,6 +50,15 @@ func NewPropertiesConfigSourceByMap(name string, kv map[string]string) *Properti
     return s
 }
 
+func NewPropertiesCompositeConfigSource(fileNames ...string) *CompositeConfigSource {
+    s := NewEmptyCompositeConfigSource()
+    s.name = "properties"
+    for _, file := range fileNames {
+        c := NewPropertiesConfigSource(file)
+        s.Add(c)
+    }
+    return s
+}
 func NewEmptyMapConfigSource(name string) *PropertiesConfigSource {
     s := &PropertiesConfigSource{}
     if name == "" {

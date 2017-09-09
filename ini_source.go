@@ -39,6 +39,15 @@ func NewIniFileConfigSourceByFile(name, file string) *IniFileConfigSource {
     return s
 }
 
+func NewIniFileCompositeConfigSource(fileNames ...string) *CompositeConfigSource {
+    s := NewEmptyCompositeConfigSource()
+    s.name = "iniFiles"
+    for _, file := range fileNames {
+        c := NewIniFileConfigSource(file)
+        s.Add(c)
+    }
+    return s
+}
 
 func (s *IniFileConfigSource) Name() string {
     return s.name

@@ -45,11 +45,13 @@ func TestCompositeConfigSource_Order(t *testing.T) {
     p2.Set(kv2[0], kv2[2])
     conf.Add(p1)
     conf.Add(p2)
+    envs := os.Environ()
+    envLen := len(envs)
 
     Convey("Test CompositeConfigSource order", t, func() {
         keys := conf.Keys()
         Convey("key len", func() {
-            So(len(keys), ShouldEqual, 2)
+            So(len(keys), ShouldEqual, 2+envLen)
         })
         Convey("key/value", func() {
             value1, err := conf.Get(kv1[0])

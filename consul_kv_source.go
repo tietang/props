@@ -40,6 +40,17 @@ func NewConsulKeyValueConfigSourceByName(name, address, root string) *ConsulKeyV
     return s
 }
 
+func NewConsulKeyValueCompositeConfigSource(contexts []string, address string) *CompositeConfigSource {
+    s := NewEmptyCompositeConfigSource()
+    s.name = "ConsulKevValue"
+    for _, context := range contexts {
+        c := NewConsulKeyValueConfigSource(address, context)
+        s.Add(c)
+    }
+
+    return s
+}
+
 func (s *ConsulKeyValueConfigSource) init() {
     s.findProperties(s.root, nil)
 }

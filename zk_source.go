@@ -7,6 +7,7 @@ import (
     "path"
     "fmt"
     log "github.com/sirupsen/logrus"
+    "time"
 )
 
 const (
@@ -29,6 +30,26 @@ func NewZookeeperConfigSource(name string, context string, conn *zk.Conn) *Zooke
     s.conn = conn
     s.context = context
     s.init()
+    return s
+}
+
+func NewZookeeperCompositeConfigSource(contexts []string, connStr []string, timeout time.Duration) *CompositeConfigSource {
+
+    conn, _, err := zk.Connect(connStr, timeout)
+    if err != nil {
+        log.Error(err)
+        panic(err)
+    }
+    return NewZookeeperCompositeConfigSourceByConn(contexts, conn)
+}
+
+func NewZookeeperCompositeConfigSourceByConn(contexts []string, conn *zk.Conn) *CompositeConfigSource {
+    s := NewEmptyCompositeConfigSource()
+    s.name = "Zookeeper"
+    for _, context := range contexts {
+        zkms := NewZookeeperConfigSource("zk:"+context, context, conn)
+        s.Add(zkms)
+    }
     return s
 }
 

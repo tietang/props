@@ -12,7 +12,9 @@ import (
 
 func initData() (*ZookeeperConfigSource, map[string]string) {
     size := 10
-    c, ch, err := zk.Connect([]string{"172.16.1.248:2181"}, 2*time.Second)
+    //urls:=[]string{"172.16.1.248:2181"}
+    urls:=[]string{"127.0.0.1:2181"}
+    c, ch, err := zk.Connect(urls, 2*time.Second)
     conn := c
     if err != nil {
         panic(err)
