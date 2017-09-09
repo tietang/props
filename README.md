@@ -185,7 +185,19 @@ cs = props.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
 
 #### 用properties来配置： key/properties
 
-value值为properties格式内容, 整体设计类似ini格式
+value值为properties格式内容, 整体设计类似ini格式,例如：
+
+##### key: 
+/config/kv/app1/dev/datasource
+##### value:
+```properties
+url=tcp(127.0.0.1:3306)/Test?charset=utf8
+username=root
+password=root
+
+```
+
+
 
 ```golang
 root := "/config/kv/app1/dev"
@@ -218,7 +230,9 @@ stringDefaultValue := cs.GetDefault("prefix.key1", "default value")
 ```
 #### 用properties来配置： key/properties
 
-value值为properties格式内容, 整体设计类似ini格式
+value值为properties格式内容, 整体设计类似ini格式,配置样式如下图：
+
+![](<docs/consul_key_props.png>)
 
 ```golang
 root := "config/app1/dev"
