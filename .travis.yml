@@ -22,7 +22,7 @@ install:
   - go get -u github.com/mattn/go-isatty
   - go get -u github.com/mgutz/ansi
   - go get -u github.com/mitchellh/go-homedir
-  - go get -u github.com/samuel/go-zookeeper/zk ...
+  - go get -u github.com/samuel/go-zookeeper ...
   - go get -u github.com/sirupsen/logrus
   - go get -u github.com/smartystreets/assertions
   - go get -u github.com/smartystreets/goconvey
