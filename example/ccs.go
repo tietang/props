@@ -31,7 +31,7 @@ func main() {
 	contexts := []string{"/configs/apps", "/configs/users"}
 	zccs := props.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
 	configSources := []props.ConfigSource{pcs1, pcs2, zccs, }
-	ccs := props.NewDefaultCompositeConfigSource(configSources)
+	ccs := props.NewDefaultCompositeConfigSource(configSources...)
 
 	//
 
