@@ -20,8 +20,15 @@ var reg = regexp.MustCompile("\\$\\{(.*)}")
 type ConfigSource interface {
     Name() string
     //
+    KeyValue(key string) *KeyValue
+    Strings(key string) []string
+    Ints(key string) []int
+    Float64s(key string) []float64
+    Durations(key string) []time.Duration
+    //
     Get(key string) (string, error)
     GetDefault(key, defaultValue string) string
+
     //
     GetInt(key string) (int, error)
     GetIntDefault(key string, defaultValue int) int
@@ -88,6 +95,51 @@ func (ccs *CompositeConfigSource) Add(ms ConfigSource) {
 
 }
 
+func (ccs *CompositeConfigSource) KeyValue(key string) *KeyValue {
+    //v := ccs.GetDefault(key, "")
+    //kv := NewKeyValue(key, v)
+    //return kv
+
+    val := ""
+    hasExists := false
+    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
+        s := ccs.ConfigSources[i]
+        v, err := s.Get(key)
+        if err == nil {
+            val = v
+            hasExists = true
+            break
+        }
+    }
+
+    if reg.MatchString(val) {
+        v, err := ccs.evalValue(val)
+        kv := NewKeyValue(key, v)
+        kv.err = err
+        return kv
+    }
+    if hasExists {
+        kv := NewKeyValue(key, val)
+        kv.err = nil
+        return kv
+    } else {
+        kv := NewKeyValue(key, val)
+        kv.err = errors.New("not exists for key: " + key)
+        return kv
+    }
+}
+func (ccs *CompositeConfigSource) Strings(key string) []string {
+    return ccs.KeyValue(key).Strings()
+}
+func (ccs *CompositeConfigSource) Ints(key string) []int {
+    return ccs.KeyValue(key).Ints()
+}
+func (ccs *CompositeConfigSource) Float64s(key string) []float64 {
+    return ccs.KeyValue(key).Float64s()
+}
+func (ccs *CompositeConfigSource) Durations(key string) []time.Duration {
+    return ccs.KeyValue(key).Durations()
+}
 func (ccs *CompositeConfigSource) Get(key string) (string, error) {
     return ccs.GetValue(key)
 }
@@ -227,26 +279,29 @@ func (ccs *CompositeConfigSource) Keys() []string {
 }
 
 func (ccs *CompositeConfigSource) GetValue(key string) (string, error) {
-    val := ""
-    hasExists := false
-    for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
-        s := ccs.ConfigSources[i]
-        v, err := s.Get(key)
-        if err == nil {
-            val = v
-            hasExists = true
-            break
-        }
-    }
+    //val := ""
+    //hasExists := false
+    //for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
+    //    s := ccs.ConfigSources[i]
+    //    v, err := s.Get(key)
+    //    if err == nil {
+    //        val = v
+    //        hasExists = true
+    //        break
+    //    }
+    //}
+    //
+    //if reg.MatchString(val) {
+    //    return ccs.evalValue(val)
+    //}
+    //if hasExists {
+    //    return val, nil
+    //} else {
+    //    return val, errors.New("not exists for key: " + key)
+    //}
 
-    if reg.MatchString(val) {
-        return ccs.evalValue(val)
-    }
-    if hasExists {
-        return val, nil
-    } else {
-        return val, errors.New("not exists for key: " + key)
-    }
+    kv := ccs.KeyValue(key)
+    return kv.value, kv.err
 }
 
 func (ccs *CompositeConfigSource) evalValue(value string) (string, error) {

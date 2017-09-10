@@ -94,6 +94,8 @@ func TestPlaceholder_String(t *testing.T) {
 
 }
 
+
+
 func TestPlaceholder_Int(t *testing.T) {
     p := NewEmptyMapConfigSource("map2")
     p.Set("orign.key1", "1")

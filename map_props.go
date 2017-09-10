@@ -37,6 +37,23 @@ func (p *MapProperties) Name() string {
 }
 
 //--get key/value
+func (p *MapProperties) KeyValue(key string) *KeyValue {
+    v := p.GetDefault(key, "")
+    kv := NewKeyValue(key, v)
+    return kv
+}
+func (p *MapProperties) Strings(key string) []string {
+    return p.KeyValue(key).Strings()
+}
+func (p *MapProperties) Ints(key string) []int {
+    return p.KeyValue(key).Ints()
+}
+func (p *MapProperties) Float64s(key string) []float64 {
+    return p.KeyValue(key).Float64s()
+}
+func (p *MapProperties) Durations(key string) []time.Duration {
+    return p.KeyValue(key).Durations()
+}
 
 // Get retrieves the value of a property. If the property does not exist, an
 // empty string will be returned.

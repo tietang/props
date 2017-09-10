@@ -35,10 +35,17 @@ func NewZookeeperConfigSource(name string, context string, conn *zk.Conn) *Zooke
 
 func NewZookeeperCompositeConfigSource(contexts []string, connStr []string, timeout time.Duration) *CompositeConfigSource {
 
-    conn, _, err := zk.Connect(connStr, timeout)
+    conn, ch, err := zk.Connect(connStr, timeout)
     if err != nil {
         log.Error(err)
         panic(err)
+    }
+    for {
+        event := <-ch
+        fmt.Println(event)
+        if event.State == zk.StateConnected {
+            break
+        }
     }
     return NewZookeeperCompositeConfigSourceByConn(contexts, conn)
 }
