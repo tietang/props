@@ -90,6 +90,18 @@ func StartMockZookeeper() <-chan int {
     return ec
 }
 
+func StartMockConsul() <-chan int {
+    command := "./consul/consul"
+    params := []string{"agent", "-dev"}
+    started := execCommand(command, params)
+    ec := make(chan int, 1)
+    if started {
+        ec <- 1
+    } else {
+        ec <- 0
+    }
+    return ec
+}
 func execCommand(commandName string, params []string) bool {
 
     cmd := exec.Command(commandName, params...)

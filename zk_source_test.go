@@ -22,10 +22,13 @@ func (lw logWriter) Write(b []byte) (int, error) {
 
 var zk_mock_started = false
 
-func aTestReadZk(t *testing.T) {
+func init() {
     if !zk_mock_started {
         go StartMockZookeeper()
     }
+}
+func TestReadZk(t *testing.T) {
+
     //urls:=[]string{"172.16.1.248:2181"}
     urls := []string{"127.0.0.1:2181"}
     c, ch, err := zk.Connect(urls, 2*time.Second)

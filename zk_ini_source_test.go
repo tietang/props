@@ -62,7 +62,7 @@ func initZkIniData(conn *zk.Conn, root string, size, inilen int) map[string]stri
     //fmt.Println(len(kv))
 }
 
-func aTestReadZkIni(t *testing.T) {
+func TestReadZkIni(t *testing.T) {
     zics, kv := initIniData()
     Convey("Get", t, func() {
 
