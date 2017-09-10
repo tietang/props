@@ -14,9 +14,9 @@ install:
   - go get -u github.com/go-ini/ini
 #  - go get -u github.com/gopherjs/gopherjs
   - go get -u github.com/hashicorp/consul
-  - go get -u github.com/hashicorp/go-cleanhttp
-  - go get -u github.com/hashicorp/go-rootcerts
-  - go get -u github.com/hashicorp/serf
+#  - go get -u github.com/hashicorp/go-cleanhttp
+#  - go get -u github.com/hashicorp/go-rootcerts
+#  - go get -u github.com/hashicorp/serf
   - go get -u github.com/jtolds/gls
   - go get -u github.com/mattn/go-colorable
   - go get -u github.com/mattn/go-isatty
