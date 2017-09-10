@@ -29,8 +29,8 @@ install:
   - go get -u github.com/tietang/go-utils
   - go get -u github.com/valyala/bytebufferpool
   - go get -u github.com/valyala/fasttemplate
-  - go get -u golang.org/x/crypto
-  - go get -u golang.org/x/sys
+  - go get -u golang.org/x/crypto ...
+  - go get -u golang.org/x/sys ...
 
 script:
   - go test -race -v
