@@ -11,6 +11,12 @@ before_install:
 branches:
   only:
     - master
+notifications:
+  email:
+    recipients:
+      - wtt.2012@gmail.com
+  on_success: change
+  on_failure: always
 
 install:
   - go get -u github.com/go-ini/ini
