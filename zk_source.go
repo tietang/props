@@ -15,7 +15,7 @@ const (
 
     KEY_NOTIFY_NODE = "notify"
 )
-
+//通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type ZookeeperConfigSource struct {
     MapProperties
     name    string

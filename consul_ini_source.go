@@ -7,7 +7,7 @@ import (
     "bytes"
 )
 
-//通过key/value, key所谓section，value为props格式内容，类似ini文件格式
+//通过key/properties, key所谓section，value为props格式内容，类似ini文件格式
 type ConsulIniConfigSource struct {
     MapProperties
     name   string

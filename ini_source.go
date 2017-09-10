@@ -10,6 +10,7 @@ const (
     KEY_INI_CURRENT_DIR = "ini.current.dir"
 )
 
+//ini 文件支持
 type IniFileConfigSource struct {
     MapProperties
     name     string
