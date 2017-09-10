@@ -31,11 +31,14 @@ install:
   - go get -u github.com/tietang/go-utils
   - go get -u github.com/valyala/bytebufferpool
   - go get -u github.com/valyala/fasttemplate
+  - go get -u github.com/mattn/goveralls
 #  - go get -u golang.org/x/crypto ...
 #  - go get -u golang.org/x/sys ...
 
 script:
-  - go test -race -v
+  - go test -race -v -covermode=count -coverprofile=coverage.out
+  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+
 go:
   - 1.8.x
 
