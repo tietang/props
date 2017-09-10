@@ -11,12 +11,12 @@ before_install:
 branches:
   only:
     - master
-notifications:
-  email:
-    recipients:
-      - wtt.2012@gmail.com
-  on_success: change
-  on_failure: always
+#notifications:
+#  email:
+#    recipients:
+#      - wtt.2012@gmail.com
+#  on_success: change
+#  on_failure: always
 
 install:
   - go get -u github.com/go-ini/ini
@@ -56,5 +56,6 @@ go:
 
 env:
   global:
-    secure: "DgTi4PC+GXhhaxZazRx/mCM8cjhUo3cKlorEdX/Ss+NyiSOLnOHxoHYdJdcYceh+nJPh8MRyCGhtIJv28GXonK49sz7pHeY1cTduKDdGFWLaw7uYPNeEz3x5/jev91is5NO+UbwmWXTe6Au00dlWCjeuTy5NlWq5Js9WRRP2P1NjKtP1jOEtm8wFABX1XMP96OoP/LRQOoSKaHK2FCxBG2WCTm5V0pfIB2KM0fs/h7NRmirNw0sFJJfkLpcmQkT7s2l10ljTTDgVbtgO0JsbLAmvAR5WkJqJy+TB6zfBmFanuun51NZcFEH+ZPNcfOmRDyuJ042mMdo9Rrpsg/lETvHp0KunK1czZVjyid3af8gSmMjWBIeakeyxTv+sjcEMAhsPSt+nzTdZy9dTr+8Bn38LiZmm+47LVqpITehQ7P1G8zZGLnqLlZnTUbzv8XeAaFSXSwcturrtr4XVZJQa3RMia53UhLoeq4/ZnesGVNtIJBa7OsKgzOUDYyArEdeI9YnA0MXE+UD+eBEFBoBd2+2WGw+3ClNBQK1a0dPaT13OE1FsfxYllntC4ICOF7SOqh1UIWW0lTjgZDnp+ZrY5ROFtATmsa0sJHVbvABN5sFsMYND86X/csICO9KIsnYMyAit50390zzUgZtaQQoLwc8yk8q7AqRcNU18khL06h0="
+    secure: UoAxs7DjoiPFPhTS4wOeDgK73MXRQivqtkEQYfpm6hfK56u/YdngvAX4/CMEE0ExKD6yMFiiFQWjE8SlC7v7AwIe7Xp2b5HYtcgPOTsO3bl07iSWt1G7FOuR+fh7mwX692krLARiHhZ2mUv8OXYsoUglz3EQ3BoS9ny/FZV5HBEOuHhFQNt1lUllwFl7LZrCHUpR9TuPzXaiWIddgHYquFamrUjeW2DbwxtvExwKeuturdyrZ62YHaEkQZmxEL54Q8sOO7BgylbdY7yIbeGDe8YeEkqhOXZeFI9umaIFzFwJXfAeGv0sGGPYx/XpJkeWTBRUzK69VrrLEFH4hVo+t366lYab3D5hXZo5NJjEwXQX80ABkCdmnFde7bm5D4gMINRpOFkZJkjhPeFm5ICpUNq5YmAs7pS3VJkt6G3mQdbNKZ5To98MyCPCYC+s8Vp5NugLx9t9TLZ9sopZA/2VNMpZpivF2nQklWJiiPhdEjTbiy7eba7fE84OAxQXW/5akExTvm8XBnkRMMjI3osqwlRImSrNLCaqK42CDeDafZMd247YlIxlksVlWeEmm92T7edprBZjpakWacdZz+J9wv5/F0EG+/hPRGidBRLTshVa18fYsCniB5pszesqrUtsNqMassloxc5jE3XXzlxzg3mwzg93JrNm4NYGlNHiMQU=
+
 
