@@ -9,6 +9,7 @@ import (
     "io"
     "os/exec"
     "os"
+    "net/http"
 )
 
 var flags = int32(0)
@@ -91,7 +92,7 @@ func StartMockZookeeper() <-chan int {
 }
 
 func StartMockConsul() <-chan int {
-    command := "./consul/consul"
+    command := "consul"
     params := []string{"agent", "-dev"}
     started := execCommand(command, params)
     ec := make(chan int, 1)
@@ -101,6 +102,21 @@ func StartMockConsul() <-chan int {
         ec <- 0
     }
     return ec
+}
+func WaitingForConsulStarted() {
+    url := "http://127.0.0.1:8500/ui/"
+    for {
+        res, err := http.Get(url)
+        if err != nil {
+            continue
+        }
+        if res != nil && res.StatusCode == 200 {
+            res.Body.Close()
+            break
+        }
+
+    }
+
 }
 func execCommand(commandName string, params []string) bool {
 

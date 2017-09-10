@@ -31,7 +31,7 @@ func TestReadZk(t *testing.T) {
 
     //urls:=[]string{"172.16.1.248:2181"}
     urls := []string{"127.0.0.1:2181"}
-    c, ch, err := zk.Connect(urls, 2*time.Second)
+    c, ch, err := zk.Connect(urls, 20*time.Second)
     zkConn := c
     if err != nil {
         panic(err)

@@ -16,8 +16,8 @@ func initIniData() (*ZookeeperIniConfigSource, map[string]string) {
     size := 10
     inilen := 3
     //urls:=[]string{"172.16.1.248:2181"}
-    urls:=[]string{"127.0.0.1:2181"}
-    c, ch, err := zk.Connect(urls, 2*time.Second)
+    urls := []string{"127.0.0.1:2181"}
+    c, ch, err := zk.Connect(urls, 20*time.Second)
     conn := c
     if err != nil {
         panic(err)
