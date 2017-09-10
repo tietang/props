@@ -1,5 +1,4 @@
 language: go
-sudo: false
 install:
   - go get -u github.com/go-ini/ini
   - go get -u github.com/gopherjs/gopherjs
@@ -23,8 +22,7 @@ install:
   - go get -u golang.org/x/sys
 
 script:
-  - cd hystrix
-  - go test -race
+  - go test -race -v
 go:
   - 1.8.x
   - 1.9.x
