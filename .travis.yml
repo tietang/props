@@ -1,4 +1,15 @@
 language: go
+
+before_install:
+  - wget http://apache.claz.org/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
+  - tar -zxvf zookeeper*tar.gz
+  - wget https://releases.hashicorp.com/consul/0.9.3/consul_0.9.3_linux_amd64.zip?_ga=2.214371295.97069421.1504961822-580552568.1501916240
+  - unzip consul_0.9.3_linux_amd64* -d consul
+
+branches:
+  only:
+    - master
+
 install:
   - go get -u github.com/go-ini/ini
   - go get -u github.com/gopherjs/gopherjs
@@ -25,7 +36,4 @@ script:
   - go test -race -v
 go:
   - 1.8.x
-  - tip
-env:
-  global:
-    - GORACE="halt_on_error=1"
+
