@@ -36,8 +36,9 @@ install:
 #  - go get -u golang.org/x/sys ...
 
 script:
+  - echo $COVERALLS_TOKEN
   - go test -race -v -covermode=count -coverprofile=coverage.out
-  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+  - (go env GOPATH | awk 'BEGIN{FS=":"} {print $1}')/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
 
 go:
   - 1.8.x
