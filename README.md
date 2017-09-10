@@ -3,8 +3,7 @@
 [![Build Status](https://travis-ci.org/tietang/props.png?branch=master)](<https://travis-ci.org/tietang/props>)
 [![GoDoc Documentation](http://godoc.org/github.com/tietang/props?status.png)](<https://godoc.org/github.com/tietang/props>)
 [![Sourcegraph](https://sourcegraph.com/github.com/tietang/props/-/badge.svg)](https://sourcegraph.com/github.com/tietang/props?badge)
-[![Circle CI](https://circleci.com/tietang/props/props.svg?style=svg)](https://circleci.com/tietang/props)
-
+[![CircleCI](https://circleci.com/gh/tietang/props.svg?style=svg)](https://circleci.com/gh/tietang/props)
  
  统一的配置工具库，将各种配置源抽象或转换为类似properties格式的key/value，并提供统一的API来访问这些key/value。支持 properties 文件、ini 文件、zookeeper k/v、zookeeper k/props、consul k/v、consul k/props等配置源，并且支持通过 Unmarshal从配置中抽出struct；支持上下文环境变量的eval，${}形式；支持多种配置源组合使用。
  
