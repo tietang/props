@@ -22,7 +22,7 @@ type ServerProperties struct {
     Times      map[string]time.Duration
 }
 
-func main() {
+func main5() {
     str:="12321s"
     fmt.Println(str[len(str)-1:])
     //t := ServerProperties{}

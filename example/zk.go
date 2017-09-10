@@ -7,7 +7,7 @@ import (
     "fmt"
 )
 
-func main() {
+func main6() {
     context := "/configurations/demo/dev/app1"
 
     c, ch, err := zk.Connect([]string{"172.16.1.248:2181"}, 2*time.Second)

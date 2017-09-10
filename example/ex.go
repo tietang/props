@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func main() {
+func main2() {
 	//p, err := props.ReadPropertyFile("config.properties")
 	//if err != nil {
 	//	panic(err)
