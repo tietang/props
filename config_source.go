@@ -53,6 +53,7 @@ type ConfigSource interface {
 type CompositeConfigSource struct {
     name          string
     ConfigSources []ConfigSource //Set
+    properties    *PropertiesConfigSource
 }
 
 func NewEmptyCompositeConfigSource() *CompositeConfigSource {
@@ -67,11 +68,12 @@ func NewCompositeConfigSource(name string, configSources ...ConfigSource) *Compo
     s := &CompositeConfigSource{
         ConfigSources: make([]ConfigSource, 0),
         name:          name,
+        properties:    NewEmptyMapConfigSource("default_properties"),
     }
     if name == "" {
         s.name = "CompositeConfigSource"
     }
-    s.ConfigSources = append(s.ConfigSources, newEnvConfigSource())
+    s.ConfigSources = append(s.ConfigSources, s.properties, newEnvConfigSource())
     for _, cs := range configSources {
         s.ConfigSources = append(s.ConfigSources, cs)
     }
@@ -137,9 +139,11 @@ func (ccs *CompositeConfigSource) Ints(key string) []int {
 func (ccs *CompositeConfigSource) Float64s(key string) []float64 {
     return ccs.KeyValue(key).Float64s()
 }
+
 func (ccs *CompositeConfigSource) Durations(key string) []time.Duration {
     return ccs.KeyValue(key).Durations()
 }
+
 func (ccs *CompositeConfigSource) Get(key string) (string, error) {
     return ccs.GetValue(key)
 }
@@ -249,11 +253,13 @@ func (ccs *CompositeConfigSource) GetFloat64Default(key string, defaultValue flo
     }
 }
 func (ccs *CompositeConfigSource) Set(key, val string) {
-    panic(errors.New("Unsupported operation"))
+    //panic(errors.New("Unsupported operation"))
+    ccs.properties.Set(key, val)
 }
 
 func (ccs *CompositeConfigSource) SetAll(values map[string]string) {
-    panic(errors.New("Unsupported operation"))
+    //panic(errors.New("Unsupported operation"))
+    ccs.properties.SetAll(values)
 }
 
 func (ccs *CompositeConfigSource) Unmarshal(obj interface{}) error {
