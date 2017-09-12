@@ -5,6 +5,7 @@ import (
     "github.com/hashicorp/consul/api"
     log "github.com/sirupsen/logrus"
     "bytes"
+    "time"
 )
 
 //通过key/properties, key所谓section，value为props格式内容，类似ini文件格式
@@ -21,7 +22,7 @@ func NewConsulIniConfigSource(address, root string) *ConsulIniConfigSource {
     return NewConsulIniConfigSourceByName("", address, root)
 }
 
-func NewConsulIniConfigSourceByName(name, address, root string) *ConsulIniConfigSource {
+func NewConsulIniConfigSourceByName(name, address, root string, timeout time.Duration) *ConsulIniConfigSource {
     s := &ConsulIniConfigSource{}
     if name == "" {
         name = strings.Join([]string{"consul", address, root}, ":")
@@ -31,6 +32,7 @@ func NewConsulIniConfigSourceByName(name, address, root string) *ConsulIniConfig
     s.root = root
     s.config = api.DefaultConfig()
     s.config.Address = address
+    s.config.WaitTime = timeout
     client, err := api.NewClient(s.config)
     if err != nil {
         panic(err)

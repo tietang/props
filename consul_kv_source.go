@@ -4,6 +4,11 @@ import (
     "strings"
     "github.com/hashicorp/consul/api"
     log "github.com/sirupsen/logrus"
+    "time"
+)
+
+const (
+    CONSUL_WAIT_TIME = time.Second * 10
 )
 
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
@@ -17,10 +22,10 @@ type ConsulKeyValueConfigSource struct {
 }
 
 func NewConsulKeyValueConfigSource(address, root string) *ConsulKeyValueConfigSource {
-    return NewConsulKeyValueConfigSourceByName("", address, root)
+    return NewConsulKeyValueConfigSourceByName("", address, root, CONSUL_WAIT_TIME)
 }
 
-func NewConsulKeyValueConfigSourceByName(name, address, root string) *ConsulKeyValueConfigSource {
+func NewConsulKeyValueConfigSourceByName(name, address, root string, timeout time.Duration) *ConsulKeyValueConfigSource {
     s := &ConsulKeyValueConfigSource{}
     if name == "" {
         name = strings.Join([]string{"consul", address, root}, ":")
@@ -30,6 +35,7 @@ func NewConsulKeyValueConfigSourceByName(name, address, root string) *ConsulKeyV
     s.root = root
     s.config = api.DefaultConfig()
     s.config.Address = address
+    s.config.WaitTime = timeout
     client, err := api.NewClient(s.config)
     if err != nil {
         panic(err)
@@ -65,6 +71,7 @@ func (s *ConsulKeyValueConfigSource) Close() {
 func (s *ConsulKeyValueConfigSource) findProperties(parentPath string, children []string) {
     prefix := s.root
     q := &api.QueryOptions{}
+
     keys, _, err := s.kv.Keys(prefix, "", q)
     if err != nil {
         log.Error(err)
