@@ -19,7 +19,7 @@ type ConsulIniConfigSource struct {
 }
 
 func NewConsulIniConfigSource(address, root string) *ConsulIniConfigSource {
-    return NewConsulIniConfigSourceByName("", address, root)
+    return NewConsulIniConfigSourceByName("consul", address, root, CONSUL_WAIT_TIME)
 }
 
 func NewConsulIniConfigSourceByName(name, address, root string, timeout time.Duration) *ConsulIniConfigSource {
