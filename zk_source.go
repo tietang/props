@@ -8,6 +8,7 @@ import (
     "fmt"
     log "github.com/sirupsen/logrus"
     "time"
+    "sync"
 )
 
 const (
@@ -15,12 +16,14 @@ const (
 
     KEY_NOTIFY_NODE = "notify"
 )
+
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type ZookeeperConfigSource struct {
     MapProperties
-    name    string
-    conn    *zk.Conn
-    context string
+    name     string
+    conn     *zk.Conn
+    context  string
+    watchers sync.Map
 }
 
 func NewZookeeperConfigSource(name string, context string, conn *zk.Conn) *ZookeeperConfigSource {
@@ -124,16 +127,16 @@ func (s *ZookeeperConfigSource) Name() string {
     return s.name
 }
 
-func (s *ZookeeperConfigSource) Watch(key string, handlers ... func([]string, zk.Event)) {
+func (s *ZookeeperConfigSource) Watch(key string, handlers ... func(children []string, event zk.Event)) {
     go s.watchGet(path.Join(s.context, key, KEY_NOTIFY_NODE), handlers...)
 }
 
-func (s *ZookeeperConfigSource) WatchChildren(key string, handlers ... func([]string, zk.Event)) {
+func (s *ZookeeperConfigSource) WatchChildren(key string, handlers ... func(children []string, event zk.Event)) {
     pathStr := path.Join(s.context, key)
     s.watchChildren(pathStr, handlers...)
 }
 
-func (s *ZookeeperConfigSource) watchChildren(pathStr string, handlers ... func([]string, zk.Event)) {
+func (s *ZookeeperConfigSource) watchChildren(pathStr string, handlers ... func(children []string, event zk.Event)) {
     children, stat, ch, err := s.conn.ChildrenW(pathStr)
     if err != nil {
         panic(err)
@@ -149,7 +152,7 @@ func (s *ZookeeperConfigSource) watchChildren(pathStr string, handlers ... func(
     s.watchChildren(pathStr, handlers...)
 }
 
-func (g *ZookeeperConfigSource) watchGet(pathStr string, handlers ... func([]string, zk.Event)) {
+func (g *ZookeeperConfigSource) watchGet(pathStr string, handlers ... func(children []string, event zk.Event)) {
     log.Info(pathStr)
     exists, _, _ := g.conn.Exists(pathStr)
     if !exists {
@@ -170,4 +173,12 @@ func (g *ZookeeperConfigSource) watchGet(pathStr string, handlers ... func([]str
     }
     log.Infof("notify event: %+v\n ", e)
     g.watchGet(pathStr, handlers...)
+}
+
+func (g *ZookeeperConfigSource) WatchAndRefresh(key string, t interface{}) {
+    //g.watchers.Store(key, t)
+    g.Watch(key, func(children []string, event zk.Event) {
+        g.Unmarshal(t)
+    })
+
 }
