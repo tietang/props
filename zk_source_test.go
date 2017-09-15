@@ -71,7 +71,7 @@ func initData(conn *zk.Conn) (*ZookeeperConfigSource, map[string]string) {
     root := "/config_kv/app1/dev"
     //fmt.Println("d:  ", conn.State().String(), err, contexts[0])
     kv := initZkData(conn, root, size)
-    zics := NewZookeeperConfigSource("zookeeper-ini", root, conn)
+    zics := NewZookeeperConfigSource("zookeeper-props", root, conn)
     return zics, kv
 }
 

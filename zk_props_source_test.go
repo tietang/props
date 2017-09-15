@@ -28,7 +28,7 @@ func initIniData() (*ZookeeperPropsConfigSource, map[string]string) {
     root := "/config_ini/app1/dev"
     //fmt.Println("d:  ", conn.State().String(), err, contexts[0])
     kv := initZkIniData(conn, root, size, inilen)
-    zics := NewZookeeperPropsConfigSource("zookeeper-ini", root, conn)
+    zics := NewZookeeperPropsConfigSource("zookeeper-props", root, conn)
     return zics, kv
 }
 

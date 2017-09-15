@@ -10,7 +10,6 @@ import (
     "bytes"
 )
 
-
 /*
 通过key/properties, key就是section，value为props格式内容，类似ini文件格式
 例如：
@@ -18,12 +17,22 @@ context: /config/demo
 zk nodes:
 
 /config/demo
-    - /key1:
+    - /jdbc:
        ```
-
+        url=tcp(127.0.0.1:3306)/Test?charset=utf8
+        username=root
+        password=root
+        timeout=6s
 
         ```
-    - /key2:
+    - /redis:
+       ```
+        host=192.168.1.123
+        port=6379
+        database=2
+        timeout=6s
+        password=password
+        ```
 
 
 */

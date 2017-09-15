@@ -198,6 +198,7 @@ value值为properties格式内容, 整体设计类似ini格式,例如：
 ##### key: 
 /config/kv/app1/dev/datasource
 ##### value:
+
 ```properties
 url=tcp(127.0.0.1:3306)/Test?charset=utf8
 username=root
@@ -210,7 +211,7 @@ password=root
 ```golang
 root := "/config/kv/app1/dev"
 var conn *zk.Conn
-p := props.NewZookeeperIniConfigSource("zookeeper-kv", root, conn)
+p := props.NewZookeeperIniConfigSource("zookeeper-props", root, conn)
 
 ```
 
@@ -245,7 +246,7 @@ value值为properties格式内容, 整体设计类似ini格式,配置样式如�
 ```golang
 root := "config/app1/dev"
 address := "127.0.0.1:8500"
-p := props.NewConsulIniConfigSourceByName("consul-ini", address, root)
+p := props.NewConsulIniConfigSourceByName("consul-props", address, root)
 ```
 
 ### 支持Unmarshal

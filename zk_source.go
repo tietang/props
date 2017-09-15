@@ -8,7 +8,6 @@ import (
     "fmt"
     log "github.com/sirupsen/logrus"
     "time"
-    "sync"
 )
 
 const (
@@ -23,7 +22,6 @@ type ZookeeperConfigSource struct {
     name     string
     conn     *zk.Conn
     context  string
-    watchers sync.Map
 }
 
 func NewZookeeperConfigSource(name string, context string, conn *zk.Conn) *ZookeeperConfigSource {
@@ -176,7 +174,6 @@ func (g *ZookeeperConfigSource) watchGet(pathStr string, handlers ... func(child
 }
 
 func (g *ZookeeperConfigSource) WatchAndRefresh(key string, t interface{}) {
-    //g.watchers.Store(key, t)
     g.Watch(key, func(children []string, event zk.Event) {
         g.Unmarshal(t)
     })
