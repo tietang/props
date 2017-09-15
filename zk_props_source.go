@@ -10,16 +10,32 @@ import (
     "bytes"
 )
 
-//通过key/properties, key所谓section，value为props格式内容，类似ini文件格式
-type ZookeeperIniConfigSource struct {
+
+/*
+通过key/properties, key就是section，value为props格式内容，类似ini文件格式
+例如：
+context: /config/demo
+zk nodes:
+
+/config/demo
+    - /key1:
+       ```
+
+
+        ```
+    - /key2:
+
+
+*/
+type ZookeeperPropsConfigSource struct {
     MapProperties
     name    string
     conn    *zk.Conn
     context string
 }
 
-func NewZookeeperIniConfigSource(name string, context string, conn *zk.Conn) *ZookeeperIniConfigSource {
-    s := &ZookeeperIniConfigSource{}
+func NewZookeeperPropsConfigSource(name string, context string, conn *zk.Conn) *ZookeeperPropsConfigSource {
+    s := &ZookeeperPropsConfigSource{}
     s.name = name
     s.values = make(map[string]string)
     s.conn = conn
@@ -28,15 +44,15 @@ func NewZookeeperIniConfigSource(name string, context string, conn *zk.Conn) *Zo
     return s
 }
 
-func (s *ZookeeperIniConfigSource) init() {
+func (s *ZookeeperPropsConfigSource) init() {
     s.findProperties(s.context)
 }
 
-func (s *ZookeeperIniConfigSource) Close() {
+func (s *ZookeeperPropsConfigSource) Close() {
     s.conn.Close()
 }
 
-func (s *ZookeeperIniConfigSource) findProperties(root string) {
+func (s *ZookeeperPropsConfigSource) findProperties(root string) {
     children := s.getChildren(root)
     if len(children) == 0 {
         return
@@ -60,7 +76,7 @@ func (s *ZookeeperIniConfigSource) findProperties(root string) {
 
 }
 
-func (s *ZookeeperIniConfigSource) getPropertiesValue(path string) ([]byte, error) {
+func (s *ZookeeperPropsConfigSource) getPropertiesValue(path string) ([]byte, error) {
     d, _, err := s.conn.Get(path)
     if err != nil || len(d) == 0 {
         return nil, errors.New("not value")
@@ -68,7 +84,7 @@ func (s *ZookeeperIniConfigSource) getPropertiesValue(path string) ([]byte, erro
     return d, nil
 }
 
-func (s *ZookeeperIniConfigSource) getChildren(childPath string) []string {
+func (s *ZookeeperPropsConfigSource) getChildren(childPath string) []string {
     children, _, err := s.conn.Children(childPath)
     if err != nil {
         return make([]string, 0)
@@ -76,32 +92,32 @@ func (s *ZookeeperIniConfigSource) getChildren(childPath string) []string {
     return children
 }
 
-func (s *ZookeeperIniConfigSource) sanitizeKey(path string, context string) string {
+func (s *ZookeeperPropsConfigSource) sanitizeKey(path string, context string) string {
     key := strings.Replace(path, context+"/", "", -1)
     key = strings.Replace(key, "/", ".", -1)
     return key
 }
 
-func (s *ZookeeperIniConfigSource) registerKeyValue(path, value string) {
+func (s *ZookeeperPropsConfigSource) registerKeyValue(path, value string) {
     key := s.sanitizeKey(path, s.context)
     s.Set(key, value)
 
 }
 
-func (s *ZookeeperIniConfigSource) Name() string {
+func (s *ZookeeperPropsConfigSource) Name() string {
     return s.name
 }
 
-func (s *ZookeeperIniConfigSource) Watch(key string, handlers ... func([]string, zk.Event)) {
+func (s *ZookeeperPropsConfigSource) Watch(key string, handlers ... func([]string, zk.Event)) {
     go s.watchGet(path.Join(s.context, key, KEY_NOTIFY_NODE), handlers...)
 }
 
-func (s *ZookeeperIniConfigSource) WatchChildren(key string, handlers ... func([]string, zk.Event)) {
+func (s *ZookeeperPropsConfigSource) WatchChildren(key string, handlers ... func([]string, zk.Event)) {
     pathStr := path.Join(s.context, key)
     s.watchChildren(pathStr, handlers...)
 }
 
-func (s *ZookeeperIniConfigSource) watchChildren(pathStr string, handlers ... func([]string, zk.Event)) {
+func (s *ZookeeperPropsConfigSource) watchChildren(pathStr string, handlers ... func([]string, zk.Event)) {
     children, stat, ch, err := s.conn.ChildrenW(pathStr)
     if err != nil {
         panic(err)
@@ -117,7 +133,7 @@ func (s *ZookeeperIniConfigSource) watchChildren(pathStr string, handlers ... fu
     s.watchChildren(pathStr, handlers...)
 }
 
-func (g *ZookeeperIniConfigSource) watchGet(pathStr string, handlers ... func([]string, zk.Event)) {
+func (g *ZookeeperPropsConfigSource) watchGet(pathStr string, handlers ... func([]string, zk.Event)) {
     log.Info(pathStr)
     exists, _, _ := g.conn.Exists(pathStr)
     if !exists {

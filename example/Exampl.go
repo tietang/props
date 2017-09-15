@@ -10,6 +10,6 @@ func main3() {
 
     root := "config/app1/dev"
     address := "127.0.0.1:8500"
-    p := props.NewConsulIniConfigSourceByName("consul-ini", address, root, 10*time.Second)
+    p := props.NewConsulPropsConfigSourceByName("consul-ini", address, root, 10*time.Second)
     fmt.Println(p.Get(""))
 }

@@ -9,7 +9,7 @@ import (
 )
 
 //通过key/properties, key所谓section，value为props格式内容，类似ini文件格式
-type ConsulIniConfigSource struct {
+type ConsulPropsConfigSource struct {
     MapProperties
     name   string
     root   string
@@ -18,12 +18,12 @@ type ConsulIniConfigSource struct {
     config *api.Config
 }
 
-func NewConsulIniConfigSource(address, root string) *ConsulIniConfigSource {
-    return NewConsulIniConfigSourceByName("consul", address, root, CONSUL_WAIT_TIME)
+func NewConsulPropsConfigSource(address, root string) *ConsulPropsConfigSource {
+    return NewConsulPropsConfigSourceByName("consul", address, root, CONSUL_WAIT_TIME)
 }
 
-func NewConsulIniConfigSourceByName(name, address, root string, timeout time.Duration) *ConsulIniConfigSource {
-    s := &ConsulIniConfigSource{}
+func NewConsulPropsConfigSourceByName(name, address, root string, timeout time.Duration) *ConsulPropsConfigSource {
+    s := &ConsulPropsConfigSource{}
     if name == "" {
         name = strings.Join([]string{"consul", address, root}, ":")
     }
@@ -43,18 +43,18 @@ func NewConsulIniConfigSourceByName(name, address, root string, timeout time.Dur
     return s
 }
 
-func (s *ConsulIniConfigSource) init() {
+func (s *ConsulPropsConfigSource) init() {
     s.findProperties(s.root, nil)
 }
 
-func (s *ConsulIniConfigSource) watchContext() {
+func (s *ConsulPropsConfigSource) watchContext() {
 
 }
 
-func (s *ConsulIniConfigSource) Close() {
+func (s *ConsulPropsConfigSource) Close() {
 }
 
-func (s *ConsulIniConfigSource) findProperties(parentPath string, children []string) {
+func (s *ConsulPropsConfigSource) findProperties(parentPath string, children []string) {
     prefix := s.root
     q := &api.QueryOptions{}
     keys, _, err := s.kv.Keys(prefix, "", q)
@@ -81,18 +81,18 @@ func (s *ConsulIniConfigSource) findProperties(parentPath string, children []str
 
 }
 
-func (s *ConsulIniConfigSource) sanitizeKey(path string, context string) string {
+func (s *ConsulPropsConfigSource) sanitizeKey(path string, context string) string {
     key := strings.Replace(path, context+"/", "", -1)
     key = strings.Replace(key, "/", ".", -1)
     return key
 }
 
-func (s *ConsulIniConfigSource) registerKeyValue(path, value string) {
+func (s *ConsulPropsConfigSource) registerKeyValue(path, value string) {
     key := s.sanitizeKey(path, s.root)
     s.Set(key, value)
 
 }
 
-func (s *ConsulIniConfigSource) Name() string {
+func (s *ConsulPropsConfigSource) Name() string {
     return s.name
 }
