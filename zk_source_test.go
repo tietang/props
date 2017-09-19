@@ -20,11 +20,9 @@ func (lw logWriter) Write(b []byte) (int, error) {
     return len(b), nil
 }
 
-var zk_mock_started = false
-
 func init() {
     if !zk_mock_started {
-        go StartMockZookeeper()
+        go StartMockTestZookeeper()
     }
 }
 func TestReadZk(t *testing.T) {

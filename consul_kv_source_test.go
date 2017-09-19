@@ -12,16 +12,19 @@ import (
 var consul_mock_started = false
 
 func init() {
+    //address := "172.16.1.248:8500"
+    address := "127.0.0.1:8500"
+    GetOrNewMockTestConsul(address)
     if !consul_mock_started {
-        go StartMockConsul()
+        go testConsul.StartMockConsul()
     }
-    WaitingForConsulStarted()
+    testConsul.WaitingForConsulStarted()
 }
 
 func TestConsulKeyValueConfigSource(t *testing.T) {
 
-    address := "127.0.0.1:8500"
-    //address := "172.16.1.248:8500"
+    address := testConsul.Address
+
     root := "config101/test/kvdemo1"
     size := 10
     m := initConsulData(address, root, size)

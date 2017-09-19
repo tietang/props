@@ -9,7 +9,6 @@ import (
     "io"
     "os/exec"
     "os"
-    "net/http"
 )
 
 var flags = int32(0)
@@ -78,46 +77,6 @@ func ZkWatchChildrenChanged(conn *zk.Conn, path string) {
     }
 }
 
-func StartMockZookeeper() <-chan int {
-    command := "java"
-    params := []string{"-jar", "zookeeper/mock.jar"}
-    started := execCommand(command, params)
-    ec := make(chan int, 1)
-    if started {
-        ec <- 1
-    } else {
-        ec <- 0
-    }
-    return ec
-}
-
-func StartMockConsul() <-chan int {
-    command := "consul"
-    params := []string{"agent", "-dev"}
-    started := execCommand(command, params)
-    ec := make(chan int, 1)
-    if started {
-        ec <- 1
-    } else {
-        ec <- 0
-    }
-    return ec
-}
-func WaitingForConsulStarted() {
-    url := "http://127.0.0.1:8500/ui/"
-    for {
-        res, err := http.Get(url)
-        if err != nil {
-            continue
-        }
-        if res != nil && res.StatusCode == 200 {
-            res.Body.Close()
-            break
-        }
-
-    }
-
-}
 func execCommand(commandName string, params []string) bool {
 
     cmd := exec.Command(commandName, params...)
@@ -140,9 +99,10 @@ func execCommand(commandName string, params []string) bool {
     for {
         line, err2 := reader.ReadString('\n')
         if err2 != nil || io.EOF == err2 {
+            fmt.Println("exit consul start.")
             break
         }
-        fmt.Println(line)
+        fmt.Print(line)
     }
     cmd.Process.Signal(os.Kill)
     cmd.Wait()
