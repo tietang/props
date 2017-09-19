@@ -24,7 +24,7 @@ func NewIniProperties() *IniProperties {
 
 // Read creates a new property set and fills it with the contents of a file.
 // See Load for the supported file format.
-func readIni(r io.Reader) (*IniProperties, error) {
+func ReadIni(r io.Reader) (*IniProperties, error) {
     p := NewIniProperties()
     err := p.Load(r)
     if err != nil {
@@ -44,7 +44,7 @@ func ReadIniFile(f string) (*IniProperties, error) {
         log.WithField("error", err.Error()).Info("read file: ", d, "  ", f)
         return nil, err
     }
-    return readIni(file)
+    return ReadIni(file)
 }
 
 func (p *IniProperties) Load(r io.Reader) error {

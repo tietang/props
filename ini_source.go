@@ -4,6 +4,7 @@ import (
     log "github.com/sirupsen/logrus"
     "path"
     "path/filepath"
+    "io"
 )
 
 const (
@@ -37,6 +38,21 @@ func NewIniFileConfigSourceByFile(name, file string) *IniFileConfigSource {
     s.values = m
     s.fileName = file
     s.Set(KEY_INI_CURRENT_DIR, filepath.Dir(file))
+    return s
+}
+
+func NewIniFileConfigSourceByReader(name string, r io.Reader) *IniFileConfigSource {
+    p, err := ReadIni(r)
+    var m map[string]string
+    if err == nil {
+        m = p.values
+    } else {
+        log.WithField("error", err.Error()).Info("read file: ")
+    }
+    s := &IniFileConfigSource{}
+    s.name = name
+    s.values = m
+    s.fileName = "no-file"
     return s
 }
 
