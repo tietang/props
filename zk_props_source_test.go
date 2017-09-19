@@ -12,7 +12,7 @@ import (
     "path"
 )
 
-func initIniData() (*ZookeeperIniConfigSource, map[string]string) {
+func initIniData() (*ZookeeperPropsConfigSource, map[string]string) {
     size := 10
     inilen := 3
     //urls:=[]string{"172.16.1.248:2181"}
@@ -28,7 +28,7 @@ func initIniData() (*ZookeeperIniConfigSource, map[string]string) {
     root := "/config_ini/app1/dev"
     //fmt.Println("d:  ", conn.State().String(), err, contexts[0])
     kv := initZkIniData(conn, root, size, inilen)
-    zics := NewZookeeperIniConfigSource("zookeeper-ini", root, conn)
+    zics := NewZookeeperPropsConfigSource("zookeeper-props", root, conn)
     return zics, kv
 }
 

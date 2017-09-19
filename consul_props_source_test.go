@@ -16,7 +16,7 @@ func TestConsulIniConfigSource(t *testing.T) {
     size := 10
     inilen := 3
     m := initIniConsulData(address, root, size, inilen)
-    c := NewConsulIniConfigSource(address, root)
+    c := NewConsulPropsConfigSource(address, root)
     Convey("consul kv", t, func() {
         keys := c.Keys()
         So(len(keys), ShouldEqual, size*inilen)
