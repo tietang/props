@@ -1,9 +1,9 @@
 package main
 
 import (
-    "github.com/tietang/props"
-    "fmt"
-    "time"
+    //"github.com/tietang/props"
+    //"fmt"
+    //"time"
 )
 
 func main3() {
