@@ -51,7 +51,7 @@ func NewPropertiesConfigSourceByMap(name string, kv map[string]string) *Properti
 }
 
 func NewPropertiesCompositeConfigSource(fileNames ...string) *CompositeConfigSource {
-    s := NewEmptyCompositeConfigSource()
+    s := NewEmptyNoSystemEnvCompositeConfigSource()
     s.name = "properties"
     for _, file := range fileNames {
         c := NewPropertiesConfigSource(file)

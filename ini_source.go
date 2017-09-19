@@ -41,7 +41,7 @@ func NewIniFileConfigSourceByFile(name, file string) *IniFileConfigSource {
 }
 
 func NewIniFileCompositeConfigSource(fileNames ...string) *CompositeConfigSource {
-    s := NewEmptyCompositeConfigSource()
+    s := NewEmptyNoSystemEnvCompositeConfigSource()
     s.name = "iniFiles"
     for _, file := range fileNames {
         c := NewIniFileConfigSource(file)

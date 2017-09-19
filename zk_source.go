@@ -54,7 +54,7 @@ func NewZookeeperCompositeConfigSource(contexts []string, connStr []string, time
 }
 
 func NewZookeeperCompositeConfigSourceByConn(contexts []string, conn *zk.Conn) *CompositeConfigSource {
-    s := NewEmptyCompositeConfigSource()
+    s := NewEmptyNoSystemEnvCompositeConfigSource()
     s.name = "Zookeeper"
     for _, context := range contexts {
         zkms := NewZookeeperConfigSource("zk:"+context, context, conn)

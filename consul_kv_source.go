@@ -47,7 +47,7 @@ func NewConsulKeyValueConfigSourceByName(name, address, root string, timeout tim
 }
 
 func NewConsulKeyValueCompositeConfigSource(contexts []string, address string) *CompositeConfigSource {
-    s := NewEmptyCompositeConfigSource()
+    s := NewEmptyNoSystemEnvCompositeConfigSource()
     s.name = "ConsulKevValue"
     for _, context := range contexts {
         c := NewConsulKeyValueConfigSource(address, context)

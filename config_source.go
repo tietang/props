@@ -57,14 +57,17 @@ type CompositeConfigSource struct {
 }
 
 func NewEmptyCompositeConfigSource() *CompositeConfigSource {
-    return NewCompositeConfigSource("CompositeConfigSource")
+    return NewCompositeConfigSource("CompositeConfigSource", true)
+}
+func NewEmptyNoSystemEnvCompositeConfigSource() *CompositeConfigSource {
+    return NewCompositeConfigSource("CompositeConfigSource", false)
 }
 
 func NewDefaultCompositeConfigSource(configSources ...ConfigSource) *CompositeConfigSource {
-    return NewCompositeConfigSource("CompositeConfigSource", configSources...)
+    return NewCompositeConfigSource("CompositeConfigSource", true, configSources...)
 }
 
-func NewCompositeConfigSource(name string, configSources ...ConfigSource) *CompositeConfigSource {
+func NewCompositeConfigSource(name string, isAppendSystemEnv bool, configSources ...ConfigSource) *CompositeConfigSource {
     s := &CompositeConfigSource{
         ConfigSources: make([]ConfigSource, 0),
         name:          name,
@@ -73,7 +76,13 @@ func NewCompositeConfigSource(name string, configSources ...ConfigSource) *Compo
     if name == "" {
         s.name = "CompositeConfigSource"
     }
-    s.ConfigSources = append(s.ConfigSources, s.properties, newEnvConfigSource())
+    if isAppendSystemEnv {
+        s.ConfigSources = append(s.ConfigSources, s.properties, newEnvConfigSource())
+    } else {
+        s.ConfigSources = append(s.ConfigSources, s.properties)
+
+    }
+
     for _, cs := range configSources {
         s.ConfigSources = append(s.ConfigSources, cs)
     }
@@ -86,14 +95,21 @@ func (ccs *CompositeConfigSource) Name() string {
 func (ccs *CompositeConfigSource) Size() int {
     return len(ccs.ConfigSources)
 }
-func (ccs *CompositeConfigSource) Add(ms ConfigSource) {
+
+func (ccs *CompositeConfigSource) Add(cs ConfigSource) {
     for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
         s := ccs.ConfigSources[i]
-        if ms.Name() == s.Name() {
+        if cs.Name() == s.Name() {
             return
         }
     }
-    ccs.ConfigSources = append(ccs.ConfigSources, ms)
+    ccs.ConfigSources = append(ccs.ConfigSources, cs)
+
+}
+func (ccs *CompositeConfigSource) AddAll(css ...ConfigSource) {
+    for _, cs := range css {
+        ccs.Add(cs)
+    }
 
 }
 
