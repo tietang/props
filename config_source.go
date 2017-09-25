@@ -10,12 +10,12 @@ import (
 )
 
 const (
-    START_TAG     = "${"
-    END_TAG       = "}"
+    __START_TAG   = "${"
+    __END_TAG     = "}"
     DEFAULT_VALUE = ""
 )
 
-var reg = regexp.MustCompile("\\$\\{(.*)}")
+var __reg = regexp.MustCompile("\\$\\{(.*)}")
 
 type ConfigSource interface {
     Name() string
@@ -128,7 +128,7 @@ func (ccs *CompositeConfigSource) KeyValue(key string) *KeyValue {
         }
     }
 
-    if reg.MatchString(val) {
+    if __reg.MatchString(val) {
         v, err := ccs.evalValue(val)
         kv := NewKeyValue(key, v)
         kv.err = err
@@ -311,7 +311,7 @@ func (ccs *CompositeConfigSource) GetValue(key string) (string, error) {
     //    }
     //}
     //
-    //if reg.MatchString(val) {
+    //if __reg.MatchString(val) {
     //    return ccs.evalValue(val)
     //}
     //if hasExists {
@@ -325,8 +325,8 @@ func (ccs *CompositeConfigSource) GetValue(key string) (string, error) {
 }
 
 func (ccs *CompositeConfigSource) evalValue(value string) (string, error) {
-    if strings.Contains(value, START_TAG) {
-        eval := fasttemplate.New(value, START_TAG, END_TAG)
+    if strings.Contains(value, __START_TAG) {
+        eval := fasttemplate.New(value, __START_TAG, __END_TAG)
         str := eval.ExecuteFuncString(func(w io.Writer, tag string) (int, error) {
             s, err := ccs.Get(tag)
             if err == nil {
@@ -342,7 +342,7 @@ func (ccs *CompositeConfigSource) evalValue(value string) (string, error) {
 
 func (ccs *CompositeConfigSource) calculateEvalValue(value string) (string, error) {
 
-    sub := reg.FindStringSubmatch(value)
+    sub := __reg.FindStringSubmatch(value)
     if len(sub) == 0 {
         return value, nil
     }
