@@ -37,6 +37,9 @@ func NewIniFileConfigSourceByFile(name, file string) *IniFileConfigSource {
     s.name = name
     s.values = m
     s.fileName = file
+    if s.values == nil {
+        s.values = make(map[string]string)
+    }
     s.Set(KEY_INI_CURRENT_DIR, filepath.Dir(file))
     return s
 }
