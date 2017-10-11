@@ -30,6 +30,7 @@ func NewConsulKeyValueConfigSourceByName(name, address, root string, timeout tim
     if name == "" {
         name = strings.Join([]string{"consul", address, root}, ":")
     }
+
     s.name = name
     s.values = make(map[string]string)
     s.root = root
@@ -43,6 +44,7 @@ func NewConsulKeyValueConfigSourceByName(name, address, root string, timeout tim
     s.client = client
     s.kv = client.KV()
     s.init()
+    
     return s
 }
 
