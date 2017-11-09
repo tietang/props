@@ -5,31 +5,31 @@ import (
     "time"
 )
 
-var testConsul *MockTestConsul
+var testEtcd *MockTestEtcd
 
-type MockTestConsul struct {
+type MockTestEtcd struct {
     Address string
 }
 
-func GetOrNewMockTestConsul(address string) *MockTestConsul {
-    if testConsul == nil {
-        testConsul = &MockTestConsul{
+func GetOrNewMockTestEtcd(address string) *MockTestEtcd {
+    if testEtcd == nil {
+        testEtcd = &MockTestEtcd{
             Address: address,
         }
     }
 
-    return testConsul
+    return testEtcd
 }
 
-func (m *MockTestConsul) StartMockConsul() <-chan int {
+func (m *MockTestEtcd) StartMockEtcd() <-chan int {
     ec := make(chan int, 1)
-    isStarted := m.CheckConsulIsStarted()
+    isStarted := m.CheckEtcdIsStarted()
 
     if isStarted {
         ec <- 1
         return ec
     }
-    command := "consul"
+    command := "etcd"
     params := []string{"agent", "-dev"}
     started := execCommand(command, params)
 
@@ -41,9 +41,9 @@ func (m *MockTestConsul) StartMockConsul() <-chan int {
     return ec
 }
 
-func (m *MockTestConsul) WaitingForConsulStarted() {
+func (m *MockTestEtcd) WaitingForEtcdStarted() {
     for {
-        isStarted := m.CheckConsulIsStarted()
+        isStarted := m.CheckEtcdIsStarted()
         if isStarted {
             break
         }
@@ -51,8 +51,8 @@ func (m *MockTestConsul) WaitingForConsulStarted() {
     }
 }
 
-func (m *MockTestConsul) CheckConsulIsStarted() bool {
-    res, err := http.Get("http://"+m.Address)
+func (m *MockTestEtcd) CheckEtcdIsStarted() bool {
+    res, err := http.Get("http://" + m.Address)
     if err != nil {
         return false
     }
