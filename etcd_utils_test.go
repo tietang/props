@@ -3,7 +3,6 @@ package props
 import (
     "net/http"
     "time"
-    "fmt"
 )
 
 var testEtcd *MockTestEtcd
