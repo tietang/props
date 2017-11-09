@@ -8,7 +8,7 @@ func StartMockTestZookeeper() <-chan int {
 
         command := "java"
         params := []string{"-jar", "zookeeper/mock.jar"}
-        started := execCommand(command, params)
+        started := execCommand(command, params...)
 
         if started {
             ec <- 1

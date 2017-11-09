@@ -3,6 +3,7 @@ package props
 import (
     "net/http"
     "time"
+    "fmt"
 )
 
 var testEtcd *MockTestEtcd
@@ -30,8 +31,7 @@ func (m *MockTestEtcd) StartMockEtcd() <-chan int {
         return ec
     }
     command := "etcd"
-    params := []string{"agent", "-dev"}
-    started := execCommand(command, params)
+    started := execCommand(command)
 
     if started {
         ec <- 1
@@ -52,7 +52,8 @@ func (m *MockTestEtcd) WaitingForEtcdStarted() {
 }
 
 func (m *MockTestEtcd) CheckEtcdIsStarted() bool {
-    res, err := http.Get("http://" + m.Address)
+    res, err := http.Get(etcdAddress + "/version")
+    //fmt.Println(res, err)
     if err != nil {
         return false
     }

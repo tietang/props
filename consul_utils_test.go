@@ -31,7 +31,7 @@ func (m *MockTestConsul) StartMockConsul() <-chan int {
     }
     command := "consul"
     params := []string{"agent", "-dev"}
-    started := execCommand(command, params)
+    started := execCommand(command, params...)
 
     if started {
         ec <- 1

@@ -13,16 +13,16 @@ import (
 )
 
 var etcd_mock_started = false
-var address string
+var etcdAddress string
 
 func init() {
-    address = "http://172.16.1.248:2379"
-    //address := "http://127.0.0.1:2379"
-    GetOrNewMockTestEtcd(address)
-    //if !etcd_mock_started {
-    //    go testEtcd.StartMockEtcd()
-    //}
-    //testEtcd.WaitingForEtcdStarted()
+    //etcdAddress = "http://172.16.1.248:2379"
+    etcdAddress = "http://127.0.0.1:2379"
+    GetOrNewMockTestEtcd(etcdAddress)
+    if !etcd_mock_started {
+        go testEtcd.StartMockEtcd()
+    }
+    testEtcd.WaitingForEtcdStarted()
 }
 
 func TestEtcdKeyValueConfigSource(t *testing.T) {
