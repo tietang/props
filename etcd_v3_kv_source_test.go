@@ -13,15 +13,15 @@ import (
     "fmt"
 )
 
-func init() {
-    //etcdAddress = "http://172.16.1.248:2379"
-    etcdAddress = "http://127.0.0.1:2379"
-    GetOrNewMockTestEtcd(etcdAddress)
-    if !etcd_mock_started {
-        go testEtcd.StartMockEtcd()
-    }
-    testEtcd.WaitingForEtcdStarted()
-}
+//func init() {
+//    //etcdAddress = "http://172.16.1.248:2379"
+//    etcdAddress = "http://127.0.0.1:2379"
+//    GetOrNewMockTestEtcd(etcdAddress)
+//    if !etcd_mock_started {
+//        go testEtcd.StartMockEtcd()
+//    }
+//    testEtcd.WaitingForEtcdStarted()
+//}
 
 func TestEtcdV3KeyValueConfigSource(t *testing.T) {
 
@@ -31,7 +31,7 @@ func TestEtcdV3KeyValueConfigSource(t *testing.T) {
     size := 10
     m := initEtcdV3Data(address, root, size)
     c := NewEtcdV3KeyValueConfigSource(address, root)
-    Convey("etcd kv", t, func() {
+    Convey("etcd kv api3", t, func() {
         keys := c.Keys()
         So(len(keys), ShouldEqual, size)
         for _, key := range keys {
@@ -72,7 +72,7 @@ func initEtcdV3Data(address, root string, size int) map[string]string {
         m[k] = value
     }
     //c.KV = namespace.NewKV(c.KV, root)
-    res, err := kv.Get(context.Background(), root, clientv3.WithKeysOnly())
+    res, err := kv.Get(context.Background(), "/", clientv3.WithPrefix(), clientv3.WithKeysOnly())
     //res, err := c.KV.Get(context.Background(), "key", clientv3.WithKeysOnly())
     fmt.Println(res.Kvs, res.Count, res.More)
     return m

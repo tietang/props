@@ -12,18 +12,6 @@ import (
     "context"
 )
 
-var etcd_mock_started = false
-var etcdAddress string
-
-func init() {
-    //etcdAddress = "http://172.16.1.248:2379"
-    etcdAddress = "http://127.0.0.1:2379"
-    GetOrNewMockTestEtcd(etcdAddress)
-    if !etcd_mock_started {
-        go testEtcd.StartMockEtcd()
-    }
-    testEtcd.WaitingForEtcdStarted()
-}
 
 func TestEtcdKeyValueConfigSource(t *testing.T) {
 
@@ -33,7 +21,7 @@ func TestEtcdKeyValueConfigSource(t *testing.T) {
     size := 10
     m := initEtcdData(address, root, size)
     c := NewEtcdKeyValueConfigSource(address, root)
-    Convey("etcd kv", t, func() {
+    Convey("etcd kv api2", t, func() {
         keys := c.Keys()
         So(len(keys), ShouldEqual, size)
         for _, key := range keys {

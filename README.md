@@ -21,6 +21,8 @@
 - zookeeper k/props 
 - consul k/v
 - consul k/props
+- etcd API v2
+- etcd API V3
 
 ### key/value支持的数据类型：
 
