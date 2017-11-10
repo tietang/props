@@ -42,7 +42,8 @@ func (m *MockTestEtcd) StartMockEtcd() <-chan int {
         return ec
     }
     command := "etcd"
-    started := execCommand(command)
+
+    started := execCommand(command,"--data-dir=./temp/etcd")
 
     if started {
         ec <- 1
