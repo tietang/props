@@ -8,7 +8,9 @@ before_install:
   - wget https://github.com/coreos/etcd/releases/download/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz
   - tar -zxvf etcd-v3.2.9-linux-amd64.tar.gz
   - mv ./etcd-v3.2.9-linux-amd64/etcd .
-  - export PATH=`pwd`/consul:$PATH
+  - pwd
+  - ls -l
+  - export PATH=`pwd`:$PATH
   - echo $PATH
 
 branches:
