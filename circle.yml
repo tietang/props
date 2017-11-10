@@ -9,7 +9,7 @@ dependencies:
     - pwd
 #    - cp consul/consul `pwd`/.local/bin
     - ls ~/.local/bin
-    - export PATH=`pwd`/consul:$PATH
+    - export PATH=`pwd`:$PATH
     - echo $PATH
     - go get github.com/ArthurHlt/gominlog
     - go get github.com/tietang/go-utils
