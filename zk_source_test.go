@@ -20,11 +20,7 @@ func (lw logWriter) Write(b []byte) (int, error) {
     return len(b), nil
 }
 
-func init() {
-    if !zk_mock_started {
-        go StartMockTestZookeeper()
-    }
-}
+
 func TestReadZk(t *testing.T) {
 
     //urls:=[]string{"172.16.1.248:2181"}
