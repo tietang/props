@@ -15,11 +15,12 @@ const (
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type EtcdV2KeyValueConfigSource struct {
     MapProperties
-    name   string
-    root   string
-    client client.Client
-    kapi   client.KeysAPI
-    config *client.Config
+    name    string
+    root    string
+    client  client.Client
+    kapi    client.KeysAPI
+    watcher client.Watcher
+    config  *client.Config
 }
 
 func NewEtcdKeyValueConfigSource(address, root string) *EtcdV2KeyValueConfigSource {
@@ -46,7 +47,13 @@ func NewEtcdKeyValueConfigSourceByName(name, urls, root string, timeout time.Dur
         log.Fatal(err)
     }
     s.client = c
+
     s.kapi = client.NewKeysAPI(c)
+    wo := &client.WatcherOptions{
+        AfterIndex: 10,
+        Recursive:  true,
+    }
+    s.watcher = s.kapi.Watcher(root, wo)
     s.init()
     return s
 }
