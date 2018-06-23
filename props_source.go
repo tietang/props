@@ -29,7 +29,7 @@ func NewPropertiesConfigSourceByFile(name, file string) *PropertiesConfigSource 
     if err == nil {
         m = p.values
     } else {
-        log.WithField("error", err.Error()).Info("read file: ")
+        log.WithField("error", err.Error()).Error("read file: ")
     }
     s := &PropertiesConfigSource{}
     s.name = name

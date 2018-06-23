@@ -79,7 +79,7 @@ func fileReader(f string) (*os.File, error) {
 
     if err != nil {
         d, _ := os.Getwd()
-        log.WithField("error", err.Error()).Info("read file: ", d, "  ", f)
+        log.WithField("error", err.Error()).Error("read file: ", d, "  ", f)
         return nil, err
     }
     return file, err
