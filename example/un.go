@@ -32,7 +32,7 @@ func main5() {
     //for i := 0; i < s.NumField(); i++ {
     //	f := s.Field(i)
     //	fmt.Printf("%d: %s %s = %v\n", i,
-    //		typeOfT.Field(i).Name, f.Type(), f.Interface())
+    //		typeOfT.Field(i).ConfName, f.Type(), f.Interface())
     //}
     //
     //s.Field(0).SetInt(25)

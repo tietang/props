@@ -3,3 +3,4 @@
 .idea/
 default.etcd/
 ./temp/
+./etcd/temp/
