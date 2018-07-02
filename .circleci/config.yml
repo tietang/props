@@ -4,7 +4,7 @@ jobs:
     build:
       docker:
 #        - image: circleci/golang:1.9.7
-        - image: circleci/golang:1.10.x
+        - image: circleci/golang:1.10.3
       steps:
         - checkout
         - run: |
