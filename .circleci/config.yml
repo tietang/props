@@ -2,6 +2,8 @@ version: 2
 
 jobs:
     build:
+      docker:
+        - image: circleci/go:1.10.x
 
 dependencies:
   pre:
