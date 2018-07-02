@@ -31,7 +31,7 @@ func NewIniFileConfigSourceByFile(name, file string) *IniFileConfigSource {
     if err == nil {
         m = p.values
     } else {
-        log.WithField("error", err.Error()).Error("read file: ")
+        log.WithField("error", err.Error()).Fatal("read file: ")
     }
     s := &IniFileConfigSource{}
     s.name = name
@@ -50,7 +50,7 @@ func NewIniFileConfigSourceByReader(name string, r io.Reader) *IniFileConfigSour
     if err == nil {
         m = p.values
     } else {
-        log.WithField("error", err.Error()).Error("read file: ")
+        log.WithField("error", err.Error()).Fatal("read file: ")
     }
     s := &IniFileConfigSource{}
     s.name = name

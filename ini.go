@@ -41,7 +41,7 @@ func ReadIniFile(f string) (*IniProperties, error) {
 
     if err != nil {
         d, _ := os.Getwd()
-        log.WithField("error", err.Error()).Error("read file: ", d, "  ", f)
+        log.WithField("error", err.Error()).Fatal("read file: ", d, "  ", f)
         return nil, err
     }
     return ReadIni(file)
