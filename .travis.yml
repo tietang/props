@@ -62,8 +62,8 @@ script:
 #  - (go env GOPATH | awk 'BEGIN{FS=":"} {print $1}')/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
 
 go:
-  - 1.8.x
   - 1.9.x
+  - 1.10.x
 
 env:
   global:
