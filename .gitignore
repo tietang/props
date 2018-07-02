@@ -4,3 +4,4 @@
 default.etcd/
 ./temp/
 ./etcd/temp/
+./vendor/
