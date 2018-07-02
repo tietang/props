@@ -1,10 +1,15 @@
 
+
+
 dependencies:
   pre:
-    - wget https://releases.hashicorp.com/consul/0.9.3/consul_0.9.3_linux_amd64.zip?_ga=2.214371295.97069421.1504961822-580552568.1501916240
-    - unzip consul_0.9.3_linux_amd64* -d ~/.local/bin
-    - wget https://github.com/coreos/etcd/releases/download/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz
-    - tar -zxvf etcd-v3.2.9-linux-amd64.tar.gz
+#    - wget https://releases.hashicorp.com/consul/0.9.3/consul_0.9.3_linux_amd64.zip?_ga=2.214371295.97069421.1504961822-580552568.1501916240
+    - wget https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip
+    - unzip consul_1.2.0_linux_amd64* -d ~/.local/bin
+#    - wget https://github.com/coreos/etcd/releases/download/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz
+#    - wget https://github-production-release-asset-2e65be.s3.amazonaws.com/11225014/0785d3a2-7084-11e8-84c5-b2ada4eec4a9?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20180702%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20180702T073452Z&X-Amz-Expires=300&X-Amz-Signature=a1d415d1aa5ec6fe75eec17834001d0e3e3bce7e88c04342e23c5fa6ead6e2d7&X-Amz-SignedHeaders=host&actor_id=2695716&response-content-disposition=attachment%3B%20filename%3Detcd-v3.3.8-linux-amd64.tar.gz&response-content-type=application%2Foctet-stream
+    - wget https://github.com/coreos/etcd/releases/download/v3.3.8/etcd-v3.3.8-linux-amd64.tar.gz
+    - tar -zxvf etcd-v3.3.8-linux-amd64.tar.gz
     - mv ./etcd-v3.2.9-linux-amd64/etcd ~/.local/bin
     - pwd
 #    - cp consul/consul `pwd`/.local/bin
