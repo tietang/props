@@ -30,7 +30,9 @@ jobs:
 #            go get github.com/smartystreets/goconvey/convey
 #            go get -u github.com/tietang/go-eureka-client/eureka/config
         - run: |
-            go test ./... -covermode=atomic -coverprofile=coverage.txt
+#            go test ./... -covermode=atomic -coverprofile=coverage.txt
+            go test -i -v -race ./...
+            go test -race -covermode=atomic -coverprofile=coverage.txt
 #        - run: |
 #            GOOS=linux GOARCH=amd64 go build -o /tmp/output/ignition github.com/pivotalservices/ignition/cmd/ignition
 #        - persist_to_workspace:

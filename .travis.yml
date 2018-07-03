@@ -25,27 +25,29 @@ branches:
 #  on_failure: always
 
 install:
-  - go get -u github.com/go-ini/ini
+  - go get -u github.com/golang/dep/cmd/dep
+  - dep ensure
+#  - go get -u github.com/go-ini/ini
 #  - go get -u github.com/gopherjs/gopherjs
-  - go get -u github.com/hashicorp/consul
+#  - go get -u github.com/hashicorp/consul
 #  - go get -u github.com/hashicorp/go-cleanhttp
 #  - go get -u github.com/hashicorp/go-rootcerts
 #  - go get -u github.com/hashicorp/serf
-  - go get -u github.com/jtolds/gls
-  - go get -u github.com/mattn/go-colorable
-  - go get -u github.com/mattn/go-isatty
-  - go get -u github.com/mgutz/ansi
-  - go get -u github.com/mitchellh/go-homedir
-  - go get -u github.com/samuel/go-zookeeper/zk ...
-  - go get -u github.com/sirupsen/logrus
-  - go get -u github.com/smartystreets/assertions
-  - go get -u github.com/smartystreets/goconvey
-  - go get -u github.com/tietang/go-utils
-  - go get -u github.com/valyala/bytebufferpool
-  - go get -u github.com/valyala/fasttemplate
-  - go get -u github.com/mattn/goveralls
-  - go get -u google.golang.org/grpc ...
-  - go get -u github.com/coreos/etcd ...
+#  - go get -u github.com/jtolds/gls
+#  - go get -u github.com/mattn/go-colorable
+#  - go get -u github.com/mattn/go-isatty
+#  - go get -u github.com/mgutz/ansi
+#  - go get -u github.com/mitchellh/go-homedir
+#  - go get -u github.com/samuel/go-zookeeper/zk ...
+#  - go get -u github.com/sirupsen/logrus
+#  - go get -u github.com/smartystreets/assertions
+#  - go get -u github.com/smartystreets/goconvey
+#  - go get -u github.com/tietang/go-utils
+#  - go get -u github.com/valyala/bytebufferpool
+#  - go get -u github.com/valyala/fasttemplate
+#  - go get -u github.com/mattn/goveralls
+#  - go get -u google.golang.org/grpc ...
+#  - go get -u github.com/coreos/etcd ...
 
 
 #  - go get -u golang.org/x/crypto ...
