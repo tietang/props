@@ -3,7 +3,6 @@ version: 2
 jobs:
     build:
       docker:
-        - image: circleci/golang:1.9.7
         - image: circleci/golang:1.10.3
       working_directory: /go/src/github.com/tietang/props
 
