@@ -2,6 +2,7 @@
 *.iml
 .idea/
 default.etcd/
-./temp/
-./etcd/temp/
-./vendor/
+temp/
+etcd/temp/
+vendor/
+**/temp/
