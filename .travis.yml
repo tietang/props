@@ -7,6 +7,7 @@ before_install:
   - unzip consul_1.2.0_linux_amd64* -d consul
   - wget https://github.com/coreos/etcd/releases/download/v3.3.8/etcd-v3.3.8-linux-amd64.tar.gz
   - tar -zxvf etcd-v3.3.8-linux-amd64.tar.gz
+  - ls -l
   - mv ./etcd-v3.3.8-linux-amd64/etcd .
   - pwd
   - ls -l
