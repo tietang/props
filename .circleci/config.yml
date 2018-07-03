@@ -24,4 +24,4 @@ jobs:
             dep ensure
         - run: |
             go test -i -v -race ./...
-            go test -race -covermode=atomic -coverprofile=coverage.txt
+            go test ./... -covermode=atomic -coverprofile=coverage.txt
