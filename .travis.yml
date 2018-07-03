@@ -61,8 +61,9 @@ script:
 #  - go test -v -covermode=count -coverprofile=coverage.out
 #  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
 #  - go test -i -v -race ./...
-  - go test ./... -covermode atomic -coverprofile=coverage.cov
-  - goveralls -coverprofile=coverage.cov -service=travis-ci
+#  - go test -v ./... -covermode atomic -coverprofile=coverage.cov
+  - go test -v -coverprofile=coverage.cov -coverpkg=./... ./...
+#  - goveralls -coverprofile=coverage.cov -service=travis-ci
 
 #  - (go env GOPATH | awk 'BEGIN{FS=":"} {print $1}')/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
 
