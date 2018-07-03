@@ -8,8 +8,8 @@ import (
     "strings"
     "time"
     "github.com/coreos/etcd/client"
-    "log"
     "context"
+    log "github.com/sirupsen/logrus"
 )
 
 

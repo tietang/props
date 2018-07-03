@@ -8,11 +8,11 @@ import (
     . "github.com/smartystreets/goconvey/convey"
     "strings"
     "time"
-    "log"
     "context"
     "github.com/coreos/etcd/clientv3"
     "github.com/coreos/etcd/clientv3/namespace"
     "fmt"
+    log "github.com/sirupsen/logrus"
 )
 
 

@@ -21,3 +21,4 @@ temp/
 etcd/temp/
 vendor/
 **/temp/
+_vendor-20180703123224/
