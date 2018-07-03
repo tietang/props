@@ -2,4 +2,7 @@
 *.iml
 .idea/
 default.etcd/
-./temp/
+temp/
+etcd/temp/
+vendor/
+2.circleci/
