@@ -1,17 +1,18 @@
 language: go
 
 before_install:
+  - mkdir bin
   - wget http://www-us.apache.org/dist/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
   - tar -zxvf zookeeper*tar.gz
   - wget https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip
   - unzip consul_1.2.0_linux_amd64* -d consul
+  - mv ./consul ./bin
   - wget https://github.com/coreos/etcd/releases/download/v3.3.8/etcd-v3.3.8-linux-amd64.tar.gz
   - tar -zxvf etcd-v3.3.8-linux-amd64.tar.gz
-  - ls -l
-  - mv ./etcd-v3.3.8-linux-amd64/etcd .
+  - mv ./etcd-v3.3.8-linux-amd64/etcd ./bin
+  - export PATH=`pwd`:`pwd`/bin:$PATH
   - pwd
   - ls -l
-  - export PATH=`pwd`:$PATH
   - echo $PATH
 
 branches:
