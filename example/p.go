@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/tietang/props"
 	"fmt"
+	"github.com/tietang/props/kvs"
 )
 
 func main4() {
-	p, err := props.ReadPropertyFile("config.properties")
+	p, err := kvs.ReadPropertyFile("config.properties")
 	if err != nil {
 		panic(err)
 	}

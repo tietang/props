@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/tietang/props"
 	"fmt"
+	"github.com/tietang/props/kvs"
 )
 
 func main2() {
@@ -21,10 +21,10 @@ func main2() {
 	//floatDefaultValue := p.GetFloat64Default("prefix.key1", 1.2)
 	//
 	////
-	var pcs props.ConfigSource
+	var pcs kvs.ConfigSource
 	var err error
 	//通过文件名，文件名作为ConfigSource name
-	pcs = props.NewPropertiesConfigSource("config.properties")
+	pcs = kvs.NewPropertiesConfigSource("config.properties")
 
 	stringValue, err := pcs.Get("prefix.key1")
 	fmt.Println(stringValue, err)

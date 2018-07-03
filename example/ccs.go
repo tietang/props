@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/tietang/props"
 	"time"
 	"fmt"
+	"github.com/tietang/props/kvs"
+	"github.com/tietang/props/zk"
 )
 
 func main() {
@@ -23,15 +24,15 @@ func main() {
 	//
 	////
 	//通过文件名，文件名作为ConfigSource name
-	pcs1 := props.NewPropertiesConfigSource("config.properties")
+	pcs1 := kvs.NewPropertiesConfigSource("config.properties")
 	//指定名称和文件名
-	pcs2 := props.NewPropertiesConfigSourceByFile("config", "config.properties")
+	pcs2 := kvs.NewPropertiesConfigSourceByFile("config", "config.properties")
 
 	urls := []string{"172.16.1.248:2181"}
 	contexts := []string{"/configs/apps", "/configs/users"}
-	zccs := props.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
-	configSources := []props.ConfigSource{pcs1, pcs2, zccs, }
-	ccs := props.NewDefaultCompositeConfigSource(configSources...)
+	zccs := zk.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
+	configSources := []kvs.ConfigSource{pcs1, pcs2, zccs, }
+	ccs := kvs.NewDefaultCompositeConfigSource(configSources...)
 
 	//
 
