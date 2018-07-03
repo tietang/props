@@ -43,7 +43,7 @@ func NewZookeeperCompositeConfigSource(contexts []string, connStr []string, time
     }
     for {
         event := <-ch
-        fmt.Println(event)
+        log.Info(event)
         if event.State == zk.StateConnected {
             break
         }

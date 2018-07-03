@@ -5,6 +5,18 @@ import (
     "time"
 )
 
+var consul_mock_started = false
+
+func init() {
+    //address := "172.16.1.248:8500"
+    address := "127.0.0.1:8500"
+    GetOrNewMockTestConsul(address)
+    if !consul_mock_started {
+        go testConsul.StartMockConsul()
+    }
+    testConsul.WaitingForConsulStarted()
+}
+
 var testConsul *MockTestConsul
 
 type MockTestConsul struct {
@@ -20,6 +32,7 @@ func GetOrNewMockTestConsul(address string) *MockTestConsul {
 
     return testConsul
 }
+
 func (m *MockTestConsul) StartMockConsul() <-chan int {
     ec := make(chan int, 1)
     isStarted := m.CheckConsulIsStarted()
@@ -30,7 +43,7 @@ func (m *MockTestConsul) StartMockConsul() <-chan int {
     }
     command := "consul"
     params := []string{"agent", "-dev"}
-    started := execCommand(command, params)
+    started := execCommand(command, params...)
 
     if started {
         ec <- 1
@@ -51,7 +64,7 @@ func (m *MockTestConsul) WaitingForConsulStarted() {
 }
 
 func (m *MockTestConsul) CheckConsulIsStarted() bool {
-    res, err := http.Get("http://"+m.Address)
+    res, err := http.Get("http://" + m.Address)
     if err != nil {
         return false
     }

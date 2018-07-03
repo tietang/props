@@ -77,12 +77,12 @@ func ZkWatchChildrenChanged(conn *zk.Conn, path string) {
     }
 }
 
-func execCommand(commandName string, params []string) bool {
+func execCommand(commandName string, params ...string) bool {
 
     cmd := exec.Command(commandName, params...)
 
     //显示运行的命令
-    fmt.Println(cmd.Args)
+    fmt.Println(commandName, cmd.Args)
 
     stdout, err := cmd.StdoutPipe()
 
@@ -99,7 +99,7 @@ func execCommand(commandName string, params []string) bool {
     for {
         line, err2 := reader.ReadString('\n')
         if err2 != nil || io.EOF == err2 {
-            fmt.Println("exit consul start.")
+            fmt.Println("exit cmd start.")
             break
         }
         fmt.Print(line)

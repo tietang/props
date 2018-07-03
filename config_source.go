@@ -45,6 +45,7 @@ type ConfigSource interface {
     Set(key, val string)
     SetAll(values map[string]string)
     Keys() []string
+    //KeysFilter(filter string) []string
     //t必须为指针型
     Unmarshal(t interface{}) error
 }
