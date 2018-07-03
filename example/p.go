@@ -5,7 +5,7 @@ import (
 	"github.com/tietang/props/kvs"
 )
 
-func main4() {
+func main() {
 	p, err := kvs.ReadPropertyFile("config.properties")
 	if err != nil {
 		panic(err)

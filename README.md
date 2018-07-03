@@ -47,11 +47,20 @@
 
 ## Install
 
-运行deps.sh安装依赖。
+> go get -u github.com/tietang/props
 
-**或者**
+**或者：**
 
 参考 [golang dep](<https://github.com/golang/dep>)使用dep命令来安装。
+
+
+> dep ensure -add github.com/tietang/props
+
+
+或者选择安装：
+
+> dep ensure -add github.com/tietang/props/kvs github.com/tietang/props/ini github.com/tietang/props/zk 
+
 
 
 ## 配置源和配置形式使用方法：
@@ -70,32 +79,38 @@
 `server.port: 8080`
 
 
-### 通过props.ReadPropertyFile读取文件
+### 通过kvs.ReadPropertyFile读取文件
 
 ```golang
 
-p, err := props.ReadPropertyFile("config.properties")
+p, err := kvs.ReadPropertyFile("config.properties")
 if err != nil {
 	panic(err)
 }
 stringValue, err := p.Get("prefix.key1")
+fmt.Println(stringValue, err)
 //如果不存在，则返回默认值
 stringDefaultValue := p.GetDefault("prefix.key1", "default value")
-boolValue, err := p.GetBool("prefix.key1")
-boolDefaultValue := p.GetBoolDefault("prefix.key1", false)
-intValue, err := p.GetInt("prefix.key1")
-intDefaultValue := p.GetIntDefault("prefix.key1", 1)
-floatValue, err := p.GetFloat64("prefix.key1")
-floatDefaultValue := p.GetFloat64Default("prefix.key1", 1.2)
-v, err := p.GetDuration("k9")
-v := p.GetDurationDefault("k12", 1*time.Second)
+fmt.Println(stringDefaultValue)
+boolValue, err := p.GetBool("prefix.key2")
+fmt.Println(boolValue)
+boolDefaultValue := p.GetBoolDefault("prefix.key2", false)
+fmt.Println(boolDefaultValue)
+intValue, err := p.GetInt("prefix.key3")
+fmt.Println(intValue)
+intDefaultValue := p.GetIntDefault("prefix.key3", 1)
+fmt.Println(intDefaultValue)
+floatValue, err := p.GetFloat64("prefix.key4")
+fmt.Println(floatValue)
+floatDefaultValue := p.GetFloat64Default("prefix.key4", 1.2)
+fmt.Println(floatDefaultValue)
 
 ```
 
 #### 通过props.NewProperties()从io.Reader中读取
 
 ```
- p := props.NewProperties()
+ p := kvs.NewProperties()
  p.Load(strings.NewReader("some data"))
  p.Load(bytes.NewReader([]byte("some data")))
 ```
@@ -104,22 +119,22 @@ v := p.GetDurationDefault("k12", 1*time.Second)
 
 ```
 file := "/path/to/config.properties"
-p := props.NewPropertiesConfigSource(file)
-p = props.NewPropertiesConfigSourceByFile("name", file)
+p := kvs.NewPropertiesConfigSource(file)
+p = kvs.NewPropertiesConfigSourceByFile("name", file)
 //通过map构造内存型
 m := make(map[string]string)
 m["key"]="value"
-p = props.NewPropertiesConfigSourceByMap("name", m)
+p = kvs.NewPropertiesConfigSourceByMap("name", m)
 
 ```
 #### Properties ConfigSource
 
 ```golang
 
-var cs props.ConfigSource
+var cs kvs.ConfigSource
 //
-cs = props.NewPropertiesConfigSource("config.properties")
-cs = props.NewPropertiesConfigSourceByFile("config", "config.properties")
+cs = kvs.NewPropertiesConfigSource("config.properties")
+cs = kvs.NewPropertiesConfigSourceByFile("config", "config.properties")
 
 
 stringValue, err := cs.Get("prefix.key1")
@@ -166,14 +181,16 @@ query.timeout=6s
 	
 ```golang
 file := "/path/to/config.ini"
-p := props.NewIniFileConfigSource(file)
-p = props.NewIniFileConfigSourceByFile("name", file)
+p := ini.NewIniFileConfigSource(file)
+p = ini.NewIniFileConfigSourceByFile("name", file)
 ```
 	
 ### zookeeper 
 
 支持key/value和key/properties配置形式，key/properties配置和ini类似，将key作为section name。
+
 key/value形式，将path去除root path部分并替换`/`为`.`作为key。
+
 key/properties形式，在root path下读取所有子节点，将子节点名称作为section name，value为子properties格式内存，通过子节点名称和子properties中的key组合成新的key作为key。
  
 #### by zookeeper key/value
@@ -183,16 +200,16 @@ key/properties形式，在root path下读取所有子节点，将子节点名称
 ```golang
 root := "/config/kv/app1/dev"
 var conn *zk.Conn
-p := props.NewZookeeperConfigSource("zookeeper-kv", root, conn)
+p := zk.NewZookeeperConfigSource("zookeeper-kv", root, conn)
 ```
 
 ##### CompositeConfigSource多context例子
 
 ```golang
-var cs props.ConfigSource
+var cs kvs.ConfigSource
 urls := []string{"172.16.1.248:2181"}
 contexts := []string{"/configs/apps","/configs/users"}
-cs = props.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
+cs = zk.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
 
 ```
 
@@ -216,7 +233,7 @@ password=root
 ```golang
 root := "/config/kv/app1/dev"
 var conn *zk.Conn
-p := props.NewZookeeperIniConfigSource("zookeeper-props", root, conn)
+p := zk.NewZookeeperIniConfigSource("zookeeper-props", root, conn)
 
 ```
 
@@ -237,7 +254,7 @@ server.port=8080
 
 address := "127.0.0.1:8500"
 root := "config101/test/demo1"
-c := NewConsulKeyValueConfigSource("consul", address, root)
+c := consul.NewConsulKeyValueConfigSource("consul", address, root)
 stringValue, err := cs.Get("prefix.key1")
 stringDefaultValue := cs.GetDefault("prefix.key1", "default value")
 
@@ -251,7 +268,7 @@ value值为properties格式内容, 整体设计类似ini格式,配置样式如�
 ```golang
 root := "config/app1/dev"
 address := "127.0.0.1:8500"
-p := props.NewConsulIniConfigSourceByName("consul-props", address, root)
+p := consul.NewConsulIniConfigSourceByName("consul-props", address, root)
 ```
 
 ### 支持Unmarshal
@@ -291,7 +308,7 @@ type ServerProperties struct {
 
 func main() {
    
-    p := props.NewMapProperties()
+    p := kvs.NewMapProperties()
     p.Set("http.server.port.port", "8080")
     p.Set("http.server.params.k1", "v1")
     p.Set("http.server.params.k2", "v2")
@@ -322,14 +339,14 @@ func main() {
 支持在props上下文中替换占位符：`${}` 
 
 ```
-p := NewEmptyMapConfigSource("map2")
+p := kvs.NewEmptyMapConfigSource("map2")
 p.Set("orign.key1", "v1")
 p.Set("orign.key2", "v2")
 p.Set("orign.key3", "2")
 p.Set("ph.key1", "${orign.key1}")
 p.Set("ph.key2", "${orign.key1}:${orign.key2}")
 p.Set("ph.key3", "${orign.key3}")
-conf := NewDefaultCompositeConfigSource(p)
+conf := kvs.NewDefaultCompositeConfigSource(p)
 phv1, err := conf.GetInt("ph.key1")//v1
 phv2, err := conf.Get("ph.key2")//v1:v1
 phv3, err := conf.GetInt("ph.key3")//2
@@ -346,10 +363,10 @@ phv3, err := conf.GetInt("ph.key3")//2
 kv1 := []string{"go.app.key1", "value1", "value1-2"}
 kv2 := []string{"go.app.key2", "value2", "value2-2"}
 
-p1 := NewEmptyMapConfigSource("map1")
+p1 := kvs.NewEmptyMapConfigSource("map1")
 p1.Set(kv1[0], kv1[1])
 p1.Set(kv2[0], kv2[1])
-p2 := NewEmptyMapConfigSource("map2")
+p2 := kvs.NewEmptyMapConfigSource("map2")
 p2.Set(kv1[0], kv1[2])
 p2.Set(kv2[0], kv2[2])
 conf.Add(p1)
