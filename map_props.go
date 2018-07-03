@@ -6,7 +6,6 @@ import (
     "time"
     "strings"
     "reflect"
-
 )
 
 const (
@@ -246,7 +245,7 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) error
 
             }
         }
-        //fmt.Println(keys)
+
         //key1 := strings.Join([]string{prefix, keys[0]}, ".")
         //key2 := strings.Join([]string{prefix, keys[1]}, ".")
         //fmt.Println(sf.Name)
@@ -425,7 +424,7 @@ func toKeys(str string) [2]string {
     keys := [2]string{"", ""}
     keys[1] = strings.ToLower(str[0:1]) + str[1:]
     r := []rune(str)
-    //if strings.Index(str, "-") >= 0 {
+    //     if strings.Index(str, "-") >= 0 {
     for i := 0; i < len(str); i++ {
         if i == 0 {
             keys[0] += strings.ToLower(string(r[i])) // + string(vv[i+1])
@@ -436,6 +435,6 @@ func toKeys(str string) [2]string {
             keys[0] += strings.ToLower(string(r[i]))
         }
     }
-    //}
+    //     }
     return keys
 }
