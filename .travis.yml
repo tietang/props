@@ -29,6 +29,7 @@ branches:
 install:
   - go get -u github.com/golang/dep/cmd/dep
   - dep ensure
+  - dep ensure -update
 #  - go get -u github.com/go-ini/ini
 #  - go get -u github.com/gopherjs/gopherjs
 #  - go get -u github.com/hashicorp/consul
