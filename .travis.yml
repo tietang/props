@@ -4,6 +4,7 @@ before_install:
   - mkdir bin
   - wget http://www-us.apache.org/dist/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
   - tar -zxvf zookeeper*tar.gz
+  - zookeeper-3.4.10/bin/zkServer.sh start
   - wget https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip
   - unzip consul_1.2.0_linux_amd64.zip  -d ./bin/
 #  - mv ./consul ./bin

@@ -5,9 +5,9 @@ import "github.com/tietang/props/kvs"
 var zk_mock_started bool = false
 
 func init() {
-    if !zk_mock_started {
-        go StartMockTestZookeeper()
-    }
+    //if !zk_mock_started {
+    //    go StartMockTestZookeeper()
+    //}
 }
 func StartMockTestZookeeper() <-chan int {
     ec := make(chan int, 1)
