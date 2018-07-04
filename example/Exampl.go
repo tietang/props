@@ -8,7 +8,7 @@ import (
     "fmt"
 )
 
-func main() {
+func mainx() {
 
     //root := "config/app1/dev"
     //address := "127.0.0.1:8500"
