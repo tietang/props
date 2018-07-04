@@ -9,7 +9,7 @@ jobs:
       steps:
         - checkout
         - run: |
-            mkdir -p ./bin
+            mkdir -p bin
             wget https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip
             unzip consul_1.2.0_linux_amd64.zip  -d ./bin/
             wget https://github.com/coreos/etcd/releases/download/v3.3.8/etcd-v3.3.8-linux-amd64.tar.gz
@@ -23,5 +23,4 @@ jobs:
             dep ensure
             dep ensure -update
         - run: |
-            go test -i -v -race ./...
-            go test -v -coverprofile=coverage.txt -coverpkg=./... ./...
+            go test -coverprofile=coverage.txt -coverpkg=./... ./...
