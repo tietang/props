@@ -12,10 +12,10 @@ func init() {
     //address := "172.16.1.248:8500"
     address := "127.0.0.1:8500"
     GetOrNewMockTestConsul(address)
-    //if !consul_mock_started {
-    //    go testConsul.StartMockConsul()
-    //}
-    //testConsul.WaitingForConsulStarted()
+    if !consul_mock_started {
+        go testConsul.StartMockConsul()
+    }
+    testConsul.WaitingForConsulStarted()
 }
 
 var testConsul *MockTestConsul

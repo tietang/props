@@ -1,5 +1,5 @@
 language: go
-
+sudo: enabled
 before_install:
   - mkdir bin
   - wget http://www-us.apache.org/dist/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
@@ -67,7 +67,7 @@ script:
 #  - go test -i -v -race ./...
 #  - go test -v ./... -covermode atomic -coverprofile=coverage.cov
   - go test -v -coverprofile=coverage.cov -coverpkg=./... ./...
-#  - goveralls -coverprofile=coverage.cov -service=travis-ci
+  - goveralls -coverprofile=coverage.cov -service=travis-ci
 
 #  - (go env GOPATH | awk 'BEGIN{FS=":"} {print $1}')/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
 

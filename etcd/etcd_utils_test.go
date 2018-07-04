@@ -14,10 +14,10 @@ func init() {
     //etcdAddress = "http://172.16.1.248:2379"
     etcdAddress = "http://127.0.0.1:2379"
     GetOrNewMockTestEtcd(etcdAddress)
-    //if !etcd_mock_started {
-    //    go testEtcd.StartMockEtcd()
-    //}
-    //testEtcd.WaitingForEtcdStarted()
+    if !etcd_mock_started {
+        go testEtcd.StartMockEtcd()
+    }
+    testEtcd.WaitingForEtcdStarted()
 }
 
 var testEtcd *MockTestEtcd
