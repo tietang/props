@@ -6,7 +6,7 @@ var zk_mock_started bool = false
 
 func init() {
     if !zk_mock_started {
-        go kvs.ExecCommand("pwd")
+        go kvs.ExecCommand("pwd", "-LP")
         go StartMockTestZookeeper()
     }
 }

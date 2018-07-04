@@ -12,7 +12,7 @@ func init() {
     //address := "172.16.1.248:8500"
     address := "127.0.0.1:8500"
     GetOrNewMockTestConsul(address)
-    go kvs.ExecCommand("pwd")
+    go kvs.ExecCommand("pwd","-LP")
     if !consul_mock_started {
         go testConsul.StartMockConsul()
     }
