@@ -23,4 +23,5 @@ jobs:
             dep ensure
             dep ensure -update
         - run: |
-            go test -coverprofile=coverage.txt -coverpkg=./... ./...
+            pwd
+            go test -v -coverprofile=coverage.txt -coverpkg=./... ./...
