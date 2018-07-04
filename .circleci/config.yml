@@ -9,15 +9,15 @@ jobs:
       steps:
         - checkout
         - run: |
-            mkdir -p /tmp/output/.props/bin
-            wget https://releases.hashicorp.com/consul/0.9.3/consul_0.9.3_linux_amd64.zip?_ga=2.214371295.97069421.1504961822-580552568.1501916240
-            unzip consul_0.9.3_linux_amd64* -d /tmp/output/.props/bin
-            wget https://github.com/coreos/etcd/releases/download/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz
-            tar -zxvf etcd-v3.2.9-linux-amd64.tar.gz
-            mv ./etcd-v3.2.9-linux-amd64/etcd /tmp/output/.props/bin
+            mkdir -p ./bin
+            wget https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip
+            unzip consul_1.2.0_linux_amd64.zip  -d ./bin/
+            wget https://github.com/coreos/etcd/releases/download/v3.3.8/etcd-v3.3.8-linux-amd64.tar.gz
+            tar -zxvf etcd-v3.3.8-linux-amd64.tar.gz
+            mv ./etcd-v3.3.8-linux-amd64/etcd ./bin
             pwd
-            ls /tmp/output/.props/bin
-            export PATH=/tmp/output/.props/bin:`pwd`:$PATH
+            ls ./bin
+            export PATH=`pwd`/bin:`pwd`:$PATH
             echo $PATH
             go get -u github.com/golang/dep/cmd/dep
             dep ensure
