@@ -18,6 +18,7 @@ jobs:
             pwd
             ls ./bin
             export PATH=`pwd`/bin:`pwd`:$PATH
+            consul agent -dev
             echo $PATH
             go get -u github.com/golang/dep/cmd/dep
             dep ensure

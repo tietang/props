@@ -8,7 +8,6 @@ import (
     "time"
     "strings"
     "strconv"
-    "syscall"
 )
 
 func ToDuration(v string) (time.Duration, error) {
