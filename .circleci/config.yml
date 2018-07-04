@@ -17,7 +17,7 @@ jobs:
             mv ./etcd-v3.3.8-linux-amd64/etcd ./bin
             pwd
             ls ./bin
-            export PATH=`pwd`/bi n:`pwd`:$PATH
+            export PATH=`pwd`/bin:`pwd`:$PATH
             echo $PATH
             go get -u github.com/golang/dep/cmd/dep
             dep ensure
