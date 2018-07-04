@@ -1,6 +1,10 @@
 package zk
 
-import "github.com/tietang/props/kvs"
+import (
+    "github.com/tietang/props/kvs"
+    "fmt"
+    "os"
+)
 
 var zk_mock_started bool = false
 
@@ -9,6 +13,7 @@ func init() {
         go kvs.ExecCommand("pwd", "-LP")
         go StartMockTestZookeeper()
     }
+    fmt.Println(os.Getwd())
 }
 func StartMockTestZookeeper() <-chan int {
     ec := make(chan int, 1)
