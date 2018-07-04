@@ -1,0 +1,26 @@
+version: 2
+
+jobs:
+    build:
+      docker:
+        - image: circleci/golang:1.10.3
+      working_directory: /go/src/github.com/tietang/props
+
+      steps:
+        - checkout
+        - run: |
+            mkdir -p bin
+            wget https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip
+            unzip consul_1.2.0_linux_amd64.zip  -d ./bin/
+            wget https://github.com/coreos/etcd/releases/download/v3.3.8/etcd-v3.3.8-linux-amd64.tar.gz
+            tar -zxvf etcd-v3.3.8-linux-amd64.tar.gz
+            mv ./etcd-v3.3.8-linux-amd64/etcd ./bin
+            pwd
+            ls ./bin
+            export PATH=`pwd`/bin:`pwd`:$PATH
+            echo $PATH
+            go get -u github.com/golang/dep/cmd/dep
+            dep ensure
+            dep ensure -update
+        - run: |
+            go test -coverprofile=coverage.txt -coverpkg=./... ./...

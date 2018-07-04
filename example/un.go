@@ -2,8 +2,8 @@ package main
 
 import (
     "fmt"
-    "github.com/tietang/props"
     "time"
+    "github.com/tietang/props/kvs"
 )
 
 type Port struct {
@@ -32,7 +32,7 @@ func main5() {
     //for i := 0; i < s.NumField(); i++ {
     //	f := s.Field(i)
     //	fmt.Printf("%d: %s %s = %v\n", i,
-    //		typeOfT.Field(i).Name, f.Type(), f.Interface())
+    //		typeOfT.Field(i).ConfName, f.Type(), f.Interface())
     //}
     //
     //s.Field(0).SetInt(25)
@@ -40,7 +40,7 @@ func main5() {
     //fmt.Println(t)
 
     //
-    p := props.NewMapProperties()
+    p := kvs.NewMapProperties()
     p.Set("http.server.port.port", "8080")
     p.Set("http.server.params.k1", "v1")
     p.Set("http.server.params.k2", "v2")

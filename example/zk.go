@@ -1,10 +1,10 @@
 package main
 
 import (
-    "github.com/tietang/props"
-    "github.com/samuel/go-zookeeper/zk"
     "time"
     "fmt"
+    "github.com/samuel/go-zookeeper/zk"
+    zkvs "github.com/tietang/props/zk"
 )
 
 func main6() {
@@ -23,7 +23,7 @@ func main6() {
 
     }
 
-    z := props.NewZookeeperConfigSource("zk", context, c)
+    z := zkvs.NewZookeeperConfigSource("zk", context, c)
     v, err := z.Get("app.xx.key-0")
     fmt.Println(v)
     fmt.Println(err)
