@@ -14,6 +14,8 @@ before_install:
   - pwd
   - ls -l
   - echo $PATH
+  - nohup consul agent -dev &
+  - nohup etcd --data-dir=./temp/etcd &
 
 branches:
   only:
