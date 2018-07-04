@@ -3,12 +3,12 @@ package kvs
 import (
     "fmt"
     "io"
-    "os"
     "os/exec"
     "bufio"
     "time"
     "strings"
     "strconv"
+    "syscall"
 )
 
 func ToDuration(v string) (time.Duration, error) {
@@ -56,7 +56,8 @@ func ExecCommand(commandName string, params ...string) bool {
         }
         fmt.Print(line)
     }
-    cmd.Process.Signal(os.Kill)
+    err = cmd.Process.Signal(syscall.SIGQUIT)
+    fmt.Println(err)
     cmd.Wait()
     return true
 }
