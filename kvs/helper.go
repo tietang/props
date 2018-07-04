@@ -8,7 +8,7 @@ import (
     "time"
     "strings"
     "strconv"
-    "syscall"
+    "os"
 )
 
 func ToDuration(v string) (time.Duration, error) {
@@ -56,7 +56,7 @@ func ExecCommand(commandName string, params ...string) bool {
         }
         fmt.Print(line)
     }
-    err = cmd.Process.Signal(syscall.SIGQUIT)
+    err = cmd.Process.Signal(os.Kill)
     fmt.Println(err)
     cmd.Wait()
     return true
