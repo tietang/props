@@ -4,6 +4,7 @@ import (
     "github.com/tietang/props/kvs"
     "fmt"
     "os"
+    "path/filepath"
 )
 
 var zk_mock_started bool = false
@@ -15,12 +16,16 @@ func init() {
     }
     fmt.Println(os.Getwd())
 }
+
 func StartMockTestZookeeper() <-chan int {
     ec := make(chan int, 1)
+    pwd, _ := os.Getwd()
+    jar := filepath.Join(pwd, "zookeeper/mock.jar")
+    fmt.Println(jar)
     if !zk_mock_started {
 
         command := "java"
-        params := []string{"-jar", "zookeeper/mock.jar"}
+        params := []string{"-jar", jar}
         started := kvs.ExecCommand(command, params...)
 
         if started {
