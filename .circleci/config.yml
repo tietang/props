@@ -10,10 +10,6 @@ jobs:
         - checkout
         - run: |
             mkdir -p bin
-#            wget http://www-us.apache.org/dist/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
-#            tar -zxvf zookeeper*tar.gz
-#            mv zookeeper-3.4.10/conf/zoo_sample.cfg zookeeper-3.4.10/conf/zoo.cfg
-#            nohup zookeeper-3.4.10/bin/zkServer.sh start &
             yum -y install java-1.8.0-openjdk*
             java -version
             wget https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip
