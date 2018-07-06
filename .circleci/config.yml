@@ -14,7 +14,7 @@ jobs:
             tar -zxvf zookeeper*tar.gz
             mv zookeeper-3.4.10/conf/zoo_sample.cfg zookeeper-3.4.10/conf/zoo.cfg
             nohup zookeeper-3.4.10/bin/zkServer.sh start &
-            cat nohup.out
+            java -version
             wget https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip
             unzip consul_1.2.0_linux_amd64.zip  -d ./bin/
             wget https://github.com/coreos/etcd/releases/download/v3.3.8/etcd-v3.3.8-linux-amd64.tar.gz
