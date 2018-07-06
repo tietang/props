@@ -10,8 +10,8 @@ jobs:
         - checkout
         - run: |
             mkdir -p bin
-            yum -y install java-1.8.0-openjdk*
-            java -version
+            wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2Ftechnetwork%2Fjava%2Fjavase%2Fdownloads%2Fjdk8-downloads-2133151.html; oraclelicense=accept-securebackup-cookie;" "http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/server-jre-8u171-linux-x64.tar.gz"
+            tar -zxvf server-jre-8u171-linux-x64.tar.gz
             wget https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip
             unzip consul_1.2.0_linux_amd64.zip  -d ./bin/
             wget https://github.com/coreos/etcd/releases/download/v3.3.8/etcd-v3.3.8-linux-amd64.tar.gz
@@ -19,8 +19,9 @@ jobs:
             mv ./etcd-v3.3.8-linux-amd64/etcd ./bin
             pwd
             ls ./bin
-            export PATH=`pwd`/bin:`pwd`:$PATH
+            export PATH=`pwd`/jdk1.8.0_171/bin:`pwd`/bin:`pwd`:$PATH
             echo $PATH
+            java -version
             go get -u github.com/golang/dep/cmd/dep
             dep ensure
             dep ensure -update
