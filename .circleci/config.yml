@@ -4,17 +4,17 @@ jobs:
     build:
       docker:
         - image: circleci/golang:1.10.3
-        - image: circleci/openjdk:8-jdk
       working_directory: /go/src/github.com/tietang/props
 
       steps:
         - checkout
         - run: |
             mkdir -p bin
-            wget http://www-us.apache.org/dist/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
-            tar -zxvf zookeeper*tar.gz
-            mv zookeeper-3.4.10/conf/zoo_sample.cfg zookeeper-3.4.10/conf/zoo.cfg
-            nohup zookeeper-3.4.10/bin/zkServer.sh start &
+#            wget http://www-us.apache.org/dist/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
+#            tar -zxvf zookeeper*tar.gz
+#            mv zookeeper-3.4.10/conf/zoo_sample.cfg zookeeper-3.4.10/conf/zoo.cfg
+#            nohup zookeeper-3.4.10/bin/zkServer.sh start &
+            yum -y install java-1.8.0-openjdk*
             java -version
             wget https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip
             unzip consul_1.2.0_linux_amd64.zip  -d ./bin/
