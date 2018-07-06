@@ -4,6 +4,7 @@ jobs:
     build:
       docker:
         - image: circleci/golang:1.10.3
+        - image: circleci/openjdk:8-jdk
       working_directory: /go/src/github.com/tietang/props
 
       steps:
