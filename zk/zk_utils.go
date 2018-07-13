@@ -3,7 +3,11 @@ package zk
 import (
     "github.com/samuel/go-zookeeper/zk"
     "path"
-    "log"
+    log "github.com/sirupsen/logrus"
+)
+
+const (
+    DEFAULT_WATCH_KEY = "__notice"
 )
 
 var flags = int32(0)
@@ -71,4 +75,3 @@ func ZkWatchChildrenChanged(conn *zk.Conn, path string) {
         log.Println("ChildrenW:", e.Type, "Event:", e)
     }
 }
-

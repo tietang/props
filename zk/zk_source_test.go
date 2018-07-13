@@ -20,7 +20,6 @@ func (lw logWriter) Write(b []byte) (int, error) {
     return len(b), nil
 }
 
-
 func TestReadZk(t *testing.T) {
 
     //urls:=[]string{"172.16.1.248:2181"}
@@ -65,7 +64,7 @@ func initData(conn *zk.Conn) (*ZookeeperConfigSource, map[string]string) {
     root := "/config_kv/app1/dev"
     //fmt.Println("d:  ", conn.State().String(), err, contexts[0])
     kv := initZkData(conn, root, size)
-    zics := NewZookeeperConfigSource("zookeeper-props", root, conn)
+    zics := NewZookeeperConfigSource("zookeeper-props", true, root, conn)
     return zics, kv
 }
 
