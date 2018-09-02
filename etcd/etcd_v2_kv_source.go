@@ -5,23 +5,12 @@ import (
     log "github.com/sirupsen/logrus"
     "time"
     "github.com/coreos/etcd/client"
-    "context"
     "github.com/tietang/props/kvs"
-)
-
-const (
-    ETCD_WAIT_TIME = time.Second * 10
 )
 
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type EtcdV2KeyValueConfigSource struct {
-    kvs.MapProperties
-    name    string
-    root    string
-    client  client.Client
-    kapi    client.KeysAPI
-    watcher client.Watcher
-    config  *client.Config
+    EtcdV2ConfigSource
 }
 
 func NewEtcdKeyValueConfigSource(address, root string) *EtcdV2KeyValueConfigSource {
@@ -74,60 +63,33 @@ func (s *EtcdV2KeyValueConfigSource) init() {
     s.findProperties(s.root, nil)
 }
 
-func (s *EtcdV2KeyValueConfigSource) watchContext() {
-
-}
-
-func (s *EtcdV2KeyValueConfigSource) Close() {
-
-}
-
 func (s *EtcdV2KeyValueConfigSource) findProperties(parentPath string, children client.Nodes) {
     if len(children) == 0 {
-        children = s.getChildrenNodes(parentPath)
+        children = s.GetChildrenNodes(parentPath)
     }
     if len(children) == 0 {
         return
     }
-    for _, node := range children {
 
-        //fp := path.Join(parentPath, node.Key)
+    for _, node := range children {
         fp := node.Key
+        if s.Watched && strings.HasSuffix(fp, DEFAULT_WATCH_KEY) {
+            log.Debug("WatchNodeDataChange: ", fp)
+            s.WatchKey(fp, func(node *client.Node) {
+                s.findProperties(fp, node.Nodes)
+            })
+        }
+        //fp := path.Join(parentPath, node.Key)
+
         //fmt.Println(fp)
-        chnodes := s.getChildrenNodes(fp)
+        chnodes := s.GetChildrenNodes(fp)
         value := node.Value
         if !node.Dir {
-            s.registerKeyValue(fp, value)
+            s.RegisterKeyValue(fp, value)
         } else {
             s.findProperties(fp, chnodes)
         }
         //
     }
 
-}
-
-func (s *EtcdV2KeyValueConfigSource) getChildrenNodes(path string) client.Nodes {
-    q := &client.GetOptions{}
-    res, err := s.kapi.Get(context.Background(), path, q)
-    if err != nil {
-        return make(client.Nodes, 0)
-    }
-    node := res.Node
-    return node.Nodes
-}
-
-func (s *EtcdV2KeyValueConfigSource) sanitizeKey(path string, context string) string {
-    key := strings.Replace(path, context+"/", "", -1)
-    key = strings.Replace(key, "/", ".", -1)
-    return key
-}
-
-func (s *EtcdV2KeyValueConfigSource) registerKeyValue(path, value string) {
-    key := s.sanitizeKey(path, s.root)
-    s.Set(key, value)
-
-}
-
-func (s *EtcdV2KeyValueConfigSource) Name() string {
-    return s.name
 }
