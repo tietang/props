@@ -1,22 +1,23 @@
 # props
 
-[![Build Status](https://travis-ci.org/tietang/props.svg?branch=master)](<https://travis-ci.org/tietang/props>)
+[![Build Status](https://travis-ci.org/tietang/kvs.svg?branch=master)](<https://travis-ci.org/tietang/props>)
 [![GoDoc Documentation](http://godoc.org/github.com/tietang/props?status.png)](<https://godoc.org/github.com/tietang/props>)
 [![Sourcegraph](https://sourcegraph.com/github.com/tietang/props/-/badge.svg)](https://sourcegraph.com/github.com/tietang/props?badge)
-[![CircleCI](https://circleci.com/gh/tietang/props.svg?style=svg)](https://circleci.com/gh/tietang/props)
+[![CircleCI](https://circleci.com/gh/tietang/kvs.svg?style=svg)](https://circleci.com/gh/tietang/props)
 [![Coverage Status](https://coveralls.io/repos/github/tietang/props/badge.svg?branch=master)](https://coveralls.io/github/tietang/props?branch=master)
-[![GitHub release](https://img.shields.io/github/release/tietang/props.svg)](https://github.com/tietang/props/releases)
+[![GitHub release](https://img.shields.io/github/release/tietang/kvs.svg)](https://github.com/tietang/props/releases)
 
  
- 
+
  统一的配置工具库，将各种配置源抽象或转换为类似properties格式的key/value，并提供统一的API来访问这些key/value。支持 properties 文件、ini 文件、zookeeper k/v、zookeeper k/props、consul k/v、consul k/props等配置源，并且支持通过 Unmarshal从配置中抽出struct；支持上下文环境变量的eval，${}形式；支持多种配置源组合使用。
- 
+
 
 ## 特性
 ### 支持的配置源：
 
 - properties文件
 - ini文件
+- [Nacos](<http://nacos.io>) k/props
 - zookeeper k/v
 - zookeeper k/props 
 - consul k/v
@@ -107,7 +108,7 @@ fmt.Println(floatDefaultValue)
 
 ```
 
-#### 通过props.NewProperties()从io.Reader中读取
+#### 通过kvs.NewProperties()从io.Reader中读取
 
 ```
  p := kvs.NewProperties()
@@ -115,7 +116,7 @@ fmt.Println(floatDefaultValue)
  p.Load(bytes.NewReader([]byte("some data")))
 ```
 
-#### 通过props.NewPropertiesConfigSource()
+#### 通过kvs.NewPropertiesConfigSource()
 
 ```
 file := "/path/to/config.properties"
@@ -155,7 +156,7 @@ floatDefaultValue := cs.GetFloat64Default("prefix.key4", 1.2)
 ### ini格式文件。
 
 格式：参考 [wiki百科：INI_file](<https://en.wikipedia.org/wiki/INI_file>)
-	
+​	
 ```ini
 [section]
 [key1][=|:][value1] 
@@ -176,15 +177,45 @@ read.timeout=6000ms
 connection.timeout=6s
 query.timeout=6s
 ```
-	
+
 #### 使用方法：
-	
+
 ```golang
 file := "/path/to/config.ini"
 p := ini.NewIniFileConfigSource(file)
 p = ini.NewIniFileConfigSourceByFile("name", file)
 ```
-	
+
+### Nacos
+
+只支持key/properties配置形式。
+
+例如有如下配置：
+
+http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=test.id&group=testGroup&tenant=testTenant
+
+```properties
+key-0.x0=value-00
+key-0.x1=value-01
+key-0.x2=value-02
+```
+
+ 
+
+基本用法：
+
+```go
+ address := "127.0.0.1:8848"
+ c := NewNacosPropsConfigSource(address)
+ c.DataId = "test.id"
+ c.Tenant = "testTenant"
+ c.Group = "testGroup"
+ v:=c.GetDefault("key-0.x0","defaultval") //value-00
+
+```
+
+
+
 ### zookeeper 
 
 支持key/value和key/properties配置形式，key/properties配置和ini类似，将key作为section name。
@@ -192,7 +223,7 @@ p = ini.NewIniFileConfigSourceByFile("name", file)
 key/value形式，将path去除root path部分并替换`/`为`.`作为key。
 
 key/properties形式，在root path下读取所有子节点，将子节点名称作为section name，value为子properties格式内存，通过子节点名称和子properties中的key组合成新的key作为key。
- 
+
 #### by zookeeper key/value
 
 ##### 基本例子
@@ -263,7 +294,7 @@ stringDefaultValue := cs.GetDefault("prefix.key1", "default value")
 
 value值为properties格式内容, 整体设计类似ini格式,配置样式如下图：
 
-![](<docs/consul_key_props.png>)
+![](<docs/consul_key_kvs.png>)
 
 ```golang
 root := "config/app1/dev"

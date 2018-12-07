@@ -19,6 +19,7 @@ func TestNacosIniConfigSource(t *testing.T) {
     c.DataId = "test.id"
     c.Tenant = "testTenant"
     c.Group = "testGroup"
+
     m := initIniNacosData(address, c, size, inilen)
     c.init()
     Convey("Nacos kv", t, func() {
