@@ -15,6 +15,13 @@ import (
 const (
     NACOS_LINE_SEPARATOR = "\n"
     NACOS_KV_SEPARATOR   = "="
+    REQUEST_TEMPLATE     = "http://%s"
+
+    ENDPOINT_GET            = "/nacos/v1/cs/configs"
+    ENDPOINT_GET_REQUEST    = REQUEST_TEMPLATE + ENDPOINT_GET + "?dataId=%s&group=%s&tenant=%s"
+    ENDPOINT_LISTEN         = "/nacos/v1/cs/configs/listener"
+    ENDPOINT_LISTEN_REQUEST = REQUEST_TEMPLATE + ENDPOINT_LISTEN
+    ENDPOINT_LISTEN_BODY    = "?dataId=%s&group=%s&tenant=%s"
 )
 
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
@@ -34,7 +41,7 @@ type NacosPropsConfigSource struct {
 
 func NewNacosPropsConfigSource(address string) *NacosPropsConfigSource {
     s := &NacosPropsConfigSource{}
-    s.servers=strings.Split(address,",")
+    s.servers = strings.Split(address, ",")
     name := strings.Join([]string{"Nacos", address}, ":")
 
     s.name = name
@@ -119,7 +126,7 @@ func (h *NacosPropsConfigSource) Next() string {
 func (h *NacosPropsConfigSource) get() (body []byte, err error) {
     base := h.Next()
     //?dataId=%s&group=%s&tenant=%s
-    url := fmt.Sprintf("http://%s%s?dataId=%s&group=%s&tenant=%s", base, "/nacos/v1/cs/configs", h.DataId, h.Group, h.Tenant)
+    url := fmt.Sprintf(ENDPOINT_GET_REQUEST, base, h.DataId, h.Group, h.Tenant)
 
     //调用请求
     res, err := http.Get(url)
