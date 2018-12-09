@@ -27,9 +27,11 @@ const (
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type NacosPropsConfigSource struct {
     kvs.MapProperties
-    //
-    DataId        string
-    Group         string
+    // Required Configuration ID. Use a naming rule similar to package.class (for example, com.taobao.tc.refund.log.level) to ensure global uniqueness. It is recommended to indicate business meaning of the configuration in the "class" section. Use lower case for all characters. Use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 256 characters are allowed.
+    DataId string
+    // Required Configuration group. To ensure uniqueness, format such as product name: module name (for example, Nacos:Test) is preferred. Use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 128 characters are allowed.
+    Group string
+    //Tenant information. It corresponds to the Namespace field in Nacos.
     Tenant        string
     LineSeparator string
     KVSeparator   string
@@ -39,23 +41,27 @@ type NacosPropsConfigSource struct {
     lastCt  uint32
 }
 
-func NewNacosPropsConfigSource(address string) *NacosPropsConfigSource {
+func NewNacosPropsConfigSource(address, group, dataId, tenant string) *NacosPropsConfigSource {
     s := &NacosPropsConfigSource{}
     s.servers = strings.Split(address, ",")
     name := strings.Join([]string{"Nacos", address}, ":")
-
     s.name = name
+    s.DataId = dataId
+    s.Group = group
+    s.Tenant=tenant
     s.Values = make(map[string]string)
     s.init()
 
     return s
 }
 
-func NewNacosPropsCompositeConfigSource(address string) *kvs.CompositeConfigSource {
+func NewNacosPropsCompositeConfigSource(address, group, tenant string, dataIds []string) *kvs.CompositeConfigSource {
     s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
     s.ConfName = "NacosKevValue"
-    c := NewNacosPropsConfigSource(address)
-    s.Add(c)
+    for _, dataId := range dataIds {
+        c := NewNacosPropsConfigSource(address, group, dataId, tenant)
+        s.Add(c)
+    }
 
     return s
 }

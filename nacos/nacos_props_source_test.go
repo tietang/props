@@ -14,14 +14,12 @@ func TestNacosIniConfigSource(t *testing.T) {
     address := "127.0.0.1:8848"
     size := 10
     inilen := 3
+    dataId := "test.id"
+    tenant := "testTenant"
+    group := "testGroup"
+    m := initIniNacosData(address, group, dataId, tenant, size, inilen)
+    c := NewNacosPropsConfigSource(address, group, dataId, tenant)
 
-    c := NewNacosPropsConfigSource(address)
-    c.DataId = "test.id"
-    c.Tenant = "testTenant"
-    c.Group = "testGroup"
-
-    m := initIniNacosData(address, c, size, inilen)
-    c.init()
     Convey("Nacos kv", t, func() {
         keys := c.Keys()
 
@@ -38,7 +36,7 @@ func TestNacosIniConfigSource(t *testing.T) {
 
 }
 
-func initIniNacosData(address string, ncs *NacosPropsConfigSource, size, len int) map[string]string {
+func initIniNacosData(address, group, dataId, tenant string, size, len int) map[string]string {
     config := api.DefaultConfig()
     config.Address = address
     m := make(map[string]string)
@@ -62,10 +60,10 @@ func initIniNacosData(address string, ncs *NacosPropsConfigSource, size, len int
         }
     }
     url := "http://127.0.0.1:8848/nacos/v1/cs/configs"
-    buf := strings.NewReader("dataId=" + ncs.DataId + "&group=" + ncs.Group + "&tenant=" + ncs.Tenant + "&content=" + content)
+    buf := strings.NewReader("dataId=" + dataId + "&group=" + group + "&tenant=" + tenant + "&content=" + content)
     fmt.Println(url, buf)
-    res,err:=http.Post(url, "application/x-www-form-urlencoded", buf)
-    fmt.Println(res,err)
+    res, err := http.Post(url, "application/x-www-form-urlencoded", buf)
+    fmt.Println(res, err)
     return m
 
 }
