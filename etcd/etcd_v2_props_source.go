@@ -94,6 +94,7 @@ func (s *EtcdV2PropsConfigSource) findProperties() {
 func (s *EtcdV2PropsConfigSource) getChildrenNodes(path string) client.Nodes {
     q := &client.GetOptions{}
     res, err := s.kapi.Get(context.Background(), path, q)
+
     if err != nil {
         return make(client.Nodes, 0)
     }
@@ -116,3 +117,5 @@ func (s *EtcdV2PropsConfigSource) registerKeyValue(path, value string) {
 func (s *EtcdV2PropsConfigSource) Name() string {
     return s.name
 }
+
+

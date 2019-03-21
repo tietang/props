@@ -1,14 +1,15 @@
 package main
 
 import (
-    "time"
     "fmt"
     "github.com/samuel/go-zookeeper/zk"
     zkvs "github.com/tietang/props/zk"
+    "time"
 )
 
-func main6() {
-    context := "/configurations/demo/dev/app1"
+func main() {
+
+    context := "/config_kv/app1/dev"
 
     c, ch, err := zk.Connect([]string{"172.16.1.248:2181"}, 2*time.Second)
     if err != nil {
@@ -20,17 +21,16 @@ func main6() {
         if event.State == zk.StateConnected {
             break
         }
-
     }
 
-    z := zkvs.NewZookeeperConfigSource("zk", context, c)
+    z := zkvs.NewZookeeperConfigSource("zk", true, context, c)
     v, err := z.Get("app.xx.key-0")
     fmt.Println(v)
     fmt.Println(err)
-    z.Watch("app/xx", func(children []string, event zk.Event) {
+    z.Watch("app/xx/key-0", func(children []string, event zk.Event) {
         fmt.Println("Watch:   ", event, len(z.Keys()))
         for _, key := range z.Keys() {
-            fmt.Println("new value:  ", z.GetDefault(key, key))
+            fmt.Println("new value:  ", key, "= ", z.GetDefault(key, key))
 
         }
     })
