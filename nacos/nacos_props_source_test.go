@@ -11,10 +11,10 @@ import (
 )
 
 func TestNacosIniConfigSource(t *testing.T) {
-	address := "172.16.1.248:8848"
+	//address := "172.16.1.248:8848"
 	//http://console.nacos.io/nacos/v1/cs/configs?show=all&dataId=q123&group=DEFAULT_GROUP&tenant=&namespaceId=
 	//http://console.nacos.io/nacos/v1/cs/configs
-	//address := "console.nacos.io"
+	address := "console.nacos.io"
 
 	size := 10
 	inilen := 3
@@ -62,8 +62,8 @@ func initIniNacosData(address, group, dataId, tenant string, size, len int) map[
 			content += "\n"
 		}
 	}
-	url := "http://172.16.1.248:8848/nacos/v1/cs/configs"
-	//url := "http://console.nacos.io/nacos/v1/cs/configs"
+	//url := "http://172.16.1.248:8848/nacos/v1/cs/configs"
+	url := "http://console.nacos.io/nacos/v1/cs/configs"
 	buf := strings.NewReader("appName=&namespaceId=&type=properties&dataId=" + dataId + "&group=" + group + "&tenant=" + tenant + "&content=" + content)
 	fmt.Println(url, buf)
 	res, err := http.Post(url, "application/x-www-form-urlencoded", buf)
