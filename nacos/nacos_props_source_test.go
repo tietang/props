@@ -10,6 +10,16 @@ import (
 	"testing"
 )
 
+func TestNacosIniConfigSource2(t *testing.T) {
+	address := "console.nacos.io"
+	//http://console.nacos.io/nacos/v1/cs/configs?
+	// show=all&dataId=xxx123&group=DEFAULT_GROUP&tenant=&namespaceId=
+	dataId := "xxx123"
+	tenant := ""
+	group := "DEFAULT_GROUP"
+	c := NewNacosPropsConfigSource(address, group, dataId, tenant)
+	fmt.Println(c.Keys())
+}
 func TestNacosIniConfigSource(t *testing.T) {
 	address := "172.16.1.248:8848"
 	//http://console.nacos.io/nacos/v1/cs/configs?show=all&dataId=q123&group=DEFAULT_GROUP&tenant=&namespaceId=
