@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -72,4 +73,14 @@ func GetCurrentFilePath(fileName string, skip int) string {
 	//组装配置文件路径
 	file := filepath.Join(dir, fileName)
 	return file
+}
+
+func ReadFile(filename string) ([]byte, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	src, err := ioutil.ReadAll(f)
+	return src, err
 }
