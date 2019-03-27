@@ -72,6 +72,9 @@ func (p *YamlProperties) kv(mapv reflect.Value, parentPath string) {
 		} else {
 			key := fmt.Sprintf("%s.%v", parentPath, k)[1:]
 			value := fmt.Sprintf("%v", val)
+			if value == "<nil>" {
+				value = ""
+			}
 			p.Values[key] = value
 		}
 	}
