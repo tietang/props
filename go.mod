@@ -26,7 +26,6 @@ replace (
 )
 
 require (
-	github.com/Unknwon/log v0.0.0-20150304194804-e617c87089d3
 	github.com/coreos/bbolt v1.3.2 // indirect
 	github.com/coreos/etcd v3.3.8+incompatible
 	github.com/coreos/go-semver v0.2.0 // indirect
