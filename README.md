@@ -50,18 +50,14 @@
 
 > go get -u github.com/tietang/props
 
-**或者：**
+**或者通过go mod：**
 
-参考 [golang dep](<https://github.com/golang/dep>)使用dep命令来安装。
+ 
+> go mod tidy 
+> go mod vendor
 
 
-> dep ensure -add github.com/tietang/props
-
-
-或者选择安装：
-
-> dep ensure -add github.com/tietang/props/kvs github.com/tietang/props/ini github.com/tietang/props/zk 
-
+ 
 
 
 ## 配置源和配置形式使用方法：
