@@ -18,7 +18,7 @@
 - properties格式文件
 - ini格式文件
 - yaml格式文件
-- [Nacos](<http://nacos.io>) k/props
+- [Nacos](<http://nacos.io>) k/properties,k/yaml,k/ini
 - zookeeper k/v
 - zookeeper k/props 
 - consul k/v
