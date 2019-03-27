@@ -15,8 +15,9 @@
 ## 特性
 ### 支持的配置源：
 
-- properties文件
-- ini文件
+- properties格式文件
+- ini格式文件
+- yaml格式文件
 - [Nacos](<http://nacos.io>) k/props
 - zookeeper k/v
 - zookeeper k/props 
