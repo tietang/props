@@ -84,3 +84,14 @@ func ReadFile(filename string) ([]byte, error) {
 	src, err := ioutil.ReadAll(f)
 	return src, err
 }
+
+func ParseBool(v string) (bool, error) {
+	if strings.ToUpper(v) == "YES" || strings.ToUpper(v) == "Y" {
+		return true, nil
+	}
+	if strings.ToUpper(v) == "NO" || strings.ToUpper(v) == "N" {
+		return false, nil
+	}
+	b, err := strconv.ParseBool(v)
+	return b, err
+}
