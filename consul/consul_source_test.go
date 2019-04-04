@@ -3,20 +3,20 @@ package consul
 import (
 	"github.com/hashicorp/consul/api"
 	. "github.com/smartystreets/goconvey/convey"
+	"github.com/tietang/props/kvs"
 	"path"
 	"strconv"
-	"strings"
 	"testing"
 )
 
-func TestConsulIniConfigSource(t *testing.T) {
+func TestConsulIniConfigSource2(t *testing.T) {
 	address := "127.0.0.1:8500"
 	//address := "172.16.1.248:8500"
 	root := "config101/test/inidemo"
 	size := 10
 	inilen := 3
-	m := initIniConsulData(address, root, size, inilen)
-	c := NewConsulPropsConfigSource(address, root)
+	m := initPropsConsulData(address, root, size, inilen)
+	c := NewConsulConfigSource(address, root, kvs.ContentProps)
 	Convey("consul kv", t, func() {
 		keys := c.Keys()
 		So(len(keys), ShouldEqual, size*inilen)
@@ -32,7 +32,7 @@ func TestConsulIniConfigSource(t *testing.T) {
 
 }
 
-func initIniConsulData(address, root string, size, len int) map[string]string {
+func initPropsConsulData(address, root string, size, len int) map[string]string {
 	config := api.DefaultConfig()
 	config.Address = address
 	client, err := api.NewClient(config)
@@ -50,12 +50,10 @@ func initIniConsulData(address, root string, size, len int) map[string]string {
 		value := ""
 
 		for j := 0; j < len; j++ {
-			kk := key + "." + "x" + strconv.Itoa(j)
 			val := "value-" + strconv.Itoa(i) + strconv.Itoa(j)
-			value += "x" + strconv.Itoa(j) + "=" + val + "\n"
-			k := strings.Replace(kk, "/", ".", -1)
-			//fmt.Println(key, k, value)
-			m[k] = val
+			pkey := "x" + strconv.Itoa(i) + "-y" + strconv.Itoa(j)
+			value += pkey + "=" + val + "\n"
+			m[pkey] = val
 		}
 		kvp := &api.KVPair{
 			Key:   keyFull,

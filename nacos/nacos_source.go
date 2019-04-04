@@ -75,47 +75,40 @@ func (s *NacosConfigSource) Close() {
 }
 
 func (s *NacosConfigSource) findYaml(content string) {
-	y := yam.NewYamlProperties()
-	err := y.Load(strings.NewReader(content))
-	if err != nil {
-		log.Error(err)
-		return
-	}
-	s.MapProperties = y.MapProperties
+	props := yam.ByYaml(content)
+	s.SetAll(props.Values)
 }
 
 func (s *NacosConfigSource) findIni(content string) {
-	iniProps, err := ini.ReadIni(strings.NewReader(content))
-	if err != nil {
-		log.Error(err)
-		return
-	}
-	s.MapProperties = iniProps.MapProperties
+	props := ini.ByIni(content)
+	s.SetAll(props.Values)
 }
 
 func (s *NacosConfigSource) findProperties(content string) {
-
-	sep := s.LineSeparator
-	if sep == "" {
-		sep = NACOS_LINE_SEPARATOR
-	}
-	kvsep := s.KVSeparator
-	if kvsep == "" {
-		kvsep = NACOS_KV_SEPARATOR
-	}
-	lines := strings.Split(content, sep)
-
-	for _, l := range lines {
-
-		i := strings.Index(l, kvsep)
-		if i <= 0 {
-			continue
-		}
-		key := string(l[:i])
-		value := string(l[i+1:])
-		s.registerProps(key, value)
-		//log.Info(key,"=",value)
-	}
+	props := kvs.ByProperties(content)
+	s.SetAll(props.Values)
+	//
+	//sep := s.LineSeparator
+	//if sep == "" {
+	//	sep = NACOS_LINE_SEPARATOR
+	//}
+	//kvsep := s.KVSeparator
+	//if kvsep == "" {
+	//	kvsep = NACOS_KV_SEPARATOR
+	//}
+	//lines := strings.Split(content, sep)
+	//
+	//for _, l := range lines {
+	//
+	//	i := strings.Index(l, kvsep)
+	//	if i <= 0 {
+	//		continue
+	//	}
+	//	key := string(l[:i])
+	//	value := string(l[i+1:])
+	//	s.registerProps(key, value)
+	//	//log.Info(key,"=",value)
+	//}
 
 }
 

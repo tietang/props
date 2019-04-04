@@ -3,6 +3,7 @@ package kvs
 import (
 	"bufio"
 	"fmt"
+	"github.com/prometheus/common/log"
 	"io"
 	"io/ioutil"
 	"os"
@@ -94,4 +95,13 @@ func ParseBool(v string) (bool, error) {
 	}
 	b, err := strconv.ParseBool(v)
 	return b, err
+}
+
+func ByProperties(content string) *MapProperties {
+	y, err := ReadProperties(strings.NewReader(content))
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+	return &y.MapProperties
 }
