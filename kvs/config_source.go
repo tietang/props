@@ -21,8 +21,11 @@ type ContentType string
 // 可以通过key后缀来标识格式类型，默认按照properties来读取
 
 const (
-	ContentProps       ContentType = "properties"
+	ContentProperties  ContentType = "properties"
+	ContentProps       ContentType = "props" //properties 别名
 	ContentYaml        ContentType = "yaml"
+	ContentYam         ContentType = "yam" //yaml 别名
+	ContentYml         ContentType = "yml" //yaml 别名
 	ContentIni         ContentType = "ini"
 	ContentIniProps    ContentType = "ini_props"
 	ContentKV          ContentType = "kv"

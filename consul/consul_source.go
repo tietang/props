@@ -108,13 +108,13 @@ func (s *ConsulConfigSource) findProperties(parentPath string, children []string
 			ctype = s.ContentType
 		}
 
-		if ctype == kvs.ContentProps {
+		if ctype == kvs.ContentProps || ctype == kvs.ContentProperties {
 			s.findProps(content)
 		} else if ctype == kvs.ContentIniProps {
 			s.findIniProps(k, content)
 		} else if ctype == kvs.ContentIni {
 			s.findIni(content)
-		} else if ctype == kvs.ContentYaml {
+		} else if ctype == kvs.ContentYaml || ctype == kvs.ContentYam || ctype == kvs.ContentYml {
 			s.findYaml(content)
 		} else {
 			log.Warn("Unsupported format：", s.ContentType)
@@ -133,24 +133,33 @@ func (s *ConsulConfigSource) findProperties(parentPath string, children []string
 }
 func (s *ConsulConfigSource) findYaml(content string) {
 	props := yam.ByYaml(content)
-	s.SetAll(props.Values)
+	if props != nil {
+		s.SetAll(props.Values)
+	}
 }
 
 func (s *ConsulConfigSource) findIni(content string) {
 	props := ini.ByIni(content)
-	s.SetAll(props.Values)
+	if props != nil {
+		s.SetAll(props.Values)
+	}
 }
 
 func (s *ConsulConfigSource) findProps(content string) {
 	props := kvs.ByProperties(content)
-	s.SetAll(props.Values)
+	if props != nil {
+		s.SetAll(props.Values)
+	}
 }
 func (s *ConsulConfigSource) findIniProps(key, content string) {
 	props := kvs.ByProperties(content)
-	prefix := path.Base(key)
-	for key, value := range props.Values {
-		k := prefix + "." + key
-		s.Set(k, value)
+	if props != nil {
+
+		prefix := path.Base(key)
+		for key, value := range props.Values {
+			k := prefix + "." + key
+			s.Set(k, value)
+		}
 	}
 }
 
