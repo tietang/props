@@ -3,20 +3,19 @@ package consul
 import (
 	"github.com/hashicorp/consul/api"
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/tietang/props/kvs"
 	"path"
 	"strconv"
 	"testing"
 )
 
-func TestConsulIniConfigSource2(t *testing.T) {
+func TestConsulIniPropsConfigSource(t *testing.T) {
 	address := "127.0.0.1:8500"
 	//address := "172.16.1.248:8500"
 	root := "config101/test/inidemo"
 	size := 10
 	inilen := 3
 	m := initPropsConsulData(address, root, size, inilen)
-	c := NewConsulConfigSource(address, root, kvs.ContentProps)
+	c := NewConsulConfigSource(address, root)
 	Convey("consul kv", t, func() {
 		keys := c.Keys()
 		So(len(keys), ShouldEqual, size*inilen)

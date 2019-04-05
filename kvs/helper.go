@@ -2,6 +2,7 @@ package kvs
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"github.com/prometheus/common/log"
 	"io"
@@ -104,4 +105,23 @@ func ByProperties(content string) *MapProperties {
 		return nil
 	}
 	return &y.MapProperties
+}
+
+func Join(elem ...string) string {
+	var buf bytes.Buffer
+	for _, e := range elem {
+		if e == "" {
+			continue
+		}
+		if !strings.HasPrefix(e, ".") {
+			buf.WriteString(".")
+		}
+		if strings.HasSuffix(e, ".") {
+			buf.WriteString(e[:len(e)-1])
+		} else {
+			buf.WriteString(e)
+		}
+
+	}
+	return ""
 }

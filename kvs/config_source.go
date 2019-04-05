@@ -7,11 +7,27 @@ import (
 
 type ContentType string
 
+//配置为ContentIniProps模式，
+// key作为section，value为props格式内容，类似ini文件格式
+// key为实际key的prefix，会添加到前面
+// 比如 root=configs/dev/app
+// consul
+// 		full key=configs/dev/app/mysql
+// 		value=(x1=0 \n x2=1)
+// 实际key/value为： mysql.x1=0 mysql.x2=1
+//ContentProps,ContentYamlContentIni 模式时，
+// 其 key无实际配置意义，只作为配置分组标识，
+// 值为对应的内容格式类型，读取时会将对应的内容转换这种类型
+// 可以通过key后缀来标识格式类型，默认按照properties来读取
+
 const (
-	ContentProps ContentType = "properties"
-	ContentYaml  ContentType = "yaml"
-	ContentIni   ContentType = "ini"
-	ContentKV    ContentType = "kv"
+	ContentProps       ContentType = "properties"
+	ContentYaml        ContentType = "yaml"
+	ContentIni         ContentType = "ini"
+	ContentIniProps    ContentType = "ini_props"
+	ContentKV          ContentType = "kv"
+	ContentAuto        ContentType = "auto"
+	DefaultContentType ContentType = ContentProps
 )
 const (
 	__START_TAG   = "${"

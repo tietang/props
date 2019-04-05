@@ -6,11 +6,26 @@ import (
 	"github.com/tietang/props/ini"
 	"github.com/tietang/props/kvs"
 	"github.com/tietang/props/yam"
+	"path"
 	"strings"
 	"time"
 )
 
-//通过key/properties, key所谓section，value为props格式内容，类似ini文件格式
+//通过key/ini_props, key所谓section，value为props格式内容，类似ini文件格式
+
+//配置为ContentIniProps模式
+// key作为section，value为props格式内容，类似ini文件格式
+// key为实际key的prefix，会添加到前面
+// 比如 root=configs/dev/app
+// consul
+// 		full key=configs/dev/app/mysql
+// 		value=(x1=0 \n x2=1)
+// 实际key/value为： mysql.x1=0 mysql.x2=1
+//ContentProps,ContentYamlContentIni 模式时，
+// 其 key无实际配置意义，只作为配置分组标识，
+// 值为对应的内容格式类型，读取时会将对应的内容转换这种类型
+// 可以通过key后缀来标识格式类型，默认按照properties来读取
+
 type ConsulConfigSource struct {
 	kvs.MapProperties
 	name        string
@@ -21,9 +36,8 @@ type ConsulConfigSource struct {
 	ContentType kvs.ContentType
 }
 
-func NewConsulConfigSource(address, root string, contentType kvs.ContentType) *ConsulConfigSource {
-	conf := NewConsulConfigSourceByName("consul", address, root, contentType, CONSUL_WAIT_TIME)
-
+func NewConsulConfigSource(address, root string) *ConsulConfigSource {
+	conf := NewConsulConfigSourceByName("consul", address, root, kvs.ContentAuto, CONSUL_WAIT_TIME)
 	return conf
 }
 
@@ -52,11 +66,11 @@ func NewConsulConfigSourceByName(name, address, root string, contentType kvs.Con
 
 func (s *ConsulConfigSource) init() {
 	s.findProperties(s.root, nil)
-
 }
 
 func (s *ConsulConfigSource) watchContext() {
-
+	q := &api.QueryOptions{}
+	s.kv.Get("", q)
 }
 
 func (s *ConsulConfigSource) Close() {
@@ -81,12 +95,26 @@ func (s *ConsulConfigSource) findProperties(parentPath string, children []string
 			continue
 		}
 		content := string(kv.Value)
+		var ctype kvs.ContentType
+		if s.ContentType == kvs.ContentAuto {
+			key := path.Base(k)
+			idx := strings.LastIndex(key, ".")
+			if idx == -1 || idx == len(key)-1 {
+				ctype = kvs.ContentProps
+			} else {
+				ctype = kvs.ContentType(key[idx+1:])
+			}
+		} else {
+			ctype = s.ContentType
+		}
 
-		if s.ContentType == kvs.ContentProps {
+		if ctype == kvs.ContentProps {
 			s.findProps(content)
-		} else if s.ContentType == kvs.ContentIni {
+		} else if ctype == kvs.ContentIniProps {
+			s.findIniProps(k, content)
+		} else if ctype == kvs.ContentIni {
 			s.findIni(content)
-		} else if s.ContentType == kvs.ContentYaml {
+		} else if ctype == kvs.ContentYaml {
 			s.findYaml(content)
 		} else {
 			log.Warn("Unsupported format：", s.ContentType)
@@ -116,6 +144,14 @@ func (s *ConsulConfigSource) findIni(content string) {
 func (s *ConsulConfigSource) findProps(content string) {
 	props := kvs.ByProperties(content)
 	s.SetAll(props.Values)
+}
+func (s *ConsulConfigSource) findIniProps(key, content string) {
+	props := kvs.ByProperties(content)
+	prefix := path.Base(key)
+	for key, value := range props.Values {
+		k := prefix + "." + key
+		s.Set(k, value)
+	}
 }
 
 func (s *ConsulConfigSource) findKeyValue(parentPath string, children []string) {
