@@ -189,6 +189,7 @@ func initZkDataForProps(conn *zk.Conn, root string, size, inilen int) map[string
 
 	//fmt.Println(len(kv))
 }
+
 func initZkDataForIni(conn *zk.Conn, root string, size, inilen int) map[string]string {
 	err := ZkDelete(conn, root)
 	if err != nil {
