@@ -98,7 +98,7 @@ func TestConsulConfigSourceForKV(t *testing.T) {
 	address := testConsul.Address
 
 	root := "config_kv/test/kv_demo1"
-	size := 10
+	size := 2
 	m := initConsulDataForKV(address, root, size)
 	conf := NewConsulConfigSourceByName("zk-"+root, address, root, kvs.ContentKV, time.Second*10)
 

@@ -164,7 +164,7 @@ func (s *ConsulConfigSource) findIniProps(key, content string) {
 }
 
 func (s *ConsulConfigSource) findKeyValue(parentPath string, children []string) {
-	prefix := s.root
+	prefix := parentPath
 	q := &api.QueryOptions{}
 
 	keys, _, err := s.kv.Keys(prefix, "", q)
@@ -184,14 +184,15 @@ func (s *ConsulConfigSource) findKeyValue(parentPath string, children []string) 
 
 }
 
-func (s *ConsulConfigSource) sanitizeKey(path string, context string) string {
-	key := strings.Replace(path, context+"/", "", -1)
+func (s *ConsulConfigSource) sanitizeKey(keyPath string, context string) string {
+	context = path.Join(context) + "/"
+	key := strings.TrimPrefix(keyPath, context)
 	key = strings.Replace(key, "/", ".", -1)
 	return key
 }
 
-func (s *ConsulConfigSource) registerKeyValue(path, value string) {
-	key := s.sanitizeKey(path, s.root)
+func (s *ConsulConfigSource) registerKeyValue(keyPath, value string) {
+	key := s.sanitizeKey(keyPath, s.root)
 	s.Set(key, value)
 
 }
