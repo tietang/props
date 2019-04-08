@@ -18,11 +18,11 @@
 - properties格式文件
 - ini格式文件
 - yaml格式文件
-- [Nacos](<http://nacos.io>) k/properties,k/yaml,k/ini
+- [Nacos](<http://nacos.io>) k/props[properties],k/yaml,k/ini,k/ini_props
 - zookeeper k/v
-- zookeeper k/props 
+- zookeeper k/props[properties],k/yaml,k/ini,k/ini_props
 - consul k/v
-- consul k/props
+- consul k/props[properties],k/yaml,k/ini,k/ini_props
 - etcd API V2 k/v
 - etcd API V2 k/props
 - etcd API V3 k/v
