@@ -72,8 +72,8 @@ func initIniNacosData(address, group, dataId, tenant string, size, len int) map[
 			content += "\n"
 		}
 	}
-	url := "http://172.16.1.248:8848/nacos/v1/cs/configs"
-	//url := "http://console.nacos.io/nacos/v1/cs/configs"
+	//url := "http://172.16.1.248:8848/nacos/v1/cs/configs"
+	url := "http://console.nacos.io/nacos/v1/cs/configs"
 	buf := strings.NewReader("appName=&namespaceId=&type=properties&dataId=" + dataId + "&group=" + group + "&tenant=" + tenant + "&content=" + content)
 	fmt.Println(url, buf)
 	res, err := http.Post(url, "application/x-www-form-urlencoded", buf)
