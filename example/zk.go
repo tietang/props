@@ -23,7 +23,7 @@ func main_() {
 		}
 	}
 
-	z := zkvs.NewZookeeperConfigSource("zk", true, context, c)
+	z := zkvs.NewZookeeperConfigSource(true, context, c)
 	v, err := z.Get("app.xx.key-0")
 	fmt.Println(v)
 	fmt.Println(err)

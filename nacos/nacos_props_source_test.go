@@ -36,7 +36,7 @@ func TestNacosIniConfigSource(t *testing.T) {
 
 	Convey("Nacos kv", t, func() {
 		keys := c.Keys()
-		fmt.Println(keys)
+		//fmt.Println(keys)
 
 		So(len(keys), ShouldEqual, size*inilen)
 		for _, key := range keys {
@@ -75,9 +75,9 @@ func initIniNacosData(address, group, dataId, tenant string, size, len int) map[
 	//url := "http://172.16.1.248:8848/nacos/v1/cs/configs"
 	url := "http://console.nacos.io/nacos/v1/cs/configs"
 	buf := strings.NewReader("appName=&namespaceId=&type=properties&dataId=" + dataId + "&group=" + group + "&tenant=" + tenant + "&content=" + content)
-	fmt.Println(url, buf)
+	//fmt.Println(url, buf)
 	res, err := http.Post(url, "application/x-www-form-urlencoded", buf)
-	fmt.Println(res, err)
+	//fmt.Println(res, err)
 	data, err := ioutil.ReadAll(res.Body)
 	fmt.Println(string(data), err)
 	return m
