@@ -1,11 +1,11 @@
 package zk
 
 import (
-    "github.com/samuel/go-zookeeper/zk"
-    "strings"
-    "path"
-    log "github.com/sirupsen/logrus"
-    "github.com/tietang/props/kvs"
+	"github.com/samuel/go-zookeeper/zk"
+	log "github.com/sirupsen/logrus"
+	"github.com/tietang/props/kvs"
+	"path"
+	"strings"
 )
 
 /*
@@ -34,50 +34,51 @@ zk nodes:
 
 
 */
-
+//Deprecated
+//看看ZookeeperConfigSource
 type ZookeeperPropsConfigSource struct {
-    ZookeeperSource
+	ZookeeperSource
 }
 
 func NewZookeeperPropsConfigSource(name string, watched bool, context string, conn *zk.Conn) *ZookeeperPropsConfigSource {
-    s := &ZookeeperPropsConfigSource{}
-    s.Watched = watched
-    s.name = name
-    s.Values = make(map[string]string)
-    s.conn = conn
-    s.context = context
-    s.initProperties()
-    return s
+	s := &ZookeeperPropsConfigSource{}
+	s.Watched = watched
+	s.name = name
+	s.Values = make(map[string]string)
+	s.conn = conn
+	s.context = context
+	s.initProperties()
+	return s
 }
 
 func (s *ZookeeperPropsConfigSource) initProperties() {
-    s.findProperties(s.context)
+	s.findProperties(s.context)
 }
 
 func (s *ZookeeperPropsConfigSource) findProperties(root string) {
-    children := s.getChildren(root)
-    if len(children) == 0 {
-        return
-    }
-    for _, p := range children {
+	children := s.getChildren(root)
+	if len(children) == 0 {
+		return
+	}
+	for _, p := range children {
 
-        fp := path.Join(root, p)
-        value, err := s.getPropertiesValue(fp)
-        if s.Watched && strings.HasSuffix(fp, DEFAULT_WATCH_KEY) {
-            log.Debug("WatchNodeDataChange: ", fp)
-            s.watchGet(fp)
-        }
+		fp := path.Join(root, p)
+		value, err := s.getPropertiesValue(fp)
+		if s.Watched && strings.HasSuffix(fp, DEFAULT_WATCH_KEY) {
+			log.Debug("WatchNodeDataChange: ", fp)
+			s.watchGet(fp)
+		}
 
-        if err == nil {
-            props := kvs.NewProperties()
-            props.Load(strings.NewReader(value))
-            for _, key := range props.Keys() {
-                val := props.GetDefault(key, "")
-                pkey := strings.Join([]string{p, key}, ".")
-                s.registerKeyValue(pkey, val)
-            }
-        }
+		if err == nil {
+			props := kvs.NewProperties()
+			props.Load(strings.NewReader(value))
+			for _, key := range props.Keys() {
+				val := props.GetDefault(key, "")
+				pkey := strings.Join([]string{p, key}, ".")
+				s.registerKeyValue(pkey, val)
+			}
+		}
 
-    }
+	}
 
 }

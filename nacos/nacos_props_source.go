@@ -33,8 +33,13 @@ type NacosPropsConfigSource struct {
 	DataId string
 	// Required Configuration group. To ensure uniqueness, format such as product name: module name (for example, Nacos:Test) is preferred. Use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 128 characters are allowed.
 	Group string
+
 	//Tenant information. It corresponds to the Namespace field in Nacos.
-	Tenant        string
+	Tenant      string
+	ContentType string
+	AppName     string
+	NamespaceId string
+
 	LineSeparator string
 	KVSeparator   string
 	//
@@ -134,6 +139,7 @@ func (h *NacosPropsConfigSource) Next() string {
 func (h *NacosPropsConfigSource) get() (body []byte, err error) {
 	base := h.Next()
 	//?dataId=%s&group=%s&tenant=%s
+	//show=all&
 	url := fmt.Sprintf(ENDPOINT_GET_REQUEST, base, h.DataId, h.Group, h.Tenant)
 
 	//调用请求

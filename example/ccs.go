@@ -1,10 +1,8 @@
 package main
 
 import (
-	"time"
 	"fmt"
 	"github.com/tietang/props/kvs"
-	"github.com/tietang/props/zk"
 )
 
 func main() {
@@ -28,11 +26,12 @@ func main() {
 	//指定名称和文件名
 	pcs2 := kvs.NewPropertiesConfigSourceByFile("config", "config.properties")
 
-	urls := []string{"172.16.1.248:2181"}
-	contexts := []string{"/configs/apps", "/configs/users"}
-	zccs := zk.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
-	configSources := []kvs.ConfigSource{pcs1, pcs2, zccs, }
+	//urls := []string{"172.16.1.248:2181"}
+	//contexts := []string{"/configs/apps", "/configs/users"}
+	//zccs := zk.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
+	configSources := []kvs.ConfigSource{pcs1, pcs2}
 	ccs := kvs.NewDefaultCompositeConfigSource(configSources...)
+	ccs.SaveToDisk()
 
 	//
 
@@ -53,4 +52,5 @@ func main() {
 	fmt.Println(floatValue)
 	floatDefaultValue := ccs.GetFloat64Default("prefix.key4", 1.2)
 	fmt.Println(floatDefaultValue)
+
 }
