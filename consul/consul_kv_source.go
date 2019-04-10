@@ -24,10 +24,12 @@ type ConsulKeyValueConfigSource struct {
 	config *api.Config
 }
 
+//Deprecated
 func NewConsulKeyValueConfigSource(address, root string) *ConsulKeyValueConfigSource {
 	return NewConsulKeyValueConfigSourceByName("", address, root, CONSUL_WAIT_TIME)
 }
 
+//Deprecated
 func NewConsulKeyValueConfigSourceByName(name, address, root string, timeout time.Duration) *ConsulKeyValueConfigSource {
 	s := &ConsulKeyValueConfigSource{}
 	if name == "" {
@@ -51,6 +53,7 @@ func NewConsulKeyValueConfigSourceByName(name, address, root string, timeout tim
 	return s
 }
 
+//Deprecated
 func NewConsulKeyValueCompositeConfigSource(contexts []string, address string) *kvs.CompositeConfigSource {
 	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
 	s.ConfName = "ConsulKevValue"
