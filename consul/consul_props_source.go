@@ -21,10 +21,12 @@ type ConsulPropsConfigSource struct {
 	config *api.Config
 }
 
+//Deprecated
 func NewConsulPropsConfigSource(address, root string) *ConsulPropsConfigSource {
 	return NewConsulPropsConfigSourceByName("consul", address, root, CONSUL_WAIT_TIME)
 }
 
+//Deprecated
 func NewConsulPropsConfigSourceByName(name, address, root string, timeout time.Duration) *ConsulPropsConfigSource {
 	s := &ConsulPropsConfigSource{}
 	if name == "" {

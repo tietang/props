@@ -36,6 +36,27 @@ type ConsulConfigSource struct {
 	ContentType kvs.ContentType
 }
 
+func NewCompositeConsulConfigSource(contexts []string, address string) *kvs.CompositeConfigSource {
+	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
+	s.ConfName = "Consul:Composite"
+	for _, context := range contexts {
+		c := NewConsulConfigSource(address, context)
+		s.Add(c)
+	}
+
+	return s
+}
+func NewCompositeConsulConfigSourceByType(contexts []string, address string, contentType kvs.ContentType) *kvs.CompositeConfigSource {
+	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
+	s.ConfName = "Consul:Composite:" + string(contentType)
+
+	for _, context := range contexts {
+		c := NewConsulConfigSourceByName("consul:"+context, address, context, contentType, time.Second*10)
+		s.Add(c)
+	}
+	return s
+}
+
 func NewConsulConfigSource(address, root string) *ConsulConfigSource {
 	conf := NewConsulConfigSourceByName("consul", address, root, kvs.ContentAuto, CONSUL_WAIT_TIME)
 	return conf
