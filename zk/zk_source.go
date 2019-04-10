@@ -136,15 +136,19 @@ func (s *ZookeeperConfigSource) findChildProperties(parentPath string, children 
 		if err != nil {
 			continue
 		}
-		//fmt.Println("-------")
-		//fmt.Println(content)
-
 		var ctype kvs.ContentType
 		if s.ContentType == kvs.ContentAuto {
 			key := path.Base(p)
 			idx := strings.LastIndex(key, ".")
 			if idx == -1 || idx == len(key)-1 {
-				ctype = kvs.ContentProps
+				//如果获取不到格式类型，就在内容第一行注释中获取
+				contentType := kvs.ReadContentType(content)
+				//如果为普通文本类型，那么就默认为ContentProps
+				if contentType == kvs.TextContentType {
+					ctype = kvs.ContentProps
+				} else {
+					ctype = contentType
+				}
 			} else {
 				ctype = kvs.ContentType(key[idx+1:])
 			}

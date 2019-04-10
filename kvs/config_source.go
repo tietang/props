@@ -1,7 +1,9 @@
 package kvs
 
 import (
+	"bufio"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -30,8 +32,38 @@ const (
 	ContentIniProps    ContentType = "ini_props"
 	ContentKV          ContentType = "kv"
 	ContentAuto        ContentType = "auto"
+	TextContentType    ContentType = "text"
 	DefaultContentType ContentType = ContentProps
 )
+
+var supportedPrefixChars = []string{"#@", ";@", "//@", "@"}
+
+func ReadContentType(content string) ContentType {
+	r := bufio.NewReader(strings.NewReader(content))
+	i := 0
+	for {
+		line, _, err := r.ReadLine()
+		if len(line) > 0 {
+			str := string(line)
+			for _, c := range supportedPrefixChars {
+				if strings.HasPrefix(str, c) {
+					ctyp := strings.TrimSpace(str[len(c):])
+					if ctyp == "" {
+						return TextContentType
+					} else {
+						return ContentType(str[len(c):])
+					}
+				}
+			}
+			i++
+		}
+		if err != nil || i > 0 {
+			break
+		}
+	}
+	return TextContentType
+}
+
 const (
 	__START_TAG   = "${"
 	__END_TAG     = "}"

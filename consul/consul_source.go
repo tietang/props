@@ -121,10 +121,18 @@ func (s *ConsulConfigSource) findProperties(parentPath string, children []string
 			key := path.Base(k)
 			idx := strings.LastIndex(key, ".")
 			if idx == -1 || idx == len(key)-1 {
-				ctype = kvs.ContentProps
+				//如果获取不到格式类型，就在内容第一行注释中获取
+				contentType := kvs.ReadContentType(content)
+				//如果为普通文本类型，那么就默认为ContentProps
+				if contentType == kvs.TextContentType {
+					ctype = kvs.ContentProps
+				} else {
+					ctype = contentType
+				}
 			} else {
 				ctype = kvs.ContentType(key[idx+1:])
 			}
+
 		} else {
 			ctype = s.ContentType
 		}
@@ -140,18 +148,11 @@ func (s *ConsulConfigSource) findProperties(parentPath string, children []string
 		} else {
 			log.Warn("Unsupported format：", s.ContentType)
 		}
-		//value := string(kv.Value)
-		//props := kvs.NewProperties()
-		//props.Load(bytes.NewReader(kv.Value))
-		//for _, key := range props.Keys() {
-		//	val := props.GetDefault(key, "")
-		//	pkey := strings.Join([]string{k, key}, ".")
-		//	s.registerKeyValue(pkey, val)
-		//}
 
 	}
 
 }
+
 func (s *ConsulConfigSource) findYaml(content string) {
 	props := yam.ByYaml(content)
 	if props != nil {

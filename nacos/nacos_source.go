@@ -1,7 +1,6 @@
 package nacos
 
 import (
-	"bufio"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -18,8 +17,6 @@ import (
 const (
 	ENDPOINT_GETALL_REQUEST = ENDPOINT_GET_REQUEST + "&show=all"
 )
-
-var supported_chars = []string{"#@", ";@", "//@", "@"}
 
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type NacosConfigSource struct {
@@ -60,7 +57,7 @@ func (s *NacosConfigSource) init() {
 	}
 	contentType := kvs.ContentType(cr.ContentType)
 	if contentType == "text" {
-		contentType = kvs.ContentType(s.readContentType(cr.Content))
+		contentType = kvs.ReadContentType(cr.Content)
 	}
 	if contentType == kvs.ContentProps || contentType == kvs.ContentProperties {
 		s.findProperties(cr.Content)
@@ -72,27 +69,6 @@ func (s *NacosConfigSource) init() {
 		log.Warn("Unsupported format：", s.ContentType)
 	}
 
-}
-func (s *NacosConfigSource) readContentType(content string) string {
-	r := bufio.NewReader(strings.NewReader(content))
-	i := 0
-	for {
-		line, _, err := r.ReadLine()
-		if len(line) > 0 {
-			str := string(line)
-			for _, c := range supported_chars {
-				if strings.HasPrefix(str, c) {
-					return str[len(c):]
-
-				}
-			}
-			i++
-		}
-		if err != nil || i > 0 {
-			break
-		}
-	}
-	return "text"
 }
 
 func (s *NacosConfigSource) watchContext() {
