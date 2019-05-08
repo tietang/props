@@ -18,7 +18,7 @@ before_install:
   - pwd
   - ls -l
   - echo $PATH
-  - export GO111MODULE=auto
+  - export GO111MODULE=on
 #  - nohup consul agent -dev &
 #  - nohup etcd --data-dir=./temp/etcd &
 
@@ -34,8 +34,8 @@ branches:
 #  on_failure: always
 
 install:
-  - GO111MODULE=auto go mod tidy
-  - GO111MODULE=auto go build
+  - go mod tidy
+  - go build
 #   - go get -u github.com/golang/dep/cmd/dep
 #   - dep ensure
 #   - dep ensure -update

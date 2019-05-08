@@ -27,7 +27,7 @@ jobs:
             echo $PATH
             java -version
             go version
-            export GO111MODULE=auto
+            export GO111MODULE=on
             go mod tidy
             go build
             pwd
