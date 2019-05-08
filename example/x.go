@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func main() {
+func main_1() {
 	var ctype kvs.ContentType
 
 	k := "configs/dev/resk/mysql."

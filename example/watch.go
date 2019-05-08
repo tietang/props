@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func main() {
+func main_2() {
 
 	root := "configs/dev/resk/"
 
