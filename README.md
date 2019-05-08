@@ -5,7 +5,7 @@
 [![Sourcegraph](https://sourcegraph.com/github.com/tietang/props/-/badge.svg)](https://sourcegraph.com/github.com/tietang/props?badge)
 [![CircleCI](https://circleci.com/gh/tietang/kvs.svg?style=svg)](https://circleci.com/gh/tietang/props)
 [![Coverage Status](https://coveralls.io/repos/github/tietang/props/badge.svg?branch=master)](https://coveralls.io/github/tietang/props?branch=master)
-[![GitHub release](https://img.shields.io/github/release/tietang/kvs.svg)](https://github.com/tietang/props/releases)
+[![GitHub release](https://img.shields.io/github/release/tietang/props.svg)](https://github.com/tietang/props/releases)
 
  
 
