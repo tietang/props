@@ -1,13 +1,14 @@
 language: go
 sudo: enabled
 before_install:
+  - sudo apt-get install oracle-java8-installer
   - mkdir bin
 #  - wget http://www-us.apache.org/dist/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
 #  - tar -zxvf zookeeper*tar.gz
 #  - mv zookeeper-3.4.10/conf/zoo_sample.cfg zookeeper-3.4.10/conf/zoo.cfg
 #  - zookeeper-3.4.10/bin/zkServer.sh start
-  - wget https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip
-  - unzip consul_1.2.0_linux_amd64.zip  -d ./bin/
+  - wget https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip
+  - unzip consul_1.4.4_linux_amd64.zip  -d ./bin/
 #  - mv ./consul ./bin
   - wget https://github.com/coreos/etcd/releases/download/v3.3.8/etcd-v3.3.8-linux-amd64.tar.gz
   - tar -zxvf etcd-v3.3.8-linux-amd64.tar.gz
@@ -31,9 +32,11 @@ branches:
 #  on_failure: always
 
 install:
-  - go get -u github.com/golang/dep/cmd/dep
-  - dep ensure
-  - dep ensure -update
+  - go mod tidy
+  - go build
+#   - go get -u github.com/golang/dep/cmd/dep
+#   - dep ensure
+#   - dep ensure -update
 #  - go get -u github.com/go-ini/ini
 #  - go get -u github.com/gopherjs/gopherjs
 #  - go get -u github.com/hashicorp/consul
