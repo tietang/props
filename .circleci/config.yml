@@ -5,7 +5,7 @@ jobs:
       docker:
 #        - image: circleci/golang:1.12.3
         - image: circleci/openjdk:8-jdk-browsers
-      working_directory: /go/src/github.com/tietang/props
+      working_directory: ~/src/github.com/tietang/props
 
       steps:
         - checkout
