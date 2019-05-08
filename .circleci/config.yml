@@ -3,13 +3,15 @@ version: 2
 jobs:
     build:
       docker:
-        - image: circleci/golang:1.12.3
+#        - image: circleci/golang:1.12.3
+        - image: circleci/openjdk:8-jdk-browsers
       working_directory: /go/src/github.com/tietang/props
 
       steps:
         - checkout
         - run: |
-            sudo apt-get install openjdk-8-jre
+            wget https://dl.google.com/go/go1.12.5.linux-amd64.tar.gz
+            tar -zxvf go1.12.5.linux-amd64.tar.gz
             mkdir -p bin
             tar -zxvf server-jre-8u171-linux-x64.tar.gz
             wget https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip
@@ -19,11 +21,12 @@ jobs:
             mv ./etcd-v3.3.8-linux-amd64/etcd ./bin
             pwd
             ls ./bin
-            export PATH=`pwd`/jdk1.8.0_171/bin:`pwd`/bin:`pwd`:$PATH
+            export PATH=`pwd`/jdk1.8.0_171/bin:`pwd`/go/bin:`pwd`/bin:`pwd`:$PATH
             echo $PATH
             java -version
-            go get -u github.com/golang/dep/cmd/dep
-            dep ensure
-            dep ensure -update
+            go version
+            export GO111MODULE=auto
+            go mod tidy
+            go build
             pwd
             go test -race ./... -covermode atomic -coverprofile=coverage.txt
