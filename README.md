@@ -1,6 +1,6 @@
 # props
 
-[![Build Status](https://travis-ci.org/tietang/kvs.svg?branch=master)](<https://travis-ci.org/tietang/props>)
+[![Build Status](https://travis-ci.org/tietang/props.svg?branch=master)](<https://travis-ci.org/tietang/props>)
 [![GoDoc Documentation](http://godoc.org/github.com/tietang/props?status.png)](<https://godoc.org/github.com/tietang/props>)
 [![Sourcegraph](https://sourcegraph.com/github.com/tietang/props/-/badge.svg)](https://sourcegraph.com/github.com/tietang/props?badge)
 [![CircleCI](https://circleci.com/gh/tietang/props.svg?style=svg)](https://circleci.com/gh/tietang/props)
