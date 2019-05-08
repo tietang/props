@@ -43,7 +43,7 @@ k2.y2=val2
 
 
 */
-func main() {
+func main_3() {
 	address := "127.0.0.1:8500"
 
 	root := "conf/"
