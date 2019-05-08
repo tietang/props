@@ -30,4 +30,5 @@ jobs:
             export GO111MODULE=on
             go mod tidy
             pwd
+            go test -i -v -race ./...
             go test -race ./... -covermode atomic -coverprofile=coverage.txt
