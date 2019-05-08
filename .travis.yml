@@ -1,7 +1,8 @@
 language: go
 sudo: enabled
 before_install:
-  - sudo apt-get install oracle-java8-installer
+#   - sudo apt-get install oracle-java8-installer
+  - sudo apt-get install openjdk-8-jre
   - mkdir bin
 #  - wget http://www-us.apache.org/dist/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
 #  - tar -zxvf zookeeper*tar.gz
@@ -76,8 +77,9 @@ script:
 #  - (go env GOPATH | awk 'BEGIN{FS=":"} {print $1}')/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
 
 go:
-#  - 1.9.x
   - 1.10.x
+  - 1.11.x
+  - 1.12.x
 
 env:
   global:
