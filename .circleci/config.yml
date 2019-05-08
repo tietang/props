@@ -20,7 +20,7 @@ jobs:
             pwd
             ls ./bin
             wget https://dl.google.com/go/go1.12.5.linux-amd64.tar.gz
-            tar -zxvf go1.12.5.linux-amd64.tar.gz ./go
+            tar -zxvf go1.12.5.linux-amd64.tar.gz
             export GOROOT=`pwd`/go
             export GOPATH=`pwd`/go_third
             export PATH=`pwd`/jdk1.8.0_171/bin:`pwd`/go/bin:`pwd`/bin:`pwd`:$PATH
