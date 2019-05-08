@@ -79,7 +79,7 @@ func main_3() {
 		v := conf.GetDefault(k, "")
 		fmt.Println(k, "=", v)
 	}
-	fmt.Println("--------------\n")
+	fmt.Println("--------------")
 	fmt.Println("\n ini_props:")
 	root = "conf/ini_props/"
 	conf = consul.NewConsulConfigSourceByName("zk-"+root, address, root, kvs.ContentIniProps, time.Second*10)
@@ -88,7 +88,7 @@ func main_3() {
 		v := conf.GetDefault(k, "")
 		fmt.Println(k, "=", v)
 	}
-	fmt.Println("--------------\n")
+	fmt.Println("--------------")
 
 	fmt.Println("\n props:")
 	root = "conf/props/"
@@ -98,7 +98,7 @@ func main_3() {
 		v := conf.GetDefault(k, "")
 		fmt.Println(k, "=", v)
 	}
-	fmt.Println("--------------\n")
+	fmt.Println("--------------")
 
 	fmt.Println("\n ini:")
 	root = "conf/ini/"
@@ -108,6 +108,6 @@ func main_3() {
 		v := conf.GetDefault(k, "")
 		fmt.Println(k, "=", v)
 	}
-	fmt.Println("--------------\n")
+	fmt.Println("--------------")
 
 }
