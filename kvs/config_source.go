@@ -23,17 +23,18 @@ type ContentType string
 // 可以通过key后缀来标识格式类型，默认按照properties来读取
 
 const (
-	ContentProperties  ContentType = "properties"
-	ContentProps       ContentType = "props" //properties 别名
-	ContentYaml        ContentType = "yaml"
-	ContentYam         ContentType = "yam" //yaml 别名
-	ContentYml         ContentType = "yml" //yaml 别名
-	ContentIni         ContentType = "ini"
-	ContentIniProps    ContentType = "ini_props"
-	ContentKV          ContentType = "kv"
-	ContentAuto        ContentType = "auto"
-	TextContentType    ContentType = "text"
-	DefaultContentType ContentType = ContentProps
+	ContentProperties   ContentType = "properties"
+	ContentProps        ContentType = "props" //properties 别名
+	ContentYaml         ContentType = "yaml"
+	ContentYam          ContentType = "yam" //yaml 别名
+	ContentYml          ContentType = "yml" //yaml 别名
+	ContentIni          ContentType = "ini"
+	ContentIniProps     ContentType = "ini_props"
+	ContentKV           ContentType = "kv"
+	ContentAuto         ContentType = "auto"
+	TextContentType     ContentType = "text"
+	KeyValueContentType ContentType = "kv"
+	DefaultContentType  ContentType = ContentProps
 )
 
 var supportedPrefixChars = []string{"#@", ";@", "//@", "@"}

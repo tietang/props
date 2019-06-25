@@ -48,12 +48,12 @@ context: /configs/dev/app
         ```
 
 如果是如下中的一个，
-ContentProperties  ContentType = "properties"
-ContentProps       ContentType = "props" //properties 别名
-ContentYaml        ContentType = "yaml"
-ContentYam         ContentType = "yam" //yaml 别名
-ContentYml         ContentType = "yml" //yaml 别名
-ContentIni         ContentType = "ini"
+ContentProperties  contentType = "properties"
+ContentProps       contentType = "props" //properties 别名
+ContentYaml        contentType = "yaml"
+ContentYam         contentType = "yam" //yaml 别名
+ContentYml         contentType = "yml" //yaml 别名
+ContentIni         contentType = "ini"
 
 
 则zk nodes,last key以对应的配置格式，就如同文件名一样，
