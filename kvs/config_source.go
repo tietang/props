@@ -1,7 +1,9 @@
 package kvs
 
 import (
+	"bufio"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -21,17 +23,48 @@ type ContentType string
 // 可以通过key后缀来标识格式类型，默认按照properties来读取
 
 const (
-	ContentProperties  ContentType = "properties"
-	ContentProps       ContentType = "props" //properties 别名
-	ContentYaml        ContentType = "yaml"
-	ContentYam         ContentType = "yam" //yaml 别名
-	ContentYml         ContentType = "yml" //yaml 别名
-	ContentIni         ContentType = "ini"
-	ContentIniProps    ContentType = "ini_props"
-	ContentKV          ContentType = "kv"
-	ContentAuto        ContentType = "auto"
-	DefaultContentType ContentType = ContentProps
+	ContentProperties   ContentType = "properties"
+	ContentProps        ContentType = "props" //properties 别名
+	ContentYaml         ContentType = "yaml"
+	ContentYam          ContentType = "yam" //yaml 别名
+	ContentYml          ContentType = "yml" //yaml 别名
+	ContentIni          ContentType = "ini"
+	ContentIniProps     ContentType = "ini_props"
+	ContentKV           ContentType = "kv"
+	ContentAuto         ContentType = "auto"
+	TextContentType     ContentType = "text"
+	KeyValueContentType ContentType = "kv"
+	DefaultContentType  ContentType = ContentProps
 )
+
+var supportedPrefixChars = []string{"#@", ";@", "//@", "@"}
+
+func ReadContentType(content string) ContentType {
+	r := bufio.NewReader(strings.NewReader(content))
+	i := 0
+	for {
+		line, _, err := r.ReadLine()
+		if len(line) > 0 {
+			str := string(line)
+			for _, c := range supportedPrefixChars {
+				if strings.HasPrefix(str, c) {
+					ctyp := strings.TrimSpace(str[len(c):])
+					if ctyp == "" {
+						return TextContentType
+					} else {
+						return ContentType(str[len(c):])
+					}
+				}
+			}
+			i++
+		}
+		if err != nil || i > 0 {
+			break
+		}
+	}
+	return TextContentType
+}
+
 const (
 	__START_TAG   = "${"
 	__END_TAG     = "}"

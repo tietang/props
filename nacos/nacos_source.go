@@ -55,14 +55,18 @@ func (s *NacosConfigSource) init() {
 		log.Error(err)
 		return
 	}
-	if cr.ContentType == "properties" {
+	contentType := kvs.ContentType(cr.ContentType)
+	if contentType == "text" {
+		contentType = kvs.ReadContentType(cr.Content)
+	}
+	if contentType == kvs.ContentProps || contentType == kvs.ContentProperties {
 		s.findProperties(cr.Content)
-	} else if cr.ContentType == "ini" {
+	} else if contentType == kvs.ContentIni {
 		s.findIni(cr.Content)
-	} else if cr.ContentType == "yaml" {
+	} else if contentType == kvs.ContentYaml || contentType == kvs.ContentYam || contentType == kvs.ContentYml {
 		s.findYaml(cr.Content)
 	} else {
-		log.Warn("Unsupported format：", cr.ContentType)
+		log.Warn("Unsupported format：", s.ContentType)
 	}
 
 }

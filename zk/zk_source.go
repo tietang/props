@@ -48,12 +48,12 @@ context: /configs/dev/app
         ```
 
 如果是如下中的一个，
-ContentProperties  ContentType = "properties"
-ContentProps       ContentType = "props" //properties 别名
-ContentYaml        ContentType = "yaml"
-ContentYam         ContentType = "yam" //yaml 别名
-ContentYml         ContentType = "yml" //yaml 别名
-ContentIni         ContentType = "ini"
+ContentProperties  contentType = "properties"
+ContentProps       contentType = "props" //properties 别名
+ContentYaml        contentType = "yaml"
+ContentYam         contentType = "yam" //yaml 别名
+ContentYml         contentType = "yml" //yaml 别名
+ContentIni         contentType = "ini"
 
 
 则zk nodes,last key以对应的配置格式，就如同文件名一样，
@@ -136,15 +136,19 @@ func (s *ZookeeperConfigSource) findChildProperties(parentPath string, children 
 		if err != nil {
 			continue
 		}
-		//fmt.Println("-------")
-		//fmt.Println(content)
-
 		var ctype kvs.ContentType
 		if s.ContentType == kvs.ContentAuto {
 			key := path.Base(p)
 			idx := strings.LastIndex(key, ".")
 			if idx == -1 || idx == len(key)-1 {
-				ctype = kvs.ContentProps
+				//如果获取不到格式类型，就在内容第一行注释中获取
+				contentType := kvs.ReadContentType(content)
+				//如果为普通文本类型，那么就默认为ContentProps
+				if contentType == kvs.TextContentType {
+					ctype = kvs.ContentProps
+				} else {
+					ctype = contentType
+				}
 			} else {
 				ctype = kvs.ContentType(key[idx+1:])
 			}

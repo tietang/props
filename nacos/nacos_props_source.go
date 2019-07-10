@@ -24,6 +24,8 @@ const (
 	ENDPOINT_LISTEN_BODY    = "?dataId=%s&group=%s&tenant=%s"
 )
 
+var _ kvs.ConfigSource = new(NacosPropsConfigSource)
+
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type NacosPropsConfigSource struct {
 	kvs.MapProperties
