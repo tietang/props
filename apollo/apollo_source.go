@@ -3,7 +3,6 @@ package apollo
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/shima-park/agollo"
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/go-utils"
 	"github.com/tietang/props/ini"
@@ -18,7 +17,6 @@ import (
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type ApolloConfigSource struct {
 	kvs.MapProperties
-	Apollo      agollo.Agollo
 	name        string
 	address     string
 	appId       string
