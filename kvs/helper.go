@@ -68,6 +68,12 @@ func ExecCommand(commandName string, params ...string) bool {
 }
 
 func GetCurrentFilePath(fileName string, skip int) string {
+	dir, _ := os.Getwd()
+	file := filepath.Join(dir, fileName)
+	return file
+}
+
+func GetCurrentFilePath2(fileName string, skip int) string {
 	//获取当前函数Caller reports，取得当前调用对应的文件
 	_, f, _, _ := runtime.Caller(skip)
 	//解析出所在目录
