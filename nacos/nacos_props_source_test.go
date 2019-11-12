@@ -20,6 +20,7 @@ func TestNacosIniConfigSource2(t *testing.T) {
 	c := NewNacosPropsConfigSource(address, group, dataId, tenant)
 	fmt.Println(c.Keys())
 }
+
 func TestNacosIniConfigSource(t *testing.T) {
 	//address := "172.16.1.248:8848"
 	//http://console.nacos.io/nacos/v1/cs/configs?show=all&dataId=q123&group=DEFAULT_GROUP&tenant=&namespaceId=
@@ -29,7 +30,7 @@ func TestNacosIniConfigSource(t *testing.T) {
 	size := 10
 	inilen := 3
 	dataId := "test.id"
-	tenant := "testTenant"
+	tenant := "tt"
 	group := "testGroup"
 	m := initIniNacosData(address, group, dataId, tenant, size, inilen)
 	c := NewNacosPropsConfigSource(address, group, dataId, tenant)
@@ -74,7 +75,8 @@ func initIniNacosData(address, group, dataId, tenant string, size, len int) map[
 	}
 	//url := "http://172.16.1.248:8848/nacos/v1/cs/configs"
 	url := "http://console.nacos.io/nacos/v1/cs/configs"
-	buf := strings.NewReader("appName=&namespaceId=&type=properties&dataId=" + dataId + "&group=" + group + "&tenant=" + tenant + "&content=" + content)
+	//buf := strings.NewReader("appName=&namespaceId=&type=properties&dataId=" + dataId + "&group=" + group + "&tenant=" + tenant + "&content=" + content)
+	buf := strings.NewReader("type=properties&dataId=" + dataId + "&group=" + group + "&tenant=" + tenant + "&content=" + content)
 	//fmt.Println(url, buf)
 	res, err := http.Post(url, "application/x-www-form-urlencoded", buf)
 	//fmt.Println(res, err)
