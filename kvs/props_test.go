@@ -292,32 +292,32 @@ func TestProperties_ToDuration(t *testing.T) {
 	Convey("测试get bool", t, func() {
 
 		Convey("1s", func() {
-			n, e :=  ToDuration("1s")
+			n, e := ToDuration("1s")
 			So(e, ShouldBeNil)
 			So(n, ShouldNotBeNil)
 			So(n, ShouldEqual, 1*time.Second)
 		})
 		Convey("1S", func() {
-			n, e :=  ToDuration("1S")
+			n, e := ToDuration("1S")
 			So(e, ShouldBeNil)
 			So(n, ShouldNotBeNil)
 			So(n, ShouldEqual, 1*time.Second)
 		})
 		Convey("1ms", func() {
-			n, e :=  ToDuration("1s")
+			n, e := ToDuration("1s")
 			So(e, ShouldBeNil)
 			So(n, ShouldNotBeNil)
 			So(n, ShouldEqual, 1*time.Second)
 		})
 		Convey("1mS", func() {
-			n, e :=  ToDuration("1mS")
+			n, e := ToDuration("1mS")
 			So(e, ShouldBeNil)
 			So(n, ShouldNotBeNil)
 			So(n, ShouldEqual, 1*time.Millisecond)
 		})
 
 		Convey("1 mS", func() {
-			n, e :=  ToDuration("1")
+			n, e := ToDuration("1")
 			So(e, ShouldBeNil)
 			So(n, ShouldNotBeNil)
 			So(n, ShouldEqual, 1*time.Second)
@@ -347,8 +347,9 @@ func TestProperties_GetDuration(t *testing.T) {
 			So(v, ShouldEqual, 2*time.Millisecond)
 		})
 		Convey("k3(-1) is -1", func() {
-			v, _ := p.GetDuration("k3")
+			v, err := p.GetDuration("k3")
 			So(v, ShouldNotBeNil)
+			So(err, ShouldBeNil)
 			So(v, ShouldEqual, -1*time.Second)
 		})
 		Convey("k4(1) is 1ms", func() {

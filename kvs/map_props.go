@@ -2,6 +2,7 @@ package kvs
 
 import (
 	"errors"
+	log "github.com/sirupsen/logrus"
 	"reflect"
 	"strconv"
 	"strings"
@@ -260,6 +261,7 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) error
 			if value.Type().Name() == "Duration" {
 				defaultValue, err := ToDuration(defVal)
 				if err != nil {
+					log.Warn(err)
 				}
 				if value.Int() != 0 {
 					defaultValue = time.Nanosecond * time.Duration(value.Int())
@@ -267,7 +269,7 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) error
 				val := defaultValue
 				for _, key := range keys {
 					val1 := p.GetDurationDefault(key, defaultValue)
-					if val1 <= 0 {
+					if val1 >= 0 {
 						val = val1
 					}
 				}
