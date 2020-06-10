@@ -27,6 +27,7 @@ replace (
 
 require (
 	github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d // indirect
+	github.com/armon/go-metrics v0.3.3 // indirect
 	github.com/coreos/bbolt v1.3.2 // indirect
 	github.com/coreos/etcd v3.3.13+incompatible
 	github.com/coreos/go-semver v0.3.0 // indirect
@@ -42,10 +43,14 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.9.0 // indirect
-	github.com/hashicorp/consul/api v1.2.0
-	github.com/hashicorp/golang-lru v0.5.1 // indirect
+	github.com/hashicorp/consul/api v1.4.0
+	github.com/hashicorp/go-hclog v0.14.1 // indirect
+	github.com/hashicorp/go-immutable-radix v1.2.0 // indirect
+	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/hashicorp/serf v0.9.2 // indirect
 	github.com/jonboulle/clockwork v0.1.0 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
+	github.com/mitchellh/mapstructure v1.3.2 // indirect
 	github.com/pascaldekloe/goe v0.1.0 // indirect
 	github.com/prometheus/common v0.10.0
 	github.com/samuel/go-zookeeper v0.0.0-20180130194729-c4fab1ac1bec
@@ -62,15 +67,13 @@ require (
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.10.0 // indirect
-	golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5 // indirect
-	golang.org/x/sync v0.0.0-20190423024810-112230192c58 // indirect
 	golang.org/x/sys v0.0.0-20200602225109-6fdc65e7d980 // indirect
 	golang.org/x/text v0.3.2 // indirect
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4 // indirect
 	google.golang.org/genproto v0.0.0-20190605220351-eb0b1bdb6ae6 // indirect
 	google.golang.org/grpc v1.21.1 // indirect
 	gopkg.in/ini.v1 v1.42.0 // indirect
-	gopkg.in/yaml.v2 v2.2.4
+	gopkg.in/yaml.v2 v2.2.8
 )
 
 //exclude (
