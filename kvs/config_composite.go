@@ -300,8 +300,8 @@ func (ccs *CompositeConfigSource) SetAll(values map[string]string) {
 	ccs.Properties.SetAll(values)
 }
 
-func (ccs *CompositeConfigSource) Unmarshal(obj interface{}) error {
-	return Unmarshal(ccs, obj)
+func (ccs *CompositeConfigSource) Unmarshal(obj interface{}, prefixes ...string) error {
+	return Unmarshal(ccs, obj, prefixes...)
 }
 
 func (ccs *CompositeConfigSource) Keys() []string {

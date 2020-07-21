@@ -172,14 +172,15 @@ func (p *MapProperties) Clear() {
 	p.Values = make(map[string]string)
 }
 
-func (p *MapProperties) Unmarshal(obj interface{}) error {
-	return Unmarshal(p, obj)
+func (p *MapProperties) Unmarshal(obj interface{}, prefixes ...string) error {
+	return Unmarshal(p, obj, prefixes...)
 }
 
 func Unmarshal(p ConfigSource, obj interface{}, parentKeys ...string) error {
 	v := reflect.ValueOf(obj).Elem()
 	return unmarshalInner(p, v, parentKeys...)
 }
+
 func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) error {
 
 	//t := reflect.TypeOf(obj)
@@ -349,7 +350,6 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) error
 					}
 				}
 			}
-			break
 			break
 		case reflect.Struct:
 			//fmt.Println("---")

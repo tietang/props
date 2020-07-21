@@ -2,24 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/tietang/props/kvs"
-	"path"
-	"strings"
+	"reflect"
+	"time"
 )
 
-func main_1() {
-	var ctype kvs.ContentType
-
-	k := "configs/dev/resk/mysql."
-	key := path.Base(k)
-	idx := strings.LastIndex(key, ".")
-	fmt.Println(idx)
-	if idx == -1 || idx == len(key)-1 {
-		ctype = kvs.ContentProps
-	} else {
-		ctype = kvs.ContentType(key[idx+1:])
-	}
-
-	fmt.Println(ctype)
-
+func main() {
+	s := time.Second * 10
+	v := reflect.ValueOf(s)
+	fmt.Println(v.Kind())
+	fmt.Println(v.Kind())
 }

@@ -5,7 +5,7 @@ import (
 	"github.com/tietang/props/kvs"
 )
 
-func main() {
+func main_css() {
 	//p, err := props.ReadPropertyFile("config.properties")
 	//if err != nil {
 	//	panic(err)

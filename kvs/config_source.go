@@ -104,5 +104,5 @@ type ConfigSource interface {
 	Keys() []string
 	//KeysFilter(filter string) []string
 	//t必须为指针型
-	Unmarshal(t interface{}) error
+	Unmarshal(obj interface{}, prefixes ...string) error
 }

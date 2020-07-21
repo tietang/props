@@ -1,10 +1,11 @@
-module github.com/tietang/props
+module github.com/tietang/props/v3
 
 go 1.12
 
 //被墙的原因，替换golang.org源为github.com源
 replace (
 	cloud.google.com/go => github.com/googleapis/google-cloud-go v0.37.2
+	github.com/hashicorp/consul => github.com/hashicorp/consul v1.7.3
 	golang.org/x/build => github.com/golang/build v0.0.0-20190327004547-5a2224f3eb52
 	golang.org/x/crypto => github.com/golang/crypto v0.0.0-20190325154230-a5d413f7728c
 	golang.org/x/exp => github.com/golang/exp v0.0.0-20190321205749-f0864edee7f3
@@ -38,28 +39,27 @@ require (
 	github.com/gogo/protobuf v1.2.1 // indirect
 	github.com/golang/groupcache v0.0.0-20190129154638-5b532d6fd5ef // indirect
 	github.com/google/btree v1.0.0 // indirect
-	github.com/gopherjs/gopherjs v0.0.0-20180628210949-0892b62f0d9f // indirect
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.9.0 // indirect
 	github.com/hashicorp/consul/api v1.4.0
-	github.com/hashicorp/go-hclog v0.14.1 // indirect
 	github.com/hashicorp/go-immutable-radix v1.2.0 // indirect
+	github.com/hashicorp/go-msgpack v0.5.5 // indirect
+	github.com/hashicorp/go-sockaddr v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/serf v0.9.2 // indirect
-	github.com/jonboulle/clockwork v0.1.0 // indirect
-	github.com/jtolds/gls v4.20.0+incompatible // indirect
+	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/mapstructure v1.3.2 // indirect
-	github.com/pascaldekloe/goe v0.1.0 // indirect
+	github.com/nacos-group/nacos-sdk-go v0.3.2
 	github.com/prometheus/common v0.10.0
 	github.com/samuel/go-zookeeper v0.0.0-20180130194729-c4fab1ac1bec
+	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
 	github.com/sirupsen/logrus v1.6.0
-	github.com/smartystreets/assertions v0.0.0-20180301161246-7678a5452ebe // indirect
-	github.com/smartystreets/goconvey v0.0.0-20170602164621-9e8dc3f972df
-	github.com/smartystreets/gunit v0.0.0-20180314194857-6f0d6275bdcd // indirect
+	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a
 	github.com/soheilhy/cmux v0.1.4 // indirect
 	github.com/tietang/go-utils v0.1.3
+	github.com/tietang/props v2.2.0+incompatible
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5 // indirect
 	github.com/valyala/fasttemplate v1.1.0
 	github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2 // indirect
@@ -67,12 +67,11 @@ require (
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.10.0 // indirect
+	golang.org/x/crypto v0.0.0-20191106202628-ed6320f186d4 // indirect
 	golang.org/x/sys v0.0.0-20200602225109-6fdc65e7d980 // indirect
-	golang.org/x/text v0.3.2 // indirect
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4 // indirect
 	google.golang.org/genproto v0.0.0-20190605220351-eb0b1bdb6ae6 // indirect
-	google.golang.org/grpc v1.21.1 // indirect
-	gopkg.in/ini.v1 v1.42.0 // indirect
+	google.golang.org/grpc v1.23.0 // indirect
 	gopkg.in/yaml.v2 v2.2.8
 )
 

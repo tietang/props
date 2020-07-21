@@ -2,42 +2,35 @@ package nacos
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
+	"github.com/nacos-group/nacos-sdk-go/vo"
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/ini"
 	"github.com/tietang/props/kvs"
 	"github.com/tietang/props/yam"
-	"io/ioutil"
-	"net/http"
 	"strings"
-	"sync/atomic"
-)
-
-const (
-	ENDPOINT_GETALL_REQUEST = ENDPOINT_GET_REQUEST + "&show=all"
 )
 
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
-type NacosConfigSource struct {
-	NacosPropsConfigSource
+type NacosClientConfigSource struct {
+	NacosClientPropsConfigSource
 }
 
-func NewNacosConfigSource(address, group, dataId, tenant string) *NacosConfigSource {
-	s := &NacosConfigSource{}
-	s.servers = strings.Split(address, ",")
+func NewNacosClientConfigSource(address, group, dataId, tenant string) *NacosClientConfigSource {
+	s := &NacosClientConfigSource{}
+
 	name := strings.Join([]string{"Nacos", address}, ":")
 	s.name = name
 	s.DataId = dataId
 	s.Group = group
 	s.Tenant = tenant
 	s.Values = make(map[string]string)
+	s.NacosClientPropsConfigSource = *NewNacosClientPropsConfigSource(address, group, dataId, tenant)
 	s.init()
 
 	return s
 }
 
-func NewNacosCompositeConfigSource(address, group, tenant string, dataIds []string) *kvs.CompositeConfigSource {
+func NewNacosClientCompositeConfigSource(address, group, tenant string, dataIds []string) *kvs.CompositeConfigSource {
 	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
 	s.ConfName = "NacosKevValue"
 	for _, dataId := range dataIds {
@@ -48,7 +41,7 @@ func NewNacosCompositeConfigSource(address, group, tenant string, dataIds []stri
 	return s
 }
 
-func (s *NacosConfigSource) init() {
+func (s *NacosClientConfigSource) init() {
 
 	cr, err := s.get()
 	if err != nil {
@@ -71,72 +64,54 @@ func (s *NacosConfigSource) init() {
 
 }
 
-func (s *NacosConfigSource) watchContext() {
+func (s *NacosClientConfigSource) watchContext() {
 
 }
 
-func (s *NacosConfigSource) Close() {
+func (s *NacosClientConfigSource) Close() {
 }
 
-func (s *NacosConfigSource) findYaml(content string) {
+func (s *NacosClientConfigSource) findYaml(content string) {
 	props := yam.ByYaml(content)
 	s.SetAll(props.Values)
 }
 
-func (s *NacosConfigSource) findIni(content string) {
+func (s *NacosClientConfigSource) findIni(content string) {
 	props := ini.ByIni(content)
 	s.SetAll(props.Values)
 }
 
-func (s *NacosConfigSource) findProperties(content string) {
+func (s *NacosClientConfigSource) findProperties(content string) {
 	props := kvs.ByProperties(content)
 	s.SetAll(props.Values)
 }
 
-func (s *NacosConfigSource) registerProps(key, value string) {
+func (s *NacosClientConfigSource) registerProps(key, value string) {
 	s.Set(strings.TrimSpace(key), strings.TrimSpace(value))
 
 }
 
-func (s *NacosConfigSource) Name() string {
+func (s *NacosClientConfigSource) Name() string {
 	return s.name
 }
 
-func (h *NacosConfigSource) Next() string {
+func (h *NacosClientConfigSource) get() (cr *ConfigRes, err error) {
 
-	nv := atomic.AddUint32(&h.lastCt, 1)
-	size := len(h.servers)
-	if size == 0 {
-		panic(errors.New("not found server."))
+	cp := vo.ConfigParam{
+		DataId: "dataId",
+		Group:  "group",
 	}
-	index := int(nv) % size
-	selected := h.servers[index]
-	return selected
-}
-
-func (h *NacosConfigSource) get() (cr *ConfigRes, err error) {
-	base := h.Next()
-	//?dataId=%s&group=%s&tenant=%s&show=all&
-	url := fmt.Sprintf(ENDPOINT_GETALL_REQUEST, base, h.DataId, h.Group, h.Tenant)
-
-	//调用请求
-	res, err := http.Get(url)
-
+	if len(h.AppName) > 0 {
+		cp.AppName = h.AppName
+	}
+	content, err := h.Client.GetConfig(cp)
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
-	// 如果出错就不需要close，因此defer语句放在err处理逻辑后面
-	defer res.Body.Close()
-	//处理response,读取Response body
-	respBody, err := ioutil.ReadAll(res.Body)
 
-	//
-	if err := res.Body.Close(); err != nil {
-		log.Error(err)
-	}
 	cr = &ConfigRes{}
-	err = json.Unmarshal(respBody, cr)
+	err = json.Unmarshal([]byte(content), cr)
 	if err != nil {
 		log.Error(err)
 		return nil, err

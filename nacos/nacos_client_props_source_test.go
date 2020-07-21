@@ -7,19 +7,18 @@ import (
 	"time"
 )
 
-func TestNacosIniConfigSource2(t *testing.T) {
+func TestNacosClientIniConfigSource2(t *testing.T) {
 	address := "console.nacos.io"
 	//http://console.nacos.io/nacos/v1/cs/configs?
 	// show=all&dataId=xxx123&group=DEFAULT_GROUP&tenant=&namespaceId=
 	dataId := "xxx123"
 	tenant := ""
 	group := "DEFAULT_GROUP"
-	c := NewNacosPropsConfigSource(address, group, dataId, tenant)
+	c := NewNacosClientPropsConfigSource(address, group, dataId, tenant)
 	fmt.Println(c.Keys())
-
 }
 
-func TestNacosIniConfigSource(t *testing.T) {
+func TestNacosClientIniConfigSource(t *testing.T) {
 	//address := "172.16.1.248:8848"
 	//http://console.nacos.io/nacos/v1/cs/configs?show=all&dataId=q123&group=DEFAULT_GROUP&tenant=&namespaceId=
 	//http://console.nacos.io/nacos/v1/cs/configs
@@ -31,7 +30,7 @@ func TestNacosIniConfigSource(t *testing.T) {
 	tenant := "tt"
 	group := "testGroup"
 	m := initIniNacosData(address, group, dataId, tenant, size, inilen)
-	c := NewNacosPropsConfigSource(address, group, dataId, tenant)
+	c := NewNacosClientPropsConfigSource(address, group, dataId, tenant)
 
 	Convey("Nacos kv", t, func() {
 		keys := c.Keys()
@@ -58,9 +57,6 @@ func TestNacosIniConfigSource(t *testing.T) {
 			So(err, ShouldBeNil)
 			So(v, ShouldEqual, v1)
 		}
-
 	})
-
-	time.Sleep(time.Second * 20)
 
 }
