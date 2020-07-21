@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/tietang/props/kvs"
+	"github.com/tietang/props/v3/kvs"
 )
 
 func main_css() {

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/tietang/props/zk"
+	"github.com/tietang/props/v3/zk"
 	"time"
 )
 

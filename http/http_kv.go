@@ -1,12 +1,12 @@
 package http
 
 import (
-    "github.com/tietang/props/kvs"
-    "net/http"
-    "bytes"
-    "io"
-    log "github.com/sirupsen/logrus"
-    "encoding/json"
+	"bytes"
+	"encoding/json"
+	log "github.com/sirupsen/logrus"
+	"github.com/tietang/props/v3/kvs"
+	"io"
+	"net/http"
 )
 
 /**
@@ -20,42 +20,42 @@ response:
 
 }
 
- */
+*/
 type HttpKeyValueConfigSource struct {
-    kvs.MapProperties
-    name       string
-    url        string
-    namespaces []string
-    username   string
-    password   string
+	kvs.MapProperties
+	name       string
+	url        string
+	namespaces []string
+	username   string
+	password   string
 }
 
 func NewHttpKeyValueConfigSource(name string, url string, namespaces []string) *HttpKeyValueConfigSource {
-    s := &HttpKeyValueConfigSource{}
-    s.name = name
-    s.Values = make(map[string]string)
-    s.url = url
-    s.namespaces = namespaces
-    s.init()
-    return s
+	s := &HttpKeyValueConfigSource{}
+	s.name = name
+	s.Values = make(map[string]string)
+	s.url = url
+	s.namespaces = namespaces
+	s.init()
+	return s
 }
 func (s *HttpKeyValueConfigSource) init() {
-    s.findProperties()
+	s.findProperties()
 }
 
 func (s *HttpKeyValueConfigSource) findProperties() {
-    for _, namespace := range s.namespaces {
-        res, err := http.Get(s.url + "?namespace=" + namespace)
-        if err != nil || res.StatusCode != http.StatusOK {
-            continue
-        }
-        dst := bytes.NewBufferString("")
-        io.Copy(dst, res.Body)
-        m := make(map[string]string)
-        err = json.Unmarshal(dst.Bytes(), &m)
-        if err != nil {
-            log.Error(err)
-        }
-        s.SetAll(m)
-    }
+	for _, namespace := range s.namespaces {
+		res, err := http.Get(s.url + "?namespace=" + namespace)
+		if err != nil || res.StatusCode != http.StatusOK {
+			continue
+		}
+		dst := bytes.NewBufferString("")
+		io.Copy(dst, res.Body)
+		m := make(map[string]string)
+		err = json.Unmarshal(dst.Bytes(), &m)
+		if err != nil {
+			log.Error(err)
+		}
+		s.SetAll(m)
+	}
 }

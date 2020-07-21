@@ -3,7 +3,7 @@ package yam
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"github.com/tietang/props/kvs"
+	"github.com/tietang/props/v3/kvs"
 	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"

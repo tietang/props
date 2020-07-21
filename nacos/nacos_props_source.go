@@ -12,7 +12,7 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/common/util"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
-	"github.com/tietang/props/kvs"
+	"github.com/tietang/props/v3/kvs"
 	"io/ioutil"
 	"net/http"
 	"strconv"

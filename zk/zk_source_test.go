@@ -5,7 +5,7 @@ import (
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/tietang/props/kvs"
+	"github.com/tietang/props/v3/kvs"
 	"path"
 	"strings"
 	"testing"

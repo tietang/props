@@ -2,11 +2,11 @@ package ini
 
 import (
 	. "github.com/smartystreets/goconvey/convey"
+	"github.com/tietang/props/v3/kvs"
+	"io/ioutil"
 	"strings"
 	"testing"
 	"time"
-	"io/ioutil"
-	"github.com/tietang/props/kvs"
 )
 
 func TestIni_Read(t *testing.T) {
@@ -106,7 +106,7 @@ func TestIni_GetBool(t *testing.T) {
         k10=12
         k11=-12
         `)
-		p, err := ReadIni (ioutil.NopCloser(r))
+		p, err := ReadIni(ioutil.NopCloser(r))
 		So(err, ShouldBeNil)
 		So(p, ShouldNotBeNil)
 		Convey("k1(true) is true", func() {
@@ -177,7 +177,7 @@ func TestIni_GetBoolDefalut(t *testing.T) {
         k10=12
         k11=-12
         `)
-		p, err := ReadIni (ioutil.NopCloser(r))
+		p, err := ReadIni(ioutil.NopCloser(r))
 		So(err, ShouldBeNil)
 		So(p, ShouldNotBeNil)
 
@@ -214,7 +214,7 @@ func TestIni_GetInt(t *testing.T) {
         k3= -1
         k9= t0
         `)
-		p, err := ReadIni (ioutil.NopCloser(r))
+		p, err := ReadIni(ioutil.NopCloser(r))
 		So(err, ShouldBeNil)
 		So(p, ShouldNotBeNil)
 		Convey("k1(1) is 1", func() {
@@ -255,7 +255,7 @@ func TestIni_GetIntDefault(t *testing.T) {
         k9=t0
         k10=-01w
         `)
-		p, err := ReadIni (ioutil.NopCloser(r))
+		p, err := ReadIni(ioutil.NopCloser(r))
 		So(err, ShouldBeNil)
 		So(p, ShouldNotBeNil)
 
@@ -331,7 +331,7 @@ func TestIni_GetDuration(t *testing.T) {
         k4= 1
         k9= t0
         `)
-		p, err := ReadIni (ioutil.NopCloser(r))
+		p, err := ReadIni(ioutil.NopCloser(r))
 		So(err, ShouldBeNil)
 		So(p, ShouldNotBeNil)
 		Convey("k1(1) is 1s", func() {
@@ -377,7 +377,7 @@ func TestIni_GetDurationDefault(t *testing.T) {
         k9=t0
         k10=-01w
         `)
-		p, err := ReadIni (ioutil.NopCloser(r))
+		p, err := ReadIni(ioutil.NopCloser(r))
 		So(err, ShouldBeNil)
 		So(p, ShouldNotBeNil)
 

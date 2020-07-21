@@ -2,7 +2,7 @@ package yam
 
 import (
 	log "github.com/sirupsen/logrus"
-	"github.com/tietang/props/kvs"
+	"github.com/tietang/props/v3/kvs"
 	"io"
 	"os"
 	"path"

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/hashicorp/consul/api"
 	"github.com/prometheus/common/log"
-	"github.com/tietang/props/consul"
-	"github.com/tietang/props/kvs"
+	"github.com/tietang/props/v3/consul"
+	"github.com/tietang/props/v3/kvs"
 	"time"
 )
 

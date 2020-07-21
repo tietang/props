@@ -3,7 +3,7 @@ package zk
 import (
 	"github.com/samuel/go-zookeeper/zk"
 	log "github.com/sirupsen/logrus"
-	"github.com/tietang/props/kvs"
+	"github.com/tietang/props/v3/kvs"
 	"time"
 )
 

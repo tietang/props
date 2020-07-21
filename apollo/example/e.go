@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/tietang/props/apollo"
+	"github.com/tietang/props/v3/apollo"
 )
 
 func main() {

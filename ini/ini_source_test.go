@@ -2,7 +2,7 @@ package ini
 
 import (
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/tietang/props/kvs"
+	"github.com/tietang/props/v3/kvs"
 	"testing"
 )
 

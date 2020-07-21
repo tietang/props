@@ -3,14 +3,14 @@
 package etcd
 
 import (
-    "strings"
-    log "github.com/sirupsen/logrus"
-    "time"
-    "context"
-    "github.com/coreos/etcd/clientv3"
-    "github.com/coreos/etcd/clientv3/namespace"
-    "github.com/coreos/etcd/mvcc/mvccpb"
-    "github.com/tietang/props/kvs"
+	"context"
+	"github.com/coreos/etcd/clientv3"
+	"github.com/coreos/etcd/clientv3/namespace"
+	"github.com/coreos/etcd/mvcc/mvccpb"
+	log "github.com/sirupsen/logrus"
+	"github.com/tietang/props/v3/kvs"
+	"strings"
+	"time"
 )
 
 const (
@@ -19,62 +19,62 @@ const (
 
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type EtcdV3KeyValueConfigSource struct {
-    kvs.MapProperties
-    name    string
-    root    string
-    prefix  string
-    client  *clientv3.Client
-    kv      clientv3.KV
-    watcher clientv3.Watcher
-    config  *clientv3.Config
+	kvs.MapProperties
+	name    string
+	root    string
+	prefix  string
+	client  *clientv3.Client
+	kv      clientv3.KV
+	watcher clientv3.Watcher
+	config  *clientv3.Config
 }
 
 func NewEtcdV3KeyValueConfigSource(address, root string) *EtcdV3KeyValueConfigSource {
-    return NewEtcdV3KeyValueConfigSourceByName("", address, root, ETCD_WAIT_TIME)
+	return NewEtcdV3KeyValueConfigSourceByName("", address, root, ETCD_WAIT_TIME)
 }
 
 func NewEtcdV3KeyValueConfigSourceByName(name, urls, root string, timeout time.Duration) *EtcdV3KeyValueConfigSource {
-    s := &EtcdV3KeyValueConfigSource{}
-    if name == "" {
-        name = strings.Join([]string{"etcd", urls, root}, ":")
-    }
-    s.name = name
-    s.Values = make(map[string]string)
-    s.root = root
-    if strings.LastIndex(s.root, "") > 0 {
-        s.root = s.root[:len(s.root)-1]
-    }
-    endpoints := strings.Split(urls, ",")
-    cfg := clientv3.Config{
-        Endpoints:   endpoints,
-        DialTimeout: timeout,
-        // set timeout per request to fail fast when the target endpoint is unavailable
-    }
-    c, err := clientv3.New(cfg)
-    if err != nil {
-        log.Fatal(err)
-    }
-    s.client = c
-    s.kv = namespace.NewKV(c, root)
-    s.prefix = "/"
-    s.watcher = namespace.NewWatcher(c, root)
-    s.init()
-    return s
+	s := &EtcdV3KeyValueConfigSource{}
+	if name == "" {
+		name = strings.Join([]string{"etcd", urls, root}, ":")
+	}
+	s.name = name
+	s.Values = make(map[string]string)
+	s.root = root
+	if strings.LastIndex(s.root, "") > 0 {
+		s.root = s.root[:len(s.root)-1]
+	}
+	endpoints := strings.Split(urls, ",")
+	cfg := clientv3.Config{
+		Endpoints:   endpoints,
+		DialTimeout: timeout,
+		// set timeout per request to fail fast when the target endpoint is unavailable
+	}
+	c, err := clientv3.New(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	s.client = c
+	s.kv = namespace.NewKV(c, root)
+	s.prefix = "/"
+	s.watcher = namespace.NewWatcher(c, root)
+	s.init()
+	return s
 }
 
 func NewEtcdV3KeyValueCompositeConfigSource(contexts []string, address string) *kvs.CompositeConfigSource {
-    s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
-    s.ConfName = "EtcdKevValue"
-    for _, context := range contexts {
-        c := NewEtcdV3KeyValueConfigSource(address, context)
-        s.Add(c)
-    }
+	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
+	s.ConfName = "EtcdKevValue"
+	for _, context := range contexts {
+		c := NewEtcdV3KeyValueConfigSource(address, context)
+		s.Add(c)
+	}
 
-    return s
+	return s
 }
 
 func (s *EtcdV3KeyValueConfigSource) init() {
-    s.findProperties(s.root, nil)
+	s.findProperties(s.root, nil)
 }
 
 func (s *EtcdV3KeyValueConfigSource) watchContext() {
@@ -82,38 +82,38 @@ func (s *EtcdV3KeyValueConfigSource) watchContext() {
 }
 
 func (s *EtcdV3KeyValueConfigSource) Close() {
-    s.client.Close()
+	s.client.Close()
 }
 
 func (s *EtcdV3KeyValueConfigSource) findProperties(parentPath string, children []*mvccpb.KeyValue) {
-    prefix := s.prefix
+	prefix := s.prefix
 
-    res, err := s.kv.Get(context.Background(), prefix, clientv3.WithPrefix())
-    if err != nil {
-        log.Error(err)
-        return
-    }
+	res, err := s.kv.Get(context.Background(), prefix, clientv3.WithPrefix())
+	if err != nil {
+		log.Error(err)
+		return
+	}
 
-    for _, kv := range res.Kvs {
-        value := string(kv.Value)
-        key := string(kv.Key)
-        s.registerKeyValue(key, value)
-    }
+	for _, kv := range res.Kvs {
+		value := string(kv.Value)
+		key := string(kv.Key)
+		s.registerKeyValue(key, value)
+	}
 
 }
 
 func (s *EtcdV3KeyValueConfigSource) sanitizeKey(path string, context string) string {
-    //key := strings.Replace(path, context+"/", "", -1)
-    key := strings.Replace(path, "/", ".", -1)
-    return key
+	//key := strings.Replace(path, context+"/", "", -1)
+	key := strings.Replace(path, "/", ".", -1)
+	return key
 }
 
 func (s *EtcdV3KeyValueConfigSource) registerKeyValue(path, value string) {
-    key := s.sanitizeKey(path, s.root)
-    s.Set(key, value)
+	key := s.sanitizeKey(path, s.root)
+	s.Set(key, value)
 
 }
 
 func (s *EtcdV3KeyValueConfigSource) Name() string {
-    return s.name
+	return s.name
 }

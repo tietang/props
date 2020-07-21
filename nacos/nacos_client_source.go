@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 	log "github.com/sirupsen/logrus"
-	"github.com/tietang/props/ini"
-	"github.com/tietang/props/kvs"
-	"github.com/tietang/props/yam"
+	"github.com/tietang/props/v3/ini"
+	"github.com/tietang/props/v3/kvs"
+	"github.com/tietang/props/v3/yam"
 	"strings"
 )
 

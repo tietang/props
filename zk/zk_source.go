@@ -3,9 +3,9 @@ package zk
 import (
 	"github.com/prometheus/common/log"
 	"github.com/samuel/go-zookeeper/zk"
-	"github.com/tietang/props/ini"
-	"github.com/tietang/props/kvs"
-	"github.com/tietang/props/yam"
+	"github.com/tietang/props/v3/ini"
+	"github.com/tietang/props/v3/kvs"
+	"github.com/tietang/props/v3/yam"
 	"path"
 	"strings"
 )

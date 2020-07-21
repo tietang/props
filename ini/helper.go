@@ -2,7 +2,7 @@ package ini
 
 import (
 	"github.com/sirupsen/logrus"
-	"github.com/tietang/props/kvs"
+	"github.com/tietang/props/v3/kvs"
 	"io/ioutil"
 	"strings"
 )

@@ -59,7 +59,6 @@ require (
 	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a
 	github.com/soheilhy/cmux v0.1.4 // indirect
 	github.com/tietang/go-utils v0.1.3
-	github.com/tietang/props v2.2.0+incompatible
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5 // indirect
 	github.com/valyala/fasttemplate v1.1.0
 	github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2 // indirect

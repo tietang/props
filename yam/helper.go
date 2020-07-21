@@ -2,7 +2,7 @@ package yam
 
 import (
 	"github.com/prometheus/common/log"
-	"github.com/tietang/props/kvs"
+	"github.com/tietang/props/v3/kvs"
 	"strings"
 )
 
