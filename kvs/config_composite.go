@@ -11,10 +11,6 @@ import (
 	"time"
 )
 
-const (
-	BackupFile = ".conf/all.properties"
-)
-
 //
 type CompositeConfigSource struct {
 	ConfName      string
@@ -59,11 +55,12 @@ func NewCompositeConfigSource(name string, isAppendSystemEnv bool, configSources
 	}
 	return s
 }
-func (ccs *CompositeConfigSource) FallbackFromDisk() {
+
+func (ccs *CompositeConfigSource) Restore() {
 	props := NewPropertiesConfigSource(ccs.backFileName)
 	ccs.Add(props)
 }
-func (ccs *CompositeConfigSource) SaveToDisk() {
+func (ccs *CompositeConfigSource) Backup() {
 
 	dir, _ := os.Getwd()
 	now := time.Now()
@@ -98,18 +95,6 @@ func (ccs *CompositeConfigSource) SaveToDisk() {
 		}
 	}
 
-}
-
-func PathExists(path string) bool {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true
-	}
-	if os.IsNotExist(err) {
-		log.Warn(err)
-		return false
-	}
-	return false
 }
 
 func (ccs *CompositeConfigSource) Name() string {
@@ -151,19 +136,24 @@ func (ccs *CompositeConfigSource) KeyValue(key string) *KeyValue {
 			break
 		}
 	}
-
+	var kv *KeyValue
+	defer func() {
+		if kv != nil && kv.err != nil {
+			log.Warnf("for `%s` err: %s ", key, kv.err.Error())
+		}
+	}()
 	if __reg.MatchString(val) {
-		v, err := ccs.evalValue(val)
-		kv := NewKeyValue(key, v)
+		v, err := ccs.EvalValue(val)
+		kv = NewKeyValue(key, v)
 		kv.err = err
 		return kv
 	}
 	if hasExists {
-		kv := NewKeyValue(key, val)
+		kv = NewKeyValue(key, val)
 		kv.err = nil
 		return kv
 	} else {
-		kv := NewKeyValue(key, val)
+		kv = NewKeyValue(key, val)
 		kv.err = errors.New("not exists for key: " + key)
 		return kv
 	}
@@ -336,7 +326,7 @@ func (ccs *CompositeConfigSource) GetValue(key string) (string, error) {
 	//}
 	//
 	//if __reg.MatchString(val) {
-	//    return ccs.evalValue(val)
+	//    return ccs.EvalValue(val)
 	//}
 	//if hasExists {
 	//    return val, nil
@@ -349,7 +339,7 @@ func (ccs *CompositeConfigSource) GetValue(key string) (string, error) {
 	return kv.value, kv.err
 }
 
-func (ccs *CompositeConfigSource) evalValue(value string) (string, error) {
+func (ccs *CompositeConfigSource) EvalValue(value string) (string, error) {
 	if strings.Contains(value, ccs.StartTag) {
 		eval := fasttemplate.New(value, ccs.StartTag, ccs.EndTag)
 		str := eval.ExecuteFuncString(func(w io.Writer, tag string) (int, error) {
@@ -360,7 +350,11 @@ func (ccs *CompositeConfigSource) evalValue(value string) (string, error) {
 				return w.Write([]byte(""))
 			}
 		})
-		return str, nil
+		var err error
+		if str != value {
+			str, err = ccs.EvalValue(str)
+		}
+		return str, err
 	}
 	return value, nil
 }

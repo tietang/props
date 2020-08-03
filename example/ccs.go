@@ -31,7 +31,7 @@ func main_css() {
 	//zccs := zk.NewZookeeperCompositeConfigSource(contexts, urls, time.Second*3)
 	configSources := []kvs.ConfigSource{pcs1, pcs2}
 	ccs := kvs.NewDefaultCompositeConfigSource(configSources...)
-	ccs.SaveToDisk()
+	ccs.Backup()
 
 	//
 

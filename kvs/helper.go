@@ -68,12 +68,41 @@ func ExecCommand(commandName string, params ...string) bool {
 }
 
 func GetCurrentFilePath(fileName string, skip int) string {
+	dir1, _ := os.Getwd()
+	dir2 := func() string {
+		abs, err := filepath.Abs(os.Args[0])
+		if err != nil {
+			log.Fatal(err)
+		}
+		dir := filepath.Dir(abs)
+		return dir
+	}()
+
+	dir3 := func() string {
+		//获取当前函数Caller reports，取得当前调用对应的文件
+		_, f, _, _ := runtime.Caller(skip)
+		//解析出所在目录
+		return filepath.Dir(f)
+	}()
+
+	//默认当前文件夹，如果运行时的二进制和当前工作文件夹一样，说明是通过二进制运行的，返回二进制当前目录
+	dir := dir1
+	//如果运行时的二进制和当前工作文件夹不一样，说明是通过go run运行的，使用runtime.Caller 路径
+	if dir1 != dir2 {
+		dir = dir3
+	}
+	//组装配置文件路径
+	file := filepath.Join(dir, fileName)
+	return file
+}
+
+func CurrentFilePath(fileName string, skip int) string {
 	dir, _ := os.Getwd()
 	file := filepath.Join(dir, fileName)
 	return file
 }
 
-func GetCurrentFilePath2(fileName string, skip int) string {
+func CurrentFilePathRuntime(fileName string, skip int) string {
 	//获取当前函数Caller reports，取得当前调用对应的文件
 	_, f, _, _ := runtime.Caller(skip)
 	//解析出所在目录
@@ -82,7 +111,6 @@ func GetCurrentFilePath2(fileName string, skip int) string {
 	file := filepath.Join(dir, fileName)
 	return file
 }
-
 func ReadFile(filename string) ([]byte, error) {
 	f, err := os.Open(filename)
 	if err != nil {
@@ -127,7 +155,6 @@ func Join(elem ...string) string {
 		} else {
 			buf.WriteString(e)
 		}
-
 	}
 	return ""
 }

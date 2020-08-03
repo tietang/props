@@ -2,7 +2,6 @@ package kvs
 
 import (
 	"bufio"
-	"regexp"
 	"strings"
 	"time"
 )
@@ -64,14 +63,6 @@ func ReadContentType(content string) ContentType {
 	}
 	return TextContentType
 }
-
-const (
-	__START_TAG   = "${"
-	__END_TAG     = "}"
-	DEFAULT_VALUE = ""
-)
-
-var __reg = regexp.MustCompile("\\$\\{(.*)}")
 
 type ConfigSource interface {
 	Name() string
