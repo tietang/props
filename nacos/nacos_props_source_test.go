@@ -2,6 +2,7 @@ package nacos
 
 import (
 	"fmt"
+	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 	"time"
@@ -28,7 +29,7 @@ func TestNacosIniConfigSource(t *testing.T) {
 	size := 10
 	inilen := 3
 	dataId := "test.id"
-	tenant := "tt"
+	tenant := constant.DEFAULT_NAMESPACE_ID
 	group := "testGroup"
 	m := initIniNacosData(address, group, dataId, tenant, size, inilen)
 	c := NewNacosPropsConfigSource(address, group, dataId, tenant)
@@ -46,7 +47,7 @@ func TestNacosIniConfigSource(t *testing.T) {
 			So(err, ShouldBeNil)
 			So(v, ShouldEqual, v1)
 		}
-		m = update(group, dataId, tenant, size, inilen)
+		m = update(address, group, dataId, tenant, size, inilen)
 		time.Sleep(time.Second * 5)
 		keys = c.Keys()
 		So(len(keys), ShouldEqual, size*inilen)

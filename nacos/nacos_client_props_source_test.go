@@ -2,11 +2,13 @@ package nacos
 
 import (
 	"fmt"
+	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 	"time"
 )
 
+//http://console.nacos.io/nacos/v1/cs/configs
 //var address = "console.nacos.io"
 var address = "172.16.1.248:8848"
 
@@ -15,25 +17,23 @@ func TestNacosClientIniConfigSource2(t *testing.T) {
 	//http://console.nacos.io/nacos/v1/cs/configs?
 	// show=all&dataId=xxx123&group=DEFAULT_GROUP&tenant=&namespaceId=
 	dataId := "xxx123"
-	tenant := ""
-	group := "DEFAULT_GROUP"
-	c := NewNacosClientPropsConfigSource(address, group, dataId, tenant)
+	namespaceId := constant.DEFAULT_NAMESPACE_ID
+	group := constant.DEFAULT_GROUP
+	c := NewNacosClientPropsConfigSource(address, group, dataId, namespaceId)
 	fmt.Println(c.Keys())
 }
 
 func TestNacosClientIniConfigSource(t *testing.T) {
-	//address := "172.16.1.248:8848"
 	//http://console.nacos.io/nacos/v1/cs/configs?show=all&dataId=q123&group=DEFAULT_GROUP&tenant=&namespaceId=
-	//http://console.nacos.io/nacos/v1/cs/configs
-	//address := "console.nacos.io"
 
 	size := 10
 	inilen := 3
-	dataId := "test.id"
-	tenant := "tt"
+	dataId := "test1"
+	namespaceId := "" //constant.DEFAULT_NAMESPACE_ID
 	group := "testGroup"
-	m := initIniNacosData(address, group, dataId, tenant, size, inilen)
-	c := NewNacosClientPropsConfigSource(address, group, dataId, tenant)
+	//group := constant.DEFAULT_GROUP
+	m := initIniNacosData(address, group, dataId, namespaceId, size, inilen)
+	c := NewNacosClientPropsConfigSource(address, group, dataId, namespaceId)
 
 	Convey("Nacos kv", t, func() {
 		keys := c.Keys()
@@ -48,8 +48,8 @@ func TestNacosClientIniConfigSource(t *testing.T) {
 			So(err, ShouldBeNil)
 			So(v, ShouldEqual, v1)
 		}
-		m = update(group, dataId, tenant, size, inilen)
-		time.Sleep(time.Second * 5)
+		m = update(address, group, dataId, namespaceId, size, inilen)
+		time.Sleep(time.Second * 10)
 		keys = c.Keys()
 		So(len(keys), ShouldEqual, size*inilen)
 		for _, key := range keys {
@@ -58,7 +58,7 @@ func TestNacosClientIniConfigSource(t *testing.T) {
 			v1, err := c.Get(key)
 			So(ok, ShouldEqual, true)
 			So(err, ShouldBeNil)
-			So(v, ShouldEqual, v1)
+			So(v1, ShouldEqual, v)
 		}
 	})
 

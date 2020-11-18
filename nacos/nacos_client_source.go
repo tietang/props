@@ -15,16 +15,16 @@ type NacosClientConfigSource struct {
 	NacosClientPropsConfigSource
 }
 
-func NewNacosClientConfigSource(address, group, dataId, tenant string) *NacosClientConfigSource {
+func NewNacosClientConfigSource(address, group, dataId, namespaceId string) *NacosClientConfigSource {
 	s := &NacosClientConfigSource{}
 
 	name := strings.Join([]string{"Nacos", address}, ":")
 	s.name = name
 	s.DataId = dataId
 	s.Group = group
-	s.Tenant = tenant
+	s.NamespaceId = namespaceId
 	s.Values = make(map[string]string)
-	s.NacosClientPropsConfigSource = *NewNacosClientPropsConfigSource(address, group, dataId, tenant)
+	s.NacosClientPropsConfigSource = *NewNacosClientPropsConfigSource(address, group, dataId, namespaceId)
 	s.init()
 
 	return s

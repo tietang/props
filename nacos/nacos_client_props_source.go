@@ -23,7 +23,7 @@ type NacosClientPropsConfigSource struct {
 	Group string
 
 	//Tenant information. It corresponds to the Namespace field in Nacos.
-	Tenant      string
+	//Tenant      string
 	NamespaceId string
 	ContentType string
 	AppName     string
@@ -38,13 +38,12 @@ type NacosClientPropsConfigSource struct {
 	Client        config_client.IConfigClient
 }
 
-func NewNacosClientPropsConfigSource(address, group, dataId, tenant string) *NacosClientPropsConfigSource {
+func NewNacosClientPropsConfigSource(address, group, dataId, namespaceId string) *NacosClientPropsConfigSource {
 	s := &NacosClientPropsConfigSource{}
 	name := strings.Join([]string{"Nacos", address}, ":")
 	s.name = name
 	s.DataId = dataId
 	s.Group = group
-	s.Tenant = tenant
 	s.ClientConfig = &constant.ClientConfig{
 		TimeoutMs:            10 * 1000,       //请求Nacos服务端的超时时间，默认是10000ms
 		BeatInterval:         5 * 1000,        //心跳间隔时间，单位毫秒（仅在ServiceClient中有效）
@@ -56,9 +55,9 @@ func NewNacosClientPropsConfigSource(address, group, dataId, tenant string) *Nac
 		RotateTime:           "1h",            // 日志轮转周期，比如：30m, 1h, 24h, 默认是24h
 		MaxAge:               3,               // 日志最大文件数，默认3
 	}
-	if len(tenant) > 0 {
-		s.ClientConfig.NamespaceId = tenant
-		s.NamespaceId = tenant
+	if len(namespaceId) > 0 {
+		s.ClientConfig.NamespaceId = namespaceId
+		s.NamespaceId = namespaceId
 	}
 	s.ServerConfigs = make([]constant.ServerConfig, 0)
 	addrs := strings.Split(address, ",")
@@ -108,14 +107,14 @@ func NewNacosClientPropsCompositeConfigSource(address, group, tenant string, dat
 }
 
 func (s *NacosClientPropsConfigSource) init() {
+	s.listenConfig()
 	s.findProperties()
-	s.watchContext()
 }
 
-func (s *NacosClientPropsConfigSource) watchContext() {
+func (s *NacosClientPropsConfigSource) listenConfig() {
 	cp := vo.ConfigParam{
-		DataId: "dataId",
-		Group:  "group",
+		DataId: s.DataId,
+		Group:  s.Group,
 	}
 	//if len(s.AppName) > 0 {
 	//	cp.AppName = s.AppName
@@ -124,7 +123,10 @@ func (s *NacosClientPropsConfigSource) watchContext() {
 		s.parseAndRegisterProps([]byte(data))
 		log.Info("changed config:", namespace, group, dataId)
 	}
-	s.Client.ListenConfig(cp)
+	err := s.Client.ListenConfig(cp)
+	if err != nil {
+		log.Error("listen config： ", err)
+	}
 
 }
 
@@ -177,15 +179,12 @@ func (s *NacosClientPropsConfigSource) Name() string {
 
 func (h *NacosClientPropsConfigSource) get() (body []byte, err error) {
 	cp := vo.ConfigParam{
-		DataId: "dataId",
-		Group:  "group",
+		DataId: h.DataId,
+		Group:  h.Group,
 	}
-	//if len(h.AppName) > 0 {
-	//	cp.AppName = h.AppName
-	//}
 	content, err := h.Client.GetConfig(cp)
 	if err != nil {
-		log.Error(err)
+		log.Error("get config: ", err)
 		return nil, err
 	}
 	return []byte(content), err
