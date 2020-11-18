@@ -33,7 +33,7 @@ type NacosClientPropsConfigSource struct {
 	//
 	name          string
 	lastCt        uint32
-	ClientConfig  constant.ClientConfig
+	ClientConfig  *constant.ClientConfig
 	ServerConfigs []constant.ServerConfig
 	Client        config_client.IConfigClient
 }
@@ -45,15 +45,16 @@ func NewNacosClientPropsConfigSource(address, group, dataId, tenant string) *Nac
 	s.DataId = dataId
 	s.Group = group
 	s.Tenant = tenant
-	s.ClientConfig = constant.ClientConfig{
-		TimeoutMs:            10 * 1000,            //http请求超时时间，单位毫秒
-		ListenInterval:       30 * 1000,            //监听间隔时间，单位毫秒（仅在ConfigClient中有效）
-		BeatInterval:         5 * 1000,             //心跳间隔时间，单位毫秒（仅在ServiceClient中有效）
-		CacheDir:             "./data/nacos/cache", //缓存目录
-		LogDir:               "./data/nacos/log",   //日志目录
-		UpdateThreadNum:      20,                   //更新服务的线程数
-		NotLoadCacheAtStart:  true,                 //在启动时不读取本地缓存数据，true--不读取，false--读取
-		UpdateCacheWhenEmpty: true,                 //当服务列表为空时是否更新本地缓存，true--更新,false--不更新
+	s.ClientConfig = &constant.ClientConfig{
+		TimeoutMs:            10 * 1000,       //请求Nacos服务端的超时时间，默认是10000ms
+		BeatInterval:         5 * 1000,        //心跳间隔时间，单位毫秒（仅在ServiceClient中有效）
+		CacheDir:             "./nacos/cache", //缓存目录
+		LogDir:               "./nacos/log",   //日志目录
+		UpdateThreadNum:      20,              //更新服务的线程数
+		NotLoadCacheAtStart:  true,            //在启动时不读取本地缓存数据，true--不读取，false--读取
+		UpdateCacheWhenEmpty: false,           //当服务列表为空时是否更新本地缓存，true--更新,false--不更新,当service返回的实例列表为空时，不更新缓存，用于推空保护
+		RotateTime:           "1h",            // 日志轮转周期，比如：30m, 1h, 24h, 默认是24h
+		MaxAge:               3,               // 日志最大文件数，默认3
 	}
 	if len(tenant) > 0 {
 		s.ClientConfig.NamespaceId = tenant
@@ -85,7 +86,7 @@ func NewNacosClientPropsConfigSource(address, group, dataId, tenant string) *Nac
 	var err error
 	s.Client, err = clients.CreateConfigClient(map[string]interface{}{
 		constant.KEY_SERVER_CONFIGS: s.ServerConfigs,
-		constant.KEY_CLIENT_CONFIG:  s.ClientConfig,
+		constant.KEY_CLIENT_CONFIG:  *s.ClientConfig,
 	})
 	if err != nil {
 		log.Panic("error create ConfigClient: ", err)
@@ -116,11 +117,11 @@ func (s *NacosClientPropsConfigSource) watchContext() {
 		DataId: "dataId",
 		Group:  "group",
 	}
-	if len(s.AppName) > 0 {
-		cp.AppName = s.AppName
-	}
+	//if len(s.AppName) > 0 {
+	//	cp.AppName = s.AppName
+	//}
 	cp.OnChange = func(namespace, group, dataId, data string) {
-		s.parseAndregisterProps([]byte(data))
+		s.parseAndRegisterProps([]byte(data))
 		log.Info("changed config:", namespace, group, dataId)
 	}
 	s.Client.ListenConfig(cp)
@@ -137,11 +138,11 @@ func (s *NacosClientPropsConfigSource) findProperties() {
 		log.Error(err)
 		return
 	}
-	s.parseAndregisterProps(data)
+	s.parseAndRegisterProps(data)
 
 }
 
-func (s *NacosClientPropsConfigSource) parseAndregisterProps(data []byte) {
+func (s *NacosClientPropsConfigSource) parseAndRegisterProps(data []byte) {
 	sep := s.LineSeparator
 	if sep == "" {
 		sep = NACOS_LINE_SEPARATOR
@@ -179,9 +180,9 @@ func (h *NacosClientPropsConfigSource) get() (body []byte, err error) {
 		DataId: "dataId",
 		Group:  "group",
 	}
-	if len(h.AppName) > 0 {
-		cp.AppName = h.AppName
-	}
+	//if len(h.AppName) > 0 {
+	//	cp.AppName = h.AppName
+	//}
 	content, err := h.Client.GetConfig(cp)
 	if err != nil {
 		log.Error(err)

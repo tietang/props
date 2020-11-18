@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/common/nacos_error"
-	"github.com/nacos-group/nacos-sdk-go/common/util"
+	"github.com/nacos-group/nacos-sdk-go/util"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/kvs"

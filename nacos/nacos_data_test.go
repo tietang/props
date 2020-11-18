@@ -36,7 +36,6 @@ func update(group, dataId, tenant string, size, len int) map[string]string {
 		DataId:  dataId,
 		Group:   group,
 		Content: "",
-		Tag:     "",
 	}
 	b, e := c.PublishConfig(vo)
 	fmt.Println(b, e)

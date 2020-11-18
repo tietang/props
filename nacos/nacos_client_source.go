@@ -101,9 +101,9 @@ func (h *NacosClientConfigSource) get() (cr *ConfigRes, err error) {
 		DataId: "dataId",
 		Group:  "group",
 	}
-	if len(h.AppName) > 0 {
-		cp.AppName = h.AppName
-	}
+	//if len(h.AppName) > 0 {
+	//	cp.AppName = h.AppName
+	//}
 	content, err := h.Client.GetConfig(cp)
 	if err != nil {
 		log.Error(err)

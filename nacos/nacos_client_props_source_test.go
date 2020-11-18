@@ -7,8 +7,11 @@ import (
 	"time"
 )
 
+//var address = "console.nacos.io"
+var address = "172.16.1.248:8848"
+
 func TestNacosClientIniConfigSource2(t *testing.T) {
-	address := "console.nacos.io"
+
 	//http://console.nacos.io/nacos/v1/cs/configs?
 	// show=all&dataId=xxx123&group=DEFAULT_GROUP&tenant=&namespaceId=
 	dataId := "xxx123"
@@ -22,7 +25,7 @@ func TestNacosClientIniConfigSource(t *testing.T) {
 	//address := "172.16.1.248:8848"
 	//http://console.nacos.io/nacos/v1/cs/configs?show=all&dataId=q123&group=DEFAULT_GROUP&tenant=&namespaceId=
 	//http://console.nacos.io/nacos/v1/cs/configs
-	address := "console.nacos.io"
+	//address := "console.nacos.io"
 
 	size := 10
 	inilen := 3
