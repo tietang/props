@@ -309,11 +309,16 @@ p := consul.NewConsulIniConfigSourceByName("consul-props", address, root)
 - float32,float64
 - map
 - time.Duration
-- 嵌套struct
-- map：key只支持string，value支持以上除struct的基本类型
+- struct: 包括嵌套、内嵌、匿名、组合、嵌套/内嵌+匿名
+- map：key只支持string，value支持struct
 
+
+
+##### Unmarshal struct
 
 在struct中规定命名为`_prefix `、类型为`string `、并且指定了`prefix`tag, 使用feild `_prefix `的`prefix`tag作为前缀，将struct feild名称转换后组合成完整的key，并从ConfigSource中获取数据并注入struct实例，feild类型只支持ConfigSource所支持的数据类型（string、int、float、bool、time.Duration）。
+
+##### Unmarshal flat struct
 
 ```golang
 
@@ -361,6 +366,88 @@ func main() {
 
 ```
 
+Unmarshal flat struct
+
+根据前缀和key，以struct结构层级进行反序列化，key的层级和结构体一一对应，每一层级的key和结构体field名称一致，切第一个字母位小写或者全部小写并用-分割的风格。
+
+### Unmarshal 内嵌 struct
+
+内嵌结构体会**忽略**内嵌结构体名称作为key。比如如下结构体：
+
+```golang
+type PlatStruct struct {
+   StrVal      string
+   IntVal      int
+   DurationVal time.Duration
+   BoolVal     bool
+}
+type OuterStruct struct {
+   PlatStruct
+}
+```
+
+前缀未：ums
+
+那么这个结构体对应的key/value应该是：
+
+```
+ums.strVal=str
+ums.intVal=123
+ums.durationVal=1s
+ums.boolVal=true
+```
+
+##### Unmarshal 嵌套 struct
+
+嵌套结构体会将嵌套的结构体名称作为key。比如如下结构体：
+
+```golang
+type OuterStruct struct {
+   Inner struct {
+      StrVal      string
+      IntVal      int
+      DurationVal time.Duration
+      BoolVal     bool
+   }
+}
+```
+
+那么这个结构体对应的key/value应该是：
+
+```
+ums.inner.strVal=str
+ums.inner.intVal=123
+ums.inner.durationVal=1s
+ums.inner.boolVal=true
+```
+
+
+##### Unmarshal Map
+
+```golang
+
+ type PlatStruct struct {
+		StrVal      string
+		IntVal      int
+		DurationVal time.Duration
+		BoolVal     bool
+	}
+	ps := NewMapProperties()
+	ps.Set("ums.test1.strVal", STR_VAL)
+	ps.Set("ums.test1.intVal", INT_VAL_STR)
+	ps.Set("ums.test1.durationVal", DURATION_VAL_STR)
+	ps.Set("ums.test1.boolVal", BOOL_VAL_STR)
+
+	ps.Set("ums.test2.strVal", STR_VAL)
+	ps.Set("ums.test2.intVal", INT_VAL_STR)
+	ps.Set("ums.test2.durationVal", DURATION_VAL_STR)
+	ps.Set("ums.test2.boolVal", BOOL_VAL_STR)
+
+  m := make(map[string]*PlatStruct, 0)
+	err := Unmarshal(ps, m, "ums")
+    
+```
+如上代码，以ums作为前缀，test1和test2作为map key，ums.test1和ums.test2后面的key将根据struct进行反序列化，key的层级和结构体一一对应。
 
 ### 上下文变量表达式（或者占位符）的支持
 
