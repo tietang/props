@@ -23,6 +23,7 @@ type NacosConfigSource struct {
 	NacosPropsConfigSource
 }
 
+// Deprecated: 使用NewNacosClientConfigSource()
 func NewNacosConfigSource(address, group, dataId, tenant string) *NacosConfigSource {
 	s := &NacosConfigSource{}
 	s.servers = strings.Split(address, ",")
@@ -37,6 +38,7 @@ func NewNacosConfigSource(address, group, dataId, tenant string) *NacosConfigSou
 	return s
 }
 
+// Deprecated: NewNacosClientCompositeConfigSource()
 func NewNacosCompositeConfigSource(address, group, tenant string, dataIds []string) *kvs.CompositeConfigSource {
 	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
 	s.ConfName = "NacosKevValue"

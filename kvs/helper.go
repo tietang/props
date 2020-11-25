@@ -3,6 +3,7 @@ package kvs
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/prometheus/common/log"
 	"io"
@@ -17,7 +18,9 @@ import (
 )
 
 func ToDuration(v string) (time.Duration, error) {
-
+	if v == "" {
+		return 0, errors.New("time: 字符串不能为空 ")
+	}
 	v = strings.ToLower(v)
 	i, err := strconv.ParseInt(v, 10, 64)
 	if err == nil {

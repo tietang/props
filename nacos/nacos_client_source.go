@@ -30,11 +30,11 @@ func NewNacosClientConfigSource(address, group, dataId, namespaceId string) *Nac
 	return s
 }
 
-func NewNacosClientCompositeConfigSource(address, group, tenant string, dataIds []string) *kvs.CompositeConfigSource {
+func NewNacosClientCompositeConfigSource(address, group, namespaceId string, dataIds []string) *kvs.CompositeConfigSource {
 	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
 	s.ConfName = "NacosKevValue"
 	for _, dataId := range dataIds {
-		c := NewNacosPropsConfigSource(address, group, dataId, tenant)
+		c := NewNacosClientConfigSource(address, group, dataId, namespaceId)
 		s.Add(c)
 	}
 
@@ -61,10 +61,6 @@ func (s *NacosClientConfigSource) init() {
 	} else {
 		log.Warn("Unsupported format：", s.ContentType)
 	}
-
-}
-
-func (s *NacosClientConfigSource) watchContext() {
 
 }
 
