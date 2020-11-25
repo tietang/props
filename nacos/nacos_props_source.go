@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/common/nacos_error"
-	"github.com/nacos-group/nacos-sdk-go/common/util"
+	"github.com/nacos-group/nacos-sdk-go/util"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/kvs"
@@ -41,6 +41,7 @@ const (
 var _ kvs.ConfigSource = new(NacosPropsConfigSource)
 
 //通过key/value来组织，过滤root prefix后，替换/为.作为properties key
+// Deprecated: 使用NacosClientPropsConfigSource NewNacosClientPropsConfigSource()
 type NacosPropsConfigSource struct {
 	kvs.MapProperties
 	// Required Configuration ID. Use a naming rule similar to package.class (for example, com.taobao.tc.refund.log.level) to ensure global uniqueness. It is recommended to indicate business meaning of the configuration in the "class" section. Use lower case for all characters. Use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 256 characters are allowed.
@@ -68,6 +69,7 @@ type NacosPropsConfigSource struct {
 	lastMD5  string
 }
 
+// Deprecated: 使用NacosClientPropsConfigSource NewNacosClientPropsConfigSource()
 func NewNacosPropsConfigSource(address, group, dataId, tenant string) *NacosPropsConfigSource {
 	s := &NacosPropsConfigSource{}
 	s.servers = strings.Split(address, ",")
@@ -82,6 +84,7 @@ func NewNacosPropsConfigSource(address, group, dataId, tenant string) *NacosProp
 	return s
 }
 
+// Deprecated: 使用NacosClientPropsConfigSource NewNacosClientPropsCompositeConfigSource()
 func NewNacosPropsCompositeConfigSource(address, group, tenant string, dataIds []string) *kvs.CompositeConfigSource {
 	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
 	s.ConfName = "NacosKevValue"

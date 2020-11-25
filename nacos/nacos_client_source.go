@@ -15,26 +15,26 @@ type NacosClientConfigSource struct {
 	NacosClientPropsConfigSource
 }
 
-func NewNacosClientConfigSource(address, group, dataId, tenant string) *NacosClientConfigSource {
+func NewNacosClientConfigSource(address, group, dataId, namespaceId string) *NacosClientConfigSource {
 	s := &NacosClientConfigSource{}
 
 	name := strings.Join([]string{"Nacos", address}, ":")
 	s.name = name
 	s.DataId = dataId
 	s.Group = group
-	s.Tenant = tenant
+	s.NamespaceId = namespaceId
 	s.Values = make(map[string]string)
-	s.NacosClientPropsConfigSource = *NewNacosClientPropsConfigSource(address, group, dataId, tenant)
+	s.NacosClientPropsConfigSource = *NewNacosClientPropsConfigSource(address, group, dataId, namespaceId)
 	s.init()
 
 	return s
 }
 
-func NewNacosClientCompositeConfigSource(address, group, tenant string, dataIds []string) *kvs.CompositeConfigSource {
+func NewNacosClientCompositeConfigSource(address, group, namespaceId string, dataIds []string) *kvs.CompositeConfigSource {
 	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
 	s.ConfName = "NacosKevValue"
 	for _, dataId := range dataIds {
-		c := NewNacosPropsConfigSource(address, group, dataId, tenant)
+		c := NewNacosClientConfigSource(address, group, dataId, namespaceId)
 		s.Add(c)
 	}
 
@@ -61,10 +61,6 @@ func (s *NacosClientConfigSource) init() {
 	} else {
 		log.Warn("Unsupported format：", s.ContentType)
 	}
-
-}
-
-func (s *NacosClientConfigSource) watchContext() {
 
 }
 
@@ -101,9 +97,9 @@ func (h *NacosClientConfigSource) get() (cr *ConfigRes, err error) {
 		DataId: "dataId",
 		Group:  "group",
 	}
-	if len(h.AppName) > 0 {
-		cp.AppName = h.AppName
-	}
+	//if len(h.AppName) > 0 {
+	//	cp.AppName = h.AppName
+	//}
 	content, err := h.Client.GetConfig(cp)
 	if err != nil {
 		log.Error(err)

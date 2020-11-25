@@ -177,11 +177,57 @@ func (p *MapProperties) Unmarshal(obj interface{}, prefixes ...string) error {
 }
 
 func Unmarshal(p ConfigSource, obj interface{}, parentKeys ...string) error {
-	v := reflect.ValueOf(obj).Elem()
+
+	v := reflect.ValueOf(obj)
+	if v.Kind() == reflect.Struct {
+		v = v.Elem()
+	}
+	if v.Kind() == reflect.Map {
+		return unmarshalInnerMap(p, v, parentKeys...)
+	}
 	return unmarshalInner(p, v, parentKeys...)
 }
+func unmarshalInnerMap(p ConfigSource, v reflect.Value, parentKeys ...string) (err error) {
+	keys := p.Keys()
+	t := v.Type()
+	typ := t.Elem()
+	//fmt.Println(typ, typ.Kind())
 
-func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) error {
+	for _, key := range keys {
+		for _, pkey := range parentKeys {
+			if strings.HasPrefix(key, pkey) {
+				k := key[len(pkey)+1:]
+				idx := strings.Index(k, ".")
+				k = k[:idx]
+				pk := pkey + "." + k
+				var mvalue reflect.Value
+
+				if typ.Kind() == reflect.Ptr {
+					mvalue = reflect.New(typ.Elem())
+				}
+				if typ.Kind() == reflect.Struct {
+					mvalue = reflect.New(typ)
+				}
+				err := unmarshalInner(p, mvalue.Elem(), pk)
+				if err != nil {
+					log.Error(err)
+				}
+				//fmt.Println(mvalue.Elem())
+				if typ.Kind() == reflect.Ptr {
+					v.SetMapIndex(reflect.ValueOf(k), mvalue)
+				}
+				if typ.Kind() == reflect.Struct {
+					v.SetMapIndex(reflect.ValueOf(k), mvalue.Elem())
+				}
+
+			}
+		}
+	}
+
+	return nil
+}
+
+func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) (err error) {
 
 	//t := reflect.TypeOf(obj)
 	//num := t.NumField()
@@ -191,6 +237,10 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) error
 	//}
 
 	t := v.Type()
+	if t.Kind() == reflect.Ptr {
+		v = v.Elem()
+		t = v.Type()
+	}
 	num := v.NumField()
 	sf, ok := t.FieldByName(PREFIX_FIELD)
 	prefix := ""
@@ -210,22 +260,26 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) error
 		ks := toKeys(sf.Name)
 		//fmt.Println(ks)
 		keys := make([]string, 0)
-		for _, k := range ks {
-			if k == "" {
-				continue
-			}
-			if parentKeys != nil && len(parentKeys) > 0 {
-				for _, pk := range parentKeys {
-					keys = append(keys, strings.Join([]string{pk, k}, "."))
+		if sf.Anonymous {
+			keys = parentKeys
+		} else {
+			for _, k := range ks {
+				if k == "" {
+					continue
 				}
-			} else {
-				if prefix != "" {
-					keys = append(keys, strings.Join([]string{prefix, k}, "."))
+				if parentKeys != nil && len(parentKeys) > 0 {
+					for _, pk := range parentKeys {
+						keys = append(keys, strings.Join([]string{pk, k}, "."))
+					}
 				} else {
-					keys = append(keys, k)
-				}
-				//fmt.Println(keys)
+					if prefix != "" {
+						keys = append(keys, strings.Join([]string{prefix, k}, "."))
+					} else {
+						keys = append(keys, k)
+					}
+					//fmt.Println(keys)
 
+				}
 			}
 		}
 
@@ -260,10 +314,16 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) error
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 
 			if value.Type().Name() == "Duration" {
-				defaultValue, err := ToDuration(defVal)
-				if err != nil {
-					log.Warn(err)
+				var defaultValue time.Duration
+				if defVal == "" {
+					defaultValue = time.Duration(0)
+				} else {
+					defaultValue, err = ToDuration(defVal)
+					if err != nil {
+						log.Warn(err)
+					}
 				}
+
 				if value.Int() != 0 {
 					defaultValue = time.Nanosecond * time.Duration(value.Int())
 				}
@@ -353,13 +413,13 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) error
 			break
 		case reflect.Struct:
 			//fmt.Println("---")
-			unmarshalInner(p, value, keys...)
+			err = unmarshalInner(p, value, keys...)
 			break
 		default:
 
 		}
 	}
-	return nil
+	return err
 }
 
 func marshalSimple(kv *KeyValue, typ reflect.Type) (interface{}, error) {
