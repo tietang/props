@@ -192,7 +192,7 @@ func unmarshalInnerMap(p ConfigSource, v reflect.Value, parentKeys ...string) (e
 	t := v.Type()
 	typ := t.Elem()
 	//fmt.Println(typ, typ.Kind())
-
+	pkeys := make([]*KeyValue, 0)
 	for _, key := range keys {
 		for _, pkey := range parentKeys {
 			if strings.HasPrefix(key, pkey) {
@@ -200,27 +200,30 @@ func unmarshalInnerMap(p ConfigSource, v reflect.Value, parentKeys ...string) (e
 				idx := strings.Index(k, ".")
 				k = k[:idx]
 				pk := pkey + "." + k
-				var mvalue reflect.Value
-
-				if typ.Kind() == reflect.Ptr {
-					mvalue = reflect.New(typ.Elem())
-				}
-				if typ.Kind() == reflect.Struct {
-					mvalue = reflect.New(typ)
-				}
-				err := unmarshalInner(p, mvalue.Elem(), pk)
-				if err != nil {
-					log.Error(err)
-				}
-				//fmt.Println(mvalue.Elem())
-				if typ.Kind() == reflect.Ptr {
-					v.SetMapIndex(reflect.ValueOf(k), mvalue)
-				}
-				if typ.Kind() == reflect.Struct {
-					v.SetMapIndex(reflect.ValueOf(k), mvalue.Elem())
-				}
-
+				kv := NewKeyValue(pk, k)
+				pkeys = append(pkeys, kv)
 			}
+		}
+	}
+	for _, kv := range pkeys {
+		var mvalue reflect.Value
+
+		if typ.Kind() == reflect.Ptr {
+			mvalue = reflect.New(typ.Elem())
+		}
+		if typ.Kind() == reflect.Struct {
+			mvalue = reflect.New(typ)
+		}
+		err := unmarshalInner(p, mvalue.Elem(), kv.Key())
+		if err != nil {
+			log.Error(err)
+		}
+		//fmt.Println(mvalue.Elem())
+		if typ.Kind() == reflect.Ptr {
+			v.SetMapIndex(reflect.ValueOf(kv.Value()), mvalue)
+		}
+		if typ.Kind() == reflect.Struct {
+			v.SetMapIndex(reflect.ValueOf(kv.Value()), mvalue.Elem())
 		}
 	}
 

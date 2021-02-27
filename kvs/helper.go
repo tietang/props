@@ -114,6 +114,7 @@ func CurrentFilePathRuntime(fileName string, skip int) string {
 	file := filepath.Join(dir, fileName)
 	return file
 }
+
 func ReadFile(filename string) ([]byte, error) {
 	f, err := os.Open(filename)
 	if err != nil {
