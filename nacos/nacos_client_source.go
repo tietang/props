@@ -1,8 +1,7 @@
 package nacos
 
 import (
-	"encoding/json"
-	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/ini"
 	"github.com/tietang/props/v3/kvs"
@@ -10,7 +9,10 @@ import (
 	"strings"
 )
 
-//通过key/value来组织，过滤root prefix后，替换/为.作为properties key
+// 通过key/value来组织，过滤root prefix后，替换/为.作为properties key
+//配置内容开头是否包含一下开头：#@, ;@, //@, @，并定义配置内容格式的信息，
+//比如：;@ini , #@yaml, #@yml等.
+//支持的格式有：;@ini，#@yaml, #@yml, #@yam，#@props，#@properties，
 type NacosClientConfigSource struct {
 	NacosClientPropsConfigSource
 }
@@ -24,7 +26,8 @@ func NewNacosClientConfigSource(address, group, dataId, namespaceId string) *Nac
 	s.Group = group
 	s.NamespaceId = namespaceId
 	s.Values = make(map[string]string)
-	s.NacosClientPropsConfigSource = *NewNacosClientPropsConfigSource(address, group, dataId, namespaceId)
+	s.NacosClientPropsConfigSource = *newNacosClientPropsConfigSource(address, group, dataId, namespaceId)
+	s.NacosClientPropsConfigSource.listenConfig()
 	s.init()
 
 	return s
@@ -43,23 +46,22 @@ func NewNacosClientCompositeConfigSource(address, group, namespaceId string, dat
 
 func (s *NacosClientConfigSource) init() {
 
-	cr, err := s.get()
+	content, err := s.get()
 	if err != nil {
 		log.Error(err)
 		return
 	}
-	contentType := kvs.ContentType(cr.ContentType)
-	if contentType == "text" {
-		contentType = kvs.ReadContentType(cr.Content)
-	}
+	contentType := kvs.ReadContentType(content)
+	s.ContentType = string(contentType)
 	if contentType == kvs.ContentProps || contentType == kvs.ContentProperties {
-		s.findProperties(cr.Content)
+		s.findProperties(content)
 	} else if contentType == kvs.ContentIni {
-		s.findIni(cr.Content)
+		s.findIni(content)
 	} else if contentType == kvs.ContentYaml || contentType == kvs.ContentYam || contentType == kvs.ContentYml {
-		s.findYaml(cr.Content)
+		s.findYaml(content)
 	} else {
-		log.Warn("Unsupported format：", s.ContentType)
+		log.Warn("[Nacos] Unsupported config format：", contentType,
+			" ,请检查配置内容开头是否包含一下开头：#@, ;@, //@, @，并定义配置内容格式的信息，比如：;@ini , #@yaml, #@yml等.支持的格式有：;@ini，#@yaml, #@yml, #@yam，#@props，#@properties，")
 	}
 
 }
@@ -91,26 +93,27 @@ func (s *NacosClientConfigSource) Name() string {
 	return s.name
 }
 
-func (h *NacosClientConfigSource) get() (cr *ConfigRes, err error) {
+func (h *NacosClientConfigSource) get() (cr string, err error) {
 
 	cp := vo.ConfigParam{
-		DataId: "dataId",
-		Group:  "group",
+		DataId: h.DataId,
+		Group:  h.Group,
 	}
 	//if len(h.AppName) > 0 {
 	//	cp.AppName = h.AppName
 	//}
-	content, err := h.Client.GetConfig(cp)
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
+	return h.Client.GetConfig(cp)
+	//if err != nil {
+	//	log.Error(err)
+	//	return "", err
+	//}
+	//
 
-	cr = &ConfigRes{}
-	err = json.Unmarshal([]byte(content), cr)
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-	return cr, err
+	//cr = &ConfigRes{}
+	//err = json.Unmarshal([]byte(content), cr)
+	//if err != nil {
+	//	log.Error(err)
+	//	return nil, err
+	//}
+	//return cr, err
 }

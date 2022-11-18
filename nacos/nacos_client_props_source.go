@@ -2,10 +2,10 @@ package nacos
 
 import (
 	"bytes"
-	"github.com/nacos-group/nacos-sdk-go/clients"
-	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
-	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients/config_client"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/kvs"
 	"strconv"
@@ -14,7 +14,7 @@ import (
 
 var _ kvs.ConfigSource = new(NacosClientPropsConfigSource)
 
-//通过key/value来组织，过滤root prefix后，替换/为.作为properties key
+// 通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type NacosClientPropsConfigSource struct {
 	kvs.MapProperties
 	// Required Configuration ID. Use a naming rule similar to package.class (for example, com.taobao.tc.refund.log.level) to ensure global uniqueness. It is recommended to indicate business meaning of the configuration in the "class" section. Use lower case for all characters. Use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 256 characters are allowed.
@@ -38,7 +38,7 @@ type NacosClientPropsConfigSource struct {
 	Client        config_client.IConfigClient
 }
 
-func NewNacosClientPropsConfigSource(address, group, dataId, namespaceId string) *NacosClientPropsConfigSource {
+func newNacosClientPropsConfigSource(address, group, dataId, namespaceId string) *NacosClientPropsConfigSource {
 	s := &NacosClientPropsConfigSource{}
 	name := strings.Join([]string{"Nacos", address}, ":")
 	s.name = name
@@ -52,8 +52,8 @@ func NewNacosClientPropsConfigSource(address, group, dataId, namespaceId string)
 		UpdateThreadNum:      20,              //更新服务的线程数
 		NotLoadCacheAtStart:  true,            //在启动时不读取本地缓存数据，true--不读取，false--读取
 		UpdateCacheWhenEmpty: false,           //当服务列表为空时是否更新本地缓存，true--更新,false--不更新,当service返回的实例列表为空时，不更新缓存，用于推空保护
-		RotateTime:           "1h",            // 日志轮转周期，比如：30m, 1h, 24h, 默认是24h
-		MaxAge:               3,               // 日志最大文件数，默认3
+		//RotateTime:           "1h",            // 日志轮转周期，比如：30m, 1h, 24h, 默认是24h
+		//MaxAge:               3,               // 日志最大文件数，默认3
 	}
 	if len(namespaceId) > 0 {
 		s.ClientConfig.NamespaceId = namespaceId
@@ -83,13 +83,24 @@ func NewNacosClientPropsConfigSource(address, group, dataId, namespaceId string)
 	s.Values = make(map[string]string)
 
 	var err error
-	s.Client, err = clients.CreateConfigClient(map[string]interface{}{
-		constant.KEY_SERVER_CONFIGS: s.ServerConfigs,
-		constant.KEY_CLIENT_CONFIG:  *s.ClientConfig,
-	})
+	//s.Client, err = clients.CreateConfigClient(map[string]interface{}{
+	//	constant.KEY_SERVER_CONFIGS: s.ServerConfigs,
+	//	constant.KEY_CLIENT_CONFIG:  *s.ClientConfig,
+	//})
+	s.Client, err = clients.NewConfigClient(
+		vo.NacosClientParam{
+			ClientConfig:  s.ClientConfig,
+			ServerConfigs: s.ServerConfigs,
+		},
+	)
 	if err != nil {
 		log.Panic("error create ConfigClient: ", err)
 	}
+
+	return s
+}
+func NewNacosClientPropsConfigSource(address, group, dataId, namespaceId string) *NacosClientPropsConfigSource {
+	s := newNacosClientPropsConfigSource(address, group, dataId, namespaceId)
 	s.init()
 
 	return s

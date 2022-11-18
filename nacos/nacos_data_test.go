@@ -1,10 +1,10 @@
 package nacos
 
 import (
-	"github.com/nacos-group/nacos-sdk-go/clients"
-	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
-	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients/config_client"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	log "github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
@@ -49,9 +49,9 @@ func client(address, namespaceId string) config_client.IConfigClient {
 		UpdateThreadNum:      20,              //更新服务的线程数
 		NotLoadCacheAtStart:  true,            //在启动时不读取本地缓存数据，true--不读取，false--读取
 		UpdateCacheWhenEmpty: false,           //当服务列表为空时是否更新本地缓存，true--更新,false--不更新,当service返回的实例列表为空时，不更新缓存，用于推空保护
-		RotateTime:           "1h",            // 日志轮转周期，比如：30m, 1h, 24h, 默认是24h
-		MaxAge:               3,               // 日志最大文件数，默认3
-		NamespaceId:          namespaceId,
+		//RotateTime:           "1h",            // 日志轮转周期，比如：30m, 1h, 24h, 默认是24h
+		//MaxAge:               3,               // 日志最大文件数，默认3
+		NamespaceId: namespaceId,
 	}
 	a := strings.Split(address, ":")
 	port := 80
