@@ -2,7 +2,7 @@ package kvs
 
 import (
 	"errors"
-	"github.com/prometheus/common/log"
+	log "github.com/sirupsen/logrus"
 	"github.com/valyala/fasttemplate"
 	"io"
 	"os"
@@ -11,7 +11,6 @@ import (
 	"time"
 )
 
-//
 type CompositeConfigSource struct {
 	ConfName      string
 	ConfigSources []ConfigSource //Set

@@ -1,8 +1,8 @@
 package zk
 
 import (
-	"github.com/prometheus/common/log"
 	"github.com/samuel/go-zookeeper/zk"
+	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/ini"
 	"github.com/tietang/props/v3/kvs"
 	"github.com/tietang/props/v3/yam"
@@ -30,22 +30,24 @@ context: /configs/dev/app
 如果是ContentType=ini_props，则zk nodes:
 
 /configs/dev/app
-    - /jdbc:
-       ```
-        url=tcp(127.0.0.1:3306)/Test?charset=utf8
-        username=root
-        password=root
-        timeout=6s
 
-        ```
-    - /redis:
-       ```
-        host=192.168.1.123
-        port=6379
-        database=2
-        timeout=6s
-        password=password
-        ```
+  - /jdbc:
+    ```
+    url=tcp(127.0.0.1:3306)/Test?charset=utf8
+    username=root
+    password=root
+    timeout=6s
+
+    ```
+
+  - /redis:
+    ```
+    host=192.168.1.123
+    port=6379
+    database=2
+    timeout=6s
+    password=password
+    ```
 
 如果是如下中的一个，
 ContentProperties  contentType = "properties"
@@ -55,7 +57,6 @@ ContentYam         contentType = "yam" //yaml 别名
 ContentYml         contentType = "yml" //yaml 别名
 ContentIni         contentType = "ini"
 
-
 则zk nodes,last key以对应的配置格式，就如同文件名一样，
 比如key为mysql，配置格式为yml，则在zookeeper中配置的key为mysql.yml
 那么完成的zk  path就为，/configs/dev/app/mysql.yml=`k/v...`
@@ -63,23 +64,24 @@ ContentIni         contentType = "ini"
 比如properties，或者props
 
 /configs/dev/app
-    - /jdbc.props:
-       ```
-        jdbc.url=tcp(127.0.0.1:3306)/Test?charset=utf8
-        jdbc.username=root
-        jdbc.password=root
-        jdbc.timeout=6s
 
-        ```
-    - /redis.props:
-       ```
-        redis.host=192.168.1.123
-        redis.port=6379
-        redis.database=2
-        redis.timeout=6s
-        redis.password=password
-        ```
+  - /jdbc.props:
+    ```
+    jdbc.url=tcp(127.0.0.1:3306)/Test?charset=utf8
+    jdbc.username=root
+    jdbc.password=root
+    jdbc.timeout=6s
 
+    ```
+
+  - /redis.props:
+    ```
+    redis.host=192.168.1.123
+    redis.port=6379
+    redis.database=2
+    redis.timeout=6s
+    redis.password=password
+    ```
 */
 type ZookeeperConfigSource struct {
 	ZookeeperSource

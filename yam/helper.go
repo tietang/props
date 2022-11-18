@@ -1,7 +1,7 @@
 package yam
 
 import (
-	"github.com/prometheus/common/log"
+	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/kvs"
 	"strings"
 )
