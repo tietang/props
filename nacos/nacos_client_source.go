@@ -10,9 +10,9 @@ import (
 )
 
 // 通过key/value来组织，过滤root prefix后，替换/为.作为properties key
-//配置内容开头是否包含一下开头：#@, ;@, //@, @，并定义配置内容格式的信息，
-//比如：;@ini , #@yaml, #@yml等.
-//支持的格式有：;@ini，#@yaml, #@yml, #@yam，#@props，#@properties，
+// 配置内容开头是否包含一下开头：#@, ;@, //@, @，并定义配置内容格式的信息，
+// 比如：;@ini , #@yaml, #@yml等.
+// 支持的格式有：;@ini，#@yaml, #@yml, #@yam，#@props，#@properties，
 type NacosClientConfigSource struct {
 	NacosClientPropsConfigSource
 }
