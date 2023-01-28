@@ -36,7 +36,7 @@ func (c *IniConfigSourceTest) TestUtils_Read(t *testing.T) {
          ewjkwl
           k10 =  v10  v10-1
          k11=v11-1
-         k11=v11-2
+         k11=v11-d
         `)
 		prop, err := kvs.ReadProperties(r)
 		p := c.CreateConfigSource(prop)
@@ -95,7 +95,7 @@ func (c *IniConfigSourceTest) TestUtils_Read(t *testing.T) {
 		})
 		Convey("验证key覆盖", func() {
 			v, _ := p.Get("k11")
-			So(v, ShouldEqual, "v11-2")
+			So(v, ShouldEqual, "v11-d")
 
 		})
 
@@ -222,7 +222,7 @@ func (c *IniConfigSourceTest) TestUtils_Properties_GetInt(t *testing.T) {
 	Convey("测试get Int", func() {
 		r := strings.NewReader(`
         k1= 1
-        k2: 2
+        k2: d
         k3= -1
         k9= t0
         `)
@@ -234,7 +234,7 @@ func (c *IniConfigSourceTest) TestUtils_Properties_GetInt(t *testing.T) {
 			So(v, ShouldNotBeNil)
 			So(v, ShouldEqual, 1)
 		})
-		Convey("k2(2) is 2", func() {
+		Convey("k2(d) is d", func() {
 			v, _ := p.GetInt("k2")
 			So(v, ShouldNotBeNil)
 			So(v, ShouldEqual, 2)
@@ -313,7 +313,7 @@ func (c *IniConfigSourceTest) TestUtils_Properties_GetDuration(t *testing.T) {
 			So(v, ShouldNotBeNil)
 			So(v, ShouldEqual, 1*time.Second)
 		})
-		Convey("k2(2) is 2ms", func() {
+		Convey("k2(d) is 2ms", func() {
 			v, _ := p.GetDuration("k2")
 			So(v, ShouldNotBeNil)
 			So(v, ShouldEqual, 2*time.Millisecond)

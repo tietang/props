@@ -475,8 +475,8 @@ phv3, err := conf.GetInt("ph.key3")//2
 
 ```golang
 
-kv1 := []string{"go.app.key1", "value1", "value1-2"}
-kv2 := []string{"go.app.key2", "value2", "value2-2"}
+kv1 := []string{"go.app.key1", "value1", "value1-d"}
+kv2 := []string{"go.app.key2", "value2", "value2-d"}
 
 p1 := kvs.NewEmptyMapConfigSource("map1")
 p1.Set(kv1[0], kv1[1])
@@ -487,10 +487,10 @@ p2.Set(kv2[0], kv2[2])
 conf.Add(p1)
 conf.Add(p2)
 
-//value1==value1-2
+//value1==value1-d
 value1, err := conf.Get(kv1[0])
 fmt.Println(value1)
-//value2=value2-2
+//value2=value2-d
 value2, err := conf.Get(kv2[0])
 fmt.Println(value2)
 

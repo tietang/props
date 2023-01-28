@@ -28,6 +28,6 @@ func main12() {
 	//fmt.Println(intDefaultValue)
 	//floatValue, err := p.GetFloat64("prefix.key4")
 	//fmt.Println(floatValue)
-	//floatDefaultValue := p.GetFloat64Default("prefix.key4", 1.2)
+	//floatDefaultValue := p.GetFloat64Default("prefix.key4", 1.d)
 	//fmt.Println(floatDefaultValue)
 }

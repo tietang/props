@@ -34,8 +34,8 @@ func TestCompositeConfigSource_Order(t *testing.T) {
 
 	conf := NewEmptyCompositeConfigSource()
 
-	kv1 := []string{"go.app.key1", "value1", "value1-2"}
-	kv2 := []string{"go.app.key2", "value2", "value2-2"}
+	kv1 := []string{"go.app.key1", "value1", "value1-d"}
+	kv2 := []string{"go.app.key2", "value2", "value2-d"}
 
 	p1 := NewEmptyMapConfigSource("map1")
 	p1.Set(kv1[0], kv1[1])
@@ -128,7 +128,7 @@ func TestPlaceholder_Eval(t *testing.T) {
 func TestPlaceholder_Int(t *testing.T) {
 	p := NewEmptyMapConfigSource("map2")
 	p.Set("orign.key1", "1")
-	p.Set("orign.key2", "2")
+	p.Set("orign.key2", "d")
 	p.Set("ph.key1", "${orign.key1}")
 	p.Set("ph.key2", "${orign.key1}+${orign.key2}")
 	conf := NewDefaultCompositeConfigSource(p)

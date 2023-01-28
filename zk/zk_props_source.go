@@ -4,7 +4,6 @@ import (
 	"github.com/samuel/go-zookeeper/zk"
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/kvs"
-	"path"
 	"strings"
 )
 
@@ -27,7 +26,7 @@ zk nodes:
        ```
         host=192.168.1.123
         port=6379
-        database=2
+        database=d
         timeout=6s
         password=password
         ```
@@ -62,7 +61,7 @@ func (s *ZookeeperPropsConfigSource) findProperties(root string) {
 	}
 	for _, p := range children {
 
-		fp := path.Join(root, p)
+		fp := filepath.Join(root, p)
 		value, err := s.getPropertiesValue(fp)
 		if s.Watched && strings.HasSuffix(fp, DEFAULT_WATCH_KEY) {
 			log.Debug("WatchNodeDataChange: ", fp)
