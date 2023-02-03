@@ -12,9 +12,11 @@ const (
 	CONSUL_WAIT_TIME = time.Second * 10
 )
 
-//通过key/value来组织，过滤root prefix后，替换/为.作为properties key
-//Deprecated
-//看看ConsulConfigSource
+var _ kvs.ConfigSource = new(ConsulKeyValueConfigSource)
+
+// 通过key/value来组织，过滤root prefix后，替换/为.作为properties key
+// Deprecated
+// 看看ConsulConfigSource
 type ConsulKeyValueConfigSource struct {
 	kvs.MapProperties
 	name   string
@@ -24,12 +26,12 @@ type ConsulKeyValueConfigSource struct {
 	config *api.Config
 }
 
-//Deprecated
+// Deprecated
 func NewConsulKeyValueConfigSource(address, root string) *ConsulKeyValueConfigSource {
 	return NewConsulKeyValueConfigSourceByName("", address, root, CONSUL_WAIT_TIME)
 }
 
-//Deprecated
+// Deprecated
 func NewConsulKeyValueConfigSourceByName(name, address, root string, timeout time.Duration) *ConsulKeyValueConfigSource {
 	s := &ConsulKeyValueConfigSource{}
 	if name == "" {
@@ -53,7 +55,7 @@ func NewConsulKeyValueConfigSourceByName(name, address, root string, timeout tim
 	return s
 }
 
-//Deprecated
+// Deprecated
 func NewConsulKeyValueCompositeConfigSource(contexts []string, address string) *kvs.CompositeConfigSource {
 	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
 	s.ConfName = "ConsulKevValue"

@@ -5,6 +5,7 @@ import (
 	"github.com/coreos/etcd/client"
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"

@@ -14,7 +14,9 @@ const (
 	DEFAULT_WATCH_KEY = "__notice"
 )
 
-//通过key/value来组织，过滤root prefix后，替换/为.作为properties key
+var _ kvs.ConfigSource = new(EtcdV2ConfigSource)
+
+// 通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type EtcdV2ConfigSource struct {
 	kvs.MapProperties
 	name    string

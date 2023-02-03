@@ -3,6 +3,7 @@ package kvs
 import (
 	"errors"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"reflect"
 	"strconv"
 	"strings"
@@ -15,8 +16,16 @@ const (
 	FIELD_DEFAULT_VALUE_TAG = "val"
 )
 
+var _ ConfigSource = new(MapProperties)
+
+type UnmarshalListener struct {
+	Prefixes []string
+	Obj      any
+}
 type MapProperties struct {
-	Values map[string]string
+	Values             map[string]string
+	OnChanges          map[string][]func(k, v string)
+	unmarshalListeners []*UnmarshalListener
 }
 
 func NewMapProperties() *MapProperties {
@@ -36,8 +45,35 @@ func NewMapPropertiesByMap(kv map[string]string) *MapProperties {
 func (p *MapProperties) Name() string {
 	return "MapProperties"
 }
+func (p *MapProperties) AddChangeListener(key string, listener func(k, v string)) {
+	if p.OnChanges == nil {
+		p.OnChanges = make(map[string][]func(k string, v string))
+	}
+	listeners, found := p.OnChanges[key]
+	if !found {
+		listeners = make([]func(k, v string), 0, 8)
+	}
+	listeners = append(listeners, listener)
+	p.OnChanges[key] = listeners
+}
 
-//--get key/value
+func (p *MapProperties) addChangeUnmarshalListener(obj interface{}, prefixes ...string) {
+	l := &UnmarshalListener{
+		Prefixes: prefixes,
+		Obj:      obj,
+	}
+	p.unmarshalListeners = append(p.unmarshalListeners, l)
+}
+
+func (p *MapProperties) unmarshalAllListeners() {
+	go time.AfterFunc(3*time.Second, func() {
+		for _, listener := range p.unmarshalListeners {
+			p.Unmarshal(listener.Obj, listener.Prefixes...)
+		}
+	})
+}
+
+// --get key/value
 func (p *MapProperties) KeyValue(key string) *KeyValue {
 	v := p.GetDefault(key, "")
 	kv := NewKeyValue(key, v)
@@ -127,8 +163,8 @@ func (p *MapProperties) GetFloat64Default(key string, defVal float64) float64 {
 }
 
 // 1ms 1mS 1MS 1Ms -> 1*time.Millisecond
-//1s 1 1S -> 1*time.Second
-//无单位默认为second
+// 1s 1 1S -> 1*time.Second
+// 无单位默认为second
 func (p *MapProperties) GetDuration(key string) (time.Duration, error) {
 	v, err := p.Get(key)
 	if err != nil {
@@ -147,6 +183,27 @@ func (p *MapProperties) GetDurationDefault(key string, defaultValue time.Duratio
 	return defaultValue
 }
 
+func (p *MapProperties) GetTime(key string) (time.Time, error) {
+	v, err := p.Get(key)
+	if err != nil {
+		return cast.ToTime(0), err
+	}
+	if x, ok := IsNumInt(v); ok {
+		return cast.ToTimeE(x)
+	}
+	return cast.ToTimeE(v)
+}
+
+func (p *MapProperties) GetTimeDefault(key string, defaultValue time.Time) time.Time {
+	v, err := p.GetTime(key)
+	if err == nil {
+		return v
+	} else {
+		return defaultValue
+	}
+
+}
+
 // Names returns the keys for all Properties in the set.
 func (p *MapProperties) Keys() []string {
 	keys := make([]string, 0, len(p.Values))
@@ -158,13 +215,17 @@ func (p *MapProperties) Keys() []string {
 
 // Set adds or changes the value of a property.
 func (p *MapProperties) Set(key, val string) {
+	CheckAndPublishChange(p.Values, key, val, p.OnChanges)
 	p.Values[key] = val
+	p.unmarshalAllListeners()
 }
+
 func (p *MapProperties) SetAll(values map[string]string) {
 	for k, v := range values {
+		CheckAndPublishChange(p.Values, k, v, p.OnChanges)
 		p.Values[k] = v
 	}
-
+	p.unmarshalAllListeners()
 }
 
 // Clear removes all key-value pairs.
@@ -173,6 +234,7 @@ func (p *MapProperties) Clear() {
 }
 
 func (p *MapProperties) Unmarshal(obj interface{}, prefixes ...string) error {
+	p.addChangeUnmarshalListener(obj, prefixes...)
 	return Unmarshal(p, obj, prefixes...)
 }
 
@@ -462,7 +524,6 @@ func getInt(p ConfigSource, keys []string, originValue int64, defVal string) int
 
 }
 
-//
 func toKeys(str string) [2]string {
 	keys := [2]string{"", ""}
 	keys[1] = strings.ToLower(str[0:1]) + str[1:]

@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+var _ kvs.ConfigSource = new(EtcdV2KeyValueConfigSource)
+
 // 通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type EtcdV2KeyValueConfigSource struct {
 	EtcdV2ConfigSource

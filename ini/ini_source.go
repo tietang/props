@@ -11,6 +11,8 @@ const (
 	KEY_INI_CURRENT_DIR = "ini.current.dir"
 )
 
+var _ kvs.ConfigSource = new(IniFileConfigSource)
+
 // ini 文件支持
 type IniFileConfigSource struct {
 	kvs.MapProperties

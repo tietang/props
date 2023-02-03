@@ -4,6 +4,7 @@ import (
 	"github.com/samuel/go-zookeeper/zk"
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/kvs"
+	"path/filepath"
 	"strings"
 )
 
@@ -33,8 +34,11 @@ zk nodes:
 
 
 */
-//Deprecated
-//看看ZookeeperConfigSource
+
+var _ kvs.ConfigSource = new(ZookeeperPropsConfigSource)
+
+// Deprecated
+// 看看ZookeeperConfigSource
 type ZookeeperPropsConfigSource struct {
 	ZookeeperSource
 }

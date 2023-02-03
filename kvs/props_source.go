@@ -9,6 +9,8 @@ const (
 	KEY_PROPS_CURRENT_DIR = "current.dir"
 )
 
+var _ ConfigSource = new(PropertiesConfigSource)
+
 type PropertiesConfigSource struct {
 	MapProperties
 	name     string

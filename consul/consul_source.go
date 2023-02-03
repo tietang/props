@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+var _ kvs.ConfigSource = new(ConsulConfigSource)
+
 //通过key/ini_props, key所谓section，value为props格式内容，类似ini文件格式
 
 //配置为ContentIniProps模式

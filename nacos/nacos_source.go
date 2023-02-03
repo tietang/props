@@ -18,7 +18,9 @@ const (
 	ENDPOINT_GETALL_REQUEST = ENDPOINT_GET_REQUEST + "&show=all"
 )
 
-//通过key/value来组织，过滤root prefix后，替换/为.作为properties key
+var _ kvs.ConfigSource = new(NacosConfigSource)
+
+// 通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type NacosConfigSource struct {
 	NacosPropsConfigSource
 }

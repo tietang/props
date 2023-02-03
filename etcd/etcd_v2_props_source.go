@@ -9,7 +9,9 @@ import (
 	"time"
 )
 
-//通过key/value来组织，过滤root prefix后，替换/为.作为properties key
+var _ kvs.ConfigSource = new(EtcdV2PropsConfigSource)
+
+// 通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type EtcdV2PropsConfigSource struct {
 	kvs.MapProperties
 	name   string

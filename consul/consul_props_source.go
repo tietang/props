@@ -9,9 +9,11 @@ import (
 	"time"
 )
 
-//通过key/properties, key作为section，value为props格式内容，类似ini文件格式
-//Deprecated
-//看看ConsulConfigSource
+var _ kvs.ConfigSource = new(ConsulPropsConfigSource)
+
+// 通过key/properties, key作为section，value为props格式内容，类似ini文件格式
+// Deprecated
+// 看看ConsulConfigSource
 type ConsulPropsConfigSource struct {
 	kvs.MapProperties
 	name   string
@@ -21,12 +23,12 @@ type ConsulPropsConfigSource struct {
 	config *api.Config
 }
 
-//Deprecated
+// Deprecated
 func NewConsulPropsConfigSource(address, root string) *ConsulPropsConfigSource {
 	return NewConsulPropsConfigSourceByName("consul", address, root, CONSUL_WAIT_TIME)
 }
 
-//Deprecated
+// Deprecated
 func NewConsulPropsConfigSourceByName(name, address, root string, timeout time.Duration) *ConsulPropsConfigSource {
 	s := &ConsulPropsConfigSource{}
 	if name == "" {

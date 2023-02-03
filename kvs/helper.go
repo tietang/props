@@ -125,12 +125,19 @@ func ReadFile(filename string) ([]byte, error) {
 }
 
 func ParseBool(v string) (bool, error) {
-	if strings.ToUpper(v) == "YES" || strings.ToUpper(v) == "Y" {
+	str := strings.ToUpper(v)
+	switch str {
+	case "1", "T", "TRUE", "YES", "Y", "ON":
 		return true, nil
-	}
-	if strings.ToUpper(v) == "NO" || strings.ToUpper(v) == "N" {
+	case "0", "F", "FALSE", "NO", "N", "OFF":
 		return false, nil
 	}
+	//if strings.ToUpper(v) == "YES" || strings.ToUpper(v) == "Y" {
+	//	return true, nil
+	//}
+	//if strings.ToUpper(v) == "NO" || strings.ToUpper(v) == "N" {
+	//	return false, nil
+	//}
 	b, err := strconv.ParseBool(v)
 	return b, err
 }
@@ -160,4 +167,9 @@ func Join(elem ...string) string {
 		}
 	}
 	return ""
+}
+
+func IsNumInt(s string) (int64, bool) {
+	v, err := strconv.ParseInt(s, 10, 64)
+	return v, err == nil
 }

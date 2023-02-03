@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 )
 
+var _ kvs.ConfigSource = new(YamlConfigSource)
+
 type YamlConfigSource struct {
 	YamlProperties
 	name     string
@@ -45,7 +47,7 @@ func NewYamlConfigSourceByReader(name string, r io.Reader) *YamlConfigSource {
 	return s
 }
 
-func NewIniFileCompositeConfigSource(fileNames ...string) *kvs.CompositeConfigSource {
+func NewYamlFileCompositeConfigSource(fileNames ...string) *kvs.CompositeConfigSource {
 	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
 	s.ConfName = "yamlFiles"
 	for _, file := range fileNames {

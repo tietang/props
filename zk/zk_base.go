@@ -17,6 +17,8 @@ const (
 	KEY_NOTICE_NODE = "notice"
 )
 
+var _ kvs.ConfigSource = new(ZookeeperSource)
+
 type ZookeeperSource struct {
 	kvs.MapProperties
 	name    string

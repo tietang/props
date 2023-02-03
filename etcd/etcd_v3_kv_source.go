@@ -1,3 +1,4 @@
+//go:build go1.9
 // +build go1.9
 
 package etcd
@@ -14,10 +15,12 @@ import (
 )
 
 const (
-//ETCD_WAIT_TIME = time.Second * 10
+// ETCD_WAIT_TIME = time.Second * 10
 )
 
-//通过key/value来组织，过滤root prefix后，替换/为.作为properties key
+var _ kvs.ConfigSource = new(EtcdV3KeyValueConfigSource)
+
+// 通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type EtcdV3KeyValueConfigSource struct {
 	kvs.MapProperties
 	name    string

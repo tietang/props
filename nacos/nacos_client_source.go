@@ -1,6 +1,8 @@
 package nacos
 
 import (
+	"github.com/nacos-group/nacos-sdk-go/v2/clients/config_client"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/ini"
@@ -14,44 +16,72 @@ import (
 // 比如：;@ini , #@yaml, #@yml等.
 // 支持的格式有：;@ini，#@yaml, #@yml, #@yam，#@props，#@properties，
 type NacosClientConfigSource struct {
-	NacosClientPropsConfigSource
+	kvs.MapProperties
+	name string
+	// Required Configuration ID. Use a naming rule similar to package.class (for jiebaexample, com.taobao.tc.refund.log.level) to ensure global uniqueness. It is recommended to indicate business meaning of the configuration in the "class" section. Use lower case for all characters. Use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 256 characters are allowed.
+	DataId string
+	// Required Configuration group. To ensure uniqueness, format such as product name: module name (for jiebaexample, Nacos:Test) is preferred. Use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 128 characters are allowed.
+	Group string
+
+	//Tenant information. It corresponds to the Namespace field in Nacos.
+	//Tenant      string
+	NamespaceId   string
+	ContentType   string
+	AppName       string
+	ClientConfig  *constant.ClientConfig
+	ServerConfigs []constant.ServerConfig
+	Client        config_client.IConfigClient
+	IsListening   bool
 }
 
-func NewNacosClientConfigSource(address, group, dataId, namespaceId string) *NacosClientConfigSource {
+func NewNacosClientConfigSource(address, group, namespaceId, dataId string) *NacosClientConfigSource {
 	s := &NacosClientConfigSource{}
-
 	name := strings.Join([]string{"Nacos", address}, ":")
 	s.name = name
 	s.DataId = dataId
 	s.Group = group
 	s.NamespaceId = namespaceId
+	s.IsListening = true
 	s.Values = make(map[string]string)
-	s.NacosClientPropsConfigSource = *newNacosClientPropsConfigSource(address, group, dataId, namespaceId)
-	s.NacosClientPropsConfigSource.listenConfig()
-	s.init()
+	var err error
+	s.ClientConfig, s.ServerConfigs, s.Client, err = buildNacos(address, namespaceId)
+	if err != nil {
+		log.Panic("error create ConfigClient: ", err)
+	}
+	s.Values = make(map[string]string)
 
+	s.init()
 	return s
 }
 
 func NewNacosClientCompositeConfigSource(address, group, namespaceId string, dataIds []string) *kvs.CompositeConfigSource {
 	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
-	s.ConfName = "NacosKevValue"
+	s.ConfName = "NacosCompositeKevValue"
 	for _, dataId := range dataIds {
-		c := NewNacosClientConfigSource(address, group, dataId, namespaceId)
+		c := NewNacosClientConfigSource(address, group, namespaceId, dataId)
 		s.Add(c)
 	}
-
 	return s
 }
 
 func (s *NacosClientConfigSource) init() {
-
 	content, err := s.get()
 	if err != nil {
 		log.Error(err)
 		return
 	}
-	contentType := kvs.ReadContentType(content)
+	s.parseConfig(content)
+	if s.IsListening {
+		s.listenConfig()
+	}
+}
+
+func (s *NacosClientConfigSource) parseConfig(content string) {
+
+	contentType := kvs.GetContentTypeByName(s.DataId)
+	if contentType == kvs.ContentUnknown {
+		contentType = kvs.ReadContentType(content)
+	}
 	s.ContentType = string(contentType)
 	if contentType == kvs.ContentProps || contentType == kvs.ContentProperties {
 		s.findProperties(content)
@@ -62,6 +92,37 @@ func (s *NacosClientConfigSource) init() {
 	} else {
 		log.Warn("[Nacos] Unsupported config format：", contentType,
 			" ,请检查配置内容开头是否包含一下开头：#@, ;@, //@, @，并定义配置内容格式的信息，比如：;@ini , #@yaml, #@yml等.支持的格式有：;@ini，#@yaml, #@yml, #@yam，#@props，#@properties，")
+	}
+}
+func (s *NacosClientConfigSource) CancelListening() {
+	cp := vo.ConfigParam{
+		DataId: s.DataId,
+		Group:  s.Group,
+	}
+	err := s.Client.CancelListenConfig(cp)
+	if err != nil {
+		log.Error(err)
+	}
+	s.IsListening = false
+}
+
+func (s *NacosClientConfigSource) listenConfig() {
+	cp := vo.ConfigParam{
+		DataId: s.DataId,
+		Group:  s.Group,
+	}
+	//if len(s.AppName) > 0 {
+	//	cp.AppName = s.AppName
+	//}
+	cp.OnChange = func(namespace, group, dataId, data string) {
+		if s.IsListening {
+			s.parseConfig(data)
+			log.Infof("changed config: %s %s %s", namespace, group, dataId)
+		}
+	}
+	err := s.Client.ListenConfig(cp)
+	if err != nil {
+		log.Error("listen config： ", err)
 	}
 
 }
