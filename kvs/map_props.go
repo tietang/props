@@ -587,25 +587,19 @@ func toKeys(field reflect.StructField) []string {
 	//}
 	r := []rune(str)
 	//     if strings.Index(str, "-") >= 0 {
-	keys0 := [4]string{}
+	keys0 := [2]string{}
 
 	for i := 0; i < len(str); i++ {
 		if i == 0 {
-			keys0[0] += strings.ToUpper(string(r[i])) // + string(vv[i+1])
-			keys0[1] += strings.ToUpper(string(r[i]))
-			keys0[2] += strings.ToLower(string(r[i]))
-			keys0[3] += strings.ToLower(string(r[i]))
+			keys0[0] += strings.ToLower(string(r[i]))
+			keys0[1] += strings.ToLower(string(r[i]))
 		} else {
 			if r[i] >= 65 && r[i] < 91 {
-				keys0[2] += "_"
-				keys0[3] += "-"
 				keys0[0] += "_"
 				keys0[1] += "-"
 			}
-			keys0[0] += strings.ToUpper(string(r[i]))
-			keys0[1] += strings.ToUpper(string(r[i]))
-			keys0[2] += strings.ToLower(string(r[i]))
-			keys0[3] += strings.ToLower(string(r[i]))
+			keys0[0] += strings.ToLower(string(r[i]))
+			keys0[1] += strings.ToLower(string(r[i]))
 		}
 	}
 	keys = append(keys, keys0[:]...)
