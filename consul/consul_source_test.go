@@ -5,7 +5,6 @@ import (
 	"github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/tietang/props/v3/kvs"
-	"path"
 	"strconv"
 	"strings"
 	"testing"
@@ -128,7 +127,7 @@ func initConsulDataForKV(address, root string, size int) map[string]string {
 	wq := &api.WriteOptions{}
 	for i := 0; i < size; i++ {
 		key := "key/x" + strconv.Itoa(i)
-		keyFull := path.Join(root, key)
+		keyFull := filepath.Join(root, key)
 		value := "value-" + strconv.Itoa(i)
 		kvp := &api.KVPair{
 			Key:   keyFull,
@@ -157,7 +156,7 @@ func initPropsConsulData(address, root string, size, len int) map[string]string 
 
 	for i := 0; i < size; i++ {
 		key := "key-" + strconv.Itoa(i)
-		keyFull := path.Join(root, key)
+		keyFull := filepath.Join(root, key)
 
 		value := ""
 
@@ -190,7 +189,7 @@ func initConsulDataForProps(kv *api.KV, root string, size, inilen int) map[strin
 	m := make(map[string]string)
 	for i := 0; i < size; i++ {
 		key := "key" + strconv.Itoa(i) + ".props"
-		keyPath := path.Join(root, key)
+		keyPath := filepath.Join(root, key)
 
 		value := ""
 
@@ -226,7 +225,7 @@ func initConsulDataForIni(kv *api.KV, root string, size, inilen int) map[string]
 		logrus.Error(err)
 	}
 	m := make(map[string]string)
-	keyPath := path.Join(root, "test.ini")
+	keyPath := filepath.Join(root, "test.ini")
 
 	value := ""
 	for i := 0; i < size; i++ {
@@ -269,7 +268,7 @@ func initConsulDataForIniProps(kv *api.KV, root string, size, inilen int) map[st
 	m := make(map[string]string)
 	for i := 0; i < size; i++ {
 		key := "key-" + strconv.Itoa(i)
-		keyPath := path.Join(root, key)
+		keyPath := filepath.Join(root, key)
 
 		value := ""
 

@@ -18,7 +18,7 @@ func main2() {
 	//intValue, err := p.GetInt("prefix.key1")
 	//intDefaultValue := p.GetIntDefault("prefix.key1", 1)
 	//floatValue, err := p.GetFloat64("prefix.key1")
-	//floatDefaultValue := p.GetFloat64Default("prefix.key1", 1.2)
+	//floatDefaultValue := p.GetFloat64Default("prefix.key1", 1.d)
 	//
 	////
 	var pcs kvs.ConfigSource

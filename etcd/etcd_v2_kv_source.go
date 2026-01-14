@@ -8,7 +8,9 @@ import (
 	"time"
 )
 
-//通过key/value来组织，过滤root prefix后，替换/为.作为properties key
+var _ kvs.ConfigSource = new(EtcdV2KeyValueConfigSource)
+
+// 通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 type EtcdV2KeyValueConfigSource struct {
 	EtcdV2ConfigSource
 }
@@ -79,7 +81,7 @@ func (s *EtcdV2KeyValueConfigSource) findProperties(parentPath string, children 
 				s.findProperties(fp, node.Nodes)
 			})
 		}
-		//fp := path.Join(parentPath, node.Key)
+		//fp := filepath.Join(parentPath, node.Key)
 
 		//fmt.Println(fp)
 		chnodes := s.GetChildrenNodes(fp)

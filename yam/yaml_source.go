@@ -5,8 +5,10 @@ import (
 	"github.com/tietang/props/v3/kvs"
 	"io"
 	"os"
-	"path"
+	"path/filepath"
 )
+
+var _ kvs.ConfigSource = new(YamlConfigSource)
 
 type YamlConfigSource struct {
 	YamlProperties
@@ -15,7 +17,7 @@ type YamlConfigSource struct {
 }
 
 func NewYamlConfigSource(fileName string) *YamlConfigSource {
-	name := path.Base(fileName)
+	name := filepath.Base(fileName)
 	return NewYamlConfigSourceByFile(name, fileName)
 }
 
@@ -37,7 +39,7 @@ func NewYamlConfigSourceByReader(name string, r io.Reader) *YamlConfigSource {
 	s := &YamlConfigSource{}
 	s.name = name
 	s.Values = make(map[string]string)
-	s.fileName = "no-file"
+	s.fileName = "no.txt-file"
 	if s.Values == nil {
 		s.Values = make(map[string]string)
 	}
@@ -45,7 +47,7 @@ func NewYamlConfigSourceByReader(name string, r io.Reader) *YamlConfigSource {
 	return s
 }
 
-func NewIniFileCompositeConfigSource(fileNames ...string) *kvs.CompositeConfigSource {
+func NewYamlFileCompositeConfigSource(fileNames ...string) *kvs.CompositeConfigSource {
 	s := kvs.NewEmptyNoSystemEnvCompositeConfigSource()
 	s.ConfName = "yamlFiles"
 	for _, file := range fileNames {

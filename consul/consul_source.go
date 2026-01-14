@@ -6,10 +6,12 @@ import (
 	"github.com/tietang/props/v3/ini"
 	"github.com/tietang/props/v3/kvs"
 	"github.com/tietang/props/v3/yam"
-	"path"
+	"path/filepath"
 	"strings"
 	"time"
 )
+
+var _ kvs.ConfigSource = new(ConsulConfigSource)
 
 //通过key/ini_props, key所谓section，value为props格式内容，类似ini文件格式
 
@@ -118,7 +120,7 @@ func (s *ConsulConfigSource) findProperties(parentPath string, children []string
 		content := string(kv.Value)
 		var ctype kvs.ContentType
 		if s.ContentType == kvs.ContentAuto {
-			key := path.Base(k)
+			key := filepath.Base(k)
 			idx := strings.LastIndex(key, ".")
 			if idx == -1 || idx == len(key)-1 {
 				//如果获取不到格式类型，就在内容第一行注释中获取
@@ -177,7 +179,7 @@ func (s *ConsulConfigSource) findIniProps(key, content string) {
 	props := kvs.ByProperties(content)
 	if props != nil {
 
-		prefix := path.Base(key)
+		prefix := filepath.Base(key)
 		for key, value := range props.Values {
 			k := prefix + "." + key
 			s.Set(k, value)
@@ -207,7 +209,7 @@ func (s *ConsulConfigSource) findKeyValue(parentPath string, children []string) 
 }
 
 func (s *ConsulConfigSource) sanitizeKey(keyPath string, context string) string {
-	context = path.Join(context) + "/"
+	context = filepath.Join(context) + "/"
 	key := strings.TrimPrefix(keyPath, context)
 	key = strings.Replace(key, "/", ".", -1)
 	return key

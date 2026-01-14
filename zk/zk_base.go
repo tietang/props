@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/kvs"
 	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -15,6 +16,8 @@ const (
 
 	KEY_NOTICE_NODE = "notice"
 )
+
+var _ kvs.ConfigSource = new(ZookeeperSource)
 
 type ZookeeperSource struct {
 	kvs.MapProperties
@@ -45,7 +48,7 @@ func (s *ZookeeperSource) getChildren(childPath string) []string {
 }
 
 func (s *ZookeeperSource) sanitizeKey(keyPath string, context string) string {
-	context = path.Join(context) + "/"
+	context = filepath.Join(context) + "/"
 	key := strings.TrimPrefix(keyPath, context)
 	key = strings.Replace(key, "/", ".", -1)
 
@@ -69,7 +72,7 @@ func (s *ZookeeperSource) Watch(key string, handlers ...func(children []string, 
 }
 
 func (s *ZookeeperSource) WatchChildren(key string, handlers ...func(children []string, event zk.Event)) {
-	pathStr := path.Join(s.context, key)
+	pathStr := filepath.Join(s.context, key)
 	s.watchChildren(pathStr, handlers...)
 }
 
@@ -83,7 +86,7 @@ func (s *ZookeeperSource) watchChildren(pathStr string, handlers ...func(childre
 	fmt.Printf("%+v %+v\n", children, stat)
 	e := <-ch
 
-	s.findProperties(false, path.Dir(e.Path), nil)
+	s.findProperties(false, filepath.Dir(e.Path), nil)
 	for _, handler := range handlers {
 		handler(children, e)
 	}
@@ -107,7 +110,7 @@ func (g *ZookeeperSource) watchGet(pathStr string, handlers ...func(children []s
 	e := <-ch
 
 	//pPath:=path.Dir(e.Path)
-	g.findProperties(false, path.Dir(e.Path), nil)
+	g.findProperties(false, filepath.Dir(e.Path), nil)
 	for _, handler := range handlers {
 		handler(children, e)
 	}
@@ -137,7 +140,7 @@ func (s *ZookeeperSource) findProperties(isWatched bool, parentPath string, chil
 	}
 	for _, p := range children {
 
-		fp := path.Join(parentPath, p)
+		fp := filepath.Join(parentPath, p)
 		//fmt.Println(fp)
 		chpath := s.getChildren(fp)
 		value, err := s.getPropertiesValue(fp)

@@ -40,13 +40,13 @@ const (
 
 var _ kvs.ConfigSource = new(NacosPropsConfigSource)
 
-//通过key/value来组织，过滤root prefix后，替换/为.作为properties key
+// 通过key/value来组织，过滤root prefix后，替换/为.作为properties key
 // Deprecated: 使用NacosClientPropsConfigSource NewNacosClientPropsConfigSource()
 type NacosPropsConfigSource struct {
 	kvs.MapProperties
-	// Required Configuration ID. Use a naming rule similar to package.class (for example, com.taobao.tc.refund.log.level) to ensure global uniqueness. It is recommended to indicate business meaning of the configuration in the "class" section. Use lower case for all characters. Use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 256 characters are allowed.
+	// Required Configuration ID. Use a naming rule similar to package.class (for jiebaexample, com.taobao.tc.refund.log.level) to ensure global uniqueness. It is recommended to indicate business meaning of the configuration in the "class" section. Use lower case for all characters. Use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 256 characters are allowed.
 	DataId string
-	// Required Configuration group. To ensure uniqueness, format such as product name: module name (for example, Nacos:Test) is preferred. Use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 128 characters are allowed.
+	// Required Configuration group. To ensure uniqueness, format such as product name: module name (for jiebaexample, Nacos:Test) is preferred. Use alphabetical letters and these four special characters (".", ":", "-", "_") only. Up to 128 characters are allowed.
 	Group string
 
 	//Tenant information. It corresponds to the Namespace field in Nacos.

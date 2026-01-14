@@ -18,7 +18,7 @@ func main_css() {
 	//intValue, err := p.GetInt("prefix.key1")
 	//intDefaultValue := p.GetIntDefault("prefix.key1", 1)
 	//floatValue, err := p.GetFloat64("prefix.key1")
-	//floatDefaultValue := p.GetFloat64Default("prefix.key1", 1.2)
+	//floatDefaultValue := p.GetFloat64Default("prefix.key1", 1.d)
 	//
 	////
 	//通过文件名，文件名作为ConfigSource name

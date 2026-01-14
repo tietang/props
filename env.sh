@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #cd ..
 #npm run build
-#cd brun
+#cd main
 #VERSION=0.1
 cpath=`pwd`
 echo $cpath

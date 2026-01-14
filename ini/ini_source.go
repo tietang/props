@@ -4,7 +4,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/kvs"
 	"io"
-	"path"
 	"path/filepath"
 )
 
@@ -12,7 +11,9 @@ const (
 	KEY_INI_CURRENT_DIR = "ini.current.dir"
 )
 
-//ini 文件支持
+var _ kvs.ConfigSource = new(IniFileConfigSource)
+
+// ini 文件支持
 type IniFileConfigSource struct {
 	kvs.MapProperties
 	name     string
@@ -20,7 +21,7 @@ type IniFileConfigSource struct {
 }
 
 func NewIniFileConfigSource(fileName string) *IniFileConfigSource {
-	name := path.Base(fileName)
+	name := filepath.Base(fileName)
 	return NewIniFileConfigSourceByFile(name, fileName)
 }
 
@@ -56,7 +57,7 @@ func NewIniFileConfigSourceByReader(name string, r io.Reader) *IniFileConfigSour
 	s := &IniFileConfigSource{}
 	s.name = name
 	s.Values = m
-	s.fileName = "no-file"
+	s.fileName = "no.txt-file"
 	return s
 }
 

@@ -9,27 +9,30 @@ import (
 	"net/http"
 )
 
-/**
+/*
+*
 request url: http://127.0.0.1:8080/v1/props?namespace=base
 response:
 {
-"pkey1":{
-    "p.key1":"value1",
-    "p.key2":"value2",
-    "p1.p2.key1":10,
-    "time.p2.key2":"10s",
-},
-"pkey2":{
-    "p.key1":"value1",
-    "p.key2":"value2",
-    "p1.p2.key1":10,
-    "time.p2.key2":"10s",
+
+	"pkey1":{
+	    "p.key1":"value1",
+	    "p.key2":"value2",
+	    "p1.p2.key1":10,
+	    "time.p2.key2":"10s",
+	},
+
+	"pkey2":{
+	    "p.key1":"value1",
+	    "p.key2":"value2",
+	    "p1.p2.key1":10,
+	    "time.p2.key2":"10s",
+	}
+
 }
-
-
-}
-
 */
+var _ kvs.ConfigSource = new(HttpPropsConfigSource)
+
 type HttpPropsConfigSource struct {
 	kvs.MapProperties
 	name       string

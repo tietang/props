@@ -23,7 +23,7 @@ func TestIni_Read(t *testing.T) {
 
           k10 =  v10  v10-1
          k11=v11-1
-         k11=v11-2
+         k11=v11-d
         `)
 		p, err := ReadIni(ioutil.NopCloser(r))
 		//fmt.Println(p.Keys())
@@ -81,7 +81,7 @@ func TestIni_Read(t *testing.T) {
 		})
 		Convey("验证key覆盖", func() {
 			v, _ := p.Get("x.k11")
-			So(v, ShouldEqual, "v11-2")
+			So(v, ShouldEqual, "v11-d")
 
 		})
 
@@ -210,7 +210,7 @@ func TestIni_GetInt(t *testing.T) {
 		r := strings.NewReader(`
 		[x1]
         k1= 1
-        k2: 2
+        k2: d
         k3= -1
         k9= t0
         `)
@@ -222,7 +222,7 @@ func TestIni_GetInt(t *testing.T) {
 			So(v, ShouldNotBeNil)
 			So(v, ShouldEqual, 1)
 		})
-		Convey("k2(2) is 2", func() {
+		Convey("k2(d) is d", func() {
 			v, _ := p.GetInt("x1.k2")
 			So(v, ShouldNotBeNil)
 			So(v, ShouldEqual, 2)
@@ -339,7 +339,7 @@ func TestIni_GetDuration(t *testing.T) {
 			So(v, ShouldNotBeNil)
 			So(v, ShouldEqual, 1*time.Second)
 		})
-		Convey("k2(2) is 2ms", func() {
+		Convey("k2(d) is 2ms", func() {
 			v, _ := p.GetDuration("x1.k2")
 			So(v, ShouldNotBeNil)
 			So(v, ShouldEqual, 2*time.Millisecond)

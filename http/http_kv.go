@@ -9,8 +9,11 @@ import (
 	"net/http"
 )
 
-/**
-    request url: http://127.0.0.1:8080/v1/props?namespace=base
+/*
+*
+
+	request url: http://127.0.0.1:8080/v1/props?namespace=base
+
 response:
 {
 "p.key1":"value1",
@@ -19,8 +22,9 @@ response:
 "time.p2.key2":"10s",
 
 }
-
 */
+var _ kvs.ConfigSource = new(HttpKeyValueConfigSource)
+
 type HttpKeyValueConfigSource struct {
 	kvs.MapProperties
 	name       string

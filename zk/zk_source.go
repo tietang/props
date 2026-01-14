@@ -6,9 +6,11 @@ import (
 	"github.com/tietang/props/v3/ini"
 	"github.com/tietang/props/v3/kvs"
 	"github.com/tietang/props/v3/yam"
-	"path"
+	"path/filepath"
 	"strings"
 )
+
+var _ kvs.ConfigSource = new(ZookeeperConfigSource)
 
 /*
 //通过key/ini_props, key所谓section，value为props格式内容，类似ini文件格式
@@ -44,7 +46,7 @@ context: /configs/dev/app
     ```
     host=192.168.1.123
     port=6379
-    database=2
+    database=d
     timeout=6s
     password=password
     ```
@@ -78,7 +80,7 @@ ContentIni         contentType = "ini"
     ```
     redis.host=192.168.1.123
     redis.port=6379
-    redis.database=2
+    redis.database=d
     redis.timeout=6s
     redis.password=password
     ```
@@ -129,7 +131,7 @@ func (s *ZookeeperConfigSource) findChildProperties(parentPath string, children 
 	}
 
 	for _, p := range children {
-		fp := path.Join(parentPath, p)
+		fp := filepath.Join(parentPath, p)
 		content, err := s.getPropertiesValue(fp)
 		if s.Watched && strings.HasSuffix(fp, DEFAULT_WATCH_KEY) {
 			log.Debug("WatchNodeDataChange: ", fp)
@@ -140,7 +142,7 @@ func (s *ZookeeperConfigSource) findChildProperties(parentPath string, children 
 		}
 		var ctype kvs.ContentType
 		if s.ContentType == kvs.ContentAuto {
-			key := path.Base(p)
+			key := filepath.Base(p)
 			idx := strings.LastIndex(key, ".")
 			if idx == -1 || idx == len(key)-1 {
 				//如果获取不到格式类型，就在内容第一行注释中获取
@@ -197,7 +199,7 @@ func (s *ZookeeperConfigSource) findProps(content string) {
 func (s *ZookeeperConfigSource) findIniProps(key, content string) {
 	props := kvs.ByProperties(content)
 	if props != nil {
-		prefix := path.Base(key)
+		prefix := filepath.Base(key)
 		for key, value := range props.Values {
 			k := prefix + "." + key
 			s.Set(k, value)

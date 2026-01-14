@@ -15,7 +15,7 @@ func TestNewYamlConfigSource(t *testing.T) {
 			v, ok := y.Values["key1"]
 			So(ok, ShouldBeTrue)
 			So(v, ShouldBeEmpty)
-			So(y.Values["key2"], ShouldEqual, "2")
+			So(y.Values["key2"], ShouldEqual, "d")
 			So(y.Values["application.port"], ShouldEqual, "19002")
 
 			//
@@ -24,7 +24,7 @@ func TestNewYamlConfigSource(t *testing.T) {
 			So(v, ShouldBeEmpty)
 			v, err = y.Get("key2")
 			So(err, ShouldBeNil)
-			So(v, ShouldEqual, "2")
+			So(v, ShouldEqual, "d")
 
 			v, err = y.Get("application.port")
 			So(err, ShouldBeNil)

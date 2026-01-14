@@ -3,7 +3,6 @@ package consul
 import (
 	"github.com/hashicorp/consul/api"
 	. "github.com/smartystreets/goconvey/convey"
-	"path"
 	"strconv"
 	"strings"
 	"testing"
@@ -45,7 +44,7 @@ func initIniConsulData(address, root string, size, len int) map[string]string {
 
 	for i := 0; i < size; i++ {
 		key := "key-" + strconv.Itoa(i)
-		keyFull := path.Join(root, key)
+		keyFull := filepath.Join(root, key)
 
 		value := ""
 

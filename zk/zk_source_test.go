@@ -6,7 +6,6 @@ import (
 	"github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/tietang/props/v3/kvs"
-	"path"
 	"strings"
 	"testing"
 	//"github.com/lunny/log"
@@ -163,7 +162,7 @@ func initZkDataForProps(conn *zk.Conn, root string, size, inilen int) map[string
 	kv := make(map[string]string)
 	for i := 0; i < size; i++ {
 		key := "key" + strconv.Itoa(i) + ".props"
-		keyPath := path.Join(root, key)
+		keyPath := filepath.Join(root, key)
 
 		value := ""
 
@@ -196,7 +195,7 @@ func initZkDataForIni(conn *zk.Conn, root string, size, inilen int) map[string]s
 		logrus.Error(err)
 	}
 	kv := make(map[string]string)
-	keyPath := path.Join(root, "test.ini")
+	keyPath := filepath.Join(root, "test.ini")
 
 	value := ""
 	for i := 0; i < size; i++ {
@@ -236,7 +235,7 @@ func initZkDataForIniProps(conn *zk.Conn, root string, size, inilen int) map[str
 	kv := make(map[string]string)
 	for i := 0; i < size; i++ {
 		key := "key-" + strconv.Itoa(i)
-		keyPath := path.Join(root, key)
+		keyPath := filepath.Join(root, key)
 
 		value := ""
 

@@ -3,6 +3,7 @@ package kvs
 import (
 	"errors"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"github.com/valyala/fasttemplate"
 	"io"
 	"os"
@@ -11,7 +12,10 @@ import (
 	"time"
 )
 
+var _ ConfigSource = new(CompositeConfigSource)
+
 type CompositeConfigSource struct {
+	OnChanges     map[string][]func(k, v string)
 	ConfName      string
 	ConfigSources []ConfigSource //Set
 	Properties    *PropertiesConfigSource
@@ -19,6 +23,10 @@ type CompositeConfigSource struct {
 	StartTag      string
 	EndTag        string
 	backFileName  string
+}
+
+func (ccs *CompositeConfigSource) AddChangeListener(key string, listener func(k string, v string)) {
+	ccs.Properties.AddChangeListener(key, listener)
 }
 
 func NewEmptyCompositeConfigSource() *CompositeConfigSource {
@@ -250,6 +258,31 @@ func (ccs *CompositeConfigSource) GetDurationDefault(key string, defaultValue ti
 
 }
 
+func (ccs *CompositeConfigSource) GetTime(key string) (time.Time, error) {
+	val, err := ccs.GetValue(key)
+	if err == nil {
+		t, e := cast.ToTimeE(val)
+		return t, e
+	} else {
+		return cast.ToTime(0), err
+	}
+}
+
+func (ccs *CompositeConfigSource) GetTimeDefault(key string, defaultValue time.Time) time.Time {
+
+	val, err := ccs.GetValue(key)
+	if err == nil {
+		t, e := cast.ToTimeE(val)
+		if e == nil {
+			return t
+		} else {
+			return defaultValue
+		}
+	} else {
+		return defaultValue
+	}
+}
+
 func (ccs *CompositeConfigSource) GetBoolDefault(key string, defaultValue bool) bool {
 
 	val, err := ccs.GetValue(key)
@@ -279,8 +312,9 @@ func (ccs *CompositeConfigSource) GetFloat64Default(key string, defaultValue flo
 		return defaultValue
 	}
 }
+
 func (ccs *CompositeConfigSource) Set(key, val string) {
-	//panic(errors.New("Unsupported operation"))
+
 	ccs.Properties.Set(key, val)
 }
 

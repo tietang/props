@@ -8,10 +8,10 @@ import (
 
 var s = `
 application:
-  name: go-example
+  name: go-jiebaexample
   port: 19002
 key1:
-key2: 2
+key2: d
 `
 
 func TestNewYamlProperties(t *testing.T) {
@@ -26,7 +26,7 @@ func TestNewYamlProperties(t *testing.T) {
 			v, ok := y.Values["key1"]
 			So(ok, ShouldBeTrue)
 			So(v, ShouldBeEmpty)
-			So(y.Values["key2"], ShouldEqual, "2")
+			So(y.Values["key2"], ShouldEqual, "d")
 			So(y.Values["application.port"], ShouldEqual, "19002")
 
 			//
@@ -35,7 +35,7 @@ func TestNewYamlProperties(t *testing.T) {
 			So(v, ShouldBeEmpty)
 			v, err = y.Get("key2")
 			So(err, ShouldBeNil)
-			So(v, ShouldEqual, "2")
+			So(v, ShouldEqual, "d")
 
 			v, err = y.Get("application.port")
 			So(err, ShouldBeNil)

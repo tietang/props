@@ -3,7 +3,7 @@ package zk
 import (
 	"github.com/samuel/go-zookeeper/zk"
 	log "github.com/sirupsen/logrus"
-	"path"
+	"path/filepath"
 )
 
 const (
@@ -19,8 +19,8 @@ func ZkCreateString(conn *zk.Conn, path string, value string) (string, error) {
 
 func ZkCreate(conn *zk.Conn, nodePath string, value []byte) (string, error) {
 
-	d, _ := path.Split(nodePath)
-	ppath := path.Clean(d)
+	d, _ := filepath.Split(nodePath)
+	ppath := filepath.Clean(d)
 	if !ZkExits(conn, ppath) {
 		ZkCreate(conn, ppath, []byte(""))
 	}
@@ -31,7 +31,7 @@ func ZkDelete(conn *zk.Conn, nodePath string) error {
 	paths, s, err := conn.Children(nodePath)
 	if err == nil && len(paths) > 0 {
 		for _, p := range paths {
-			np := path.Join(nodePath, p)
+			np := filepath.Join(nodePath, p)
 			err := ZkDelete(conn, np)
 			if err != nil {
 				return err
