@@ -18,12 +18,14 @@ const (
 
 func TestStruct(t *testing.T) {
 	type PlatStruct struct {
-		StrVal      string
-		IntVal      int
-		DurationVal time.Duration
-		BoolVal     bool
-		MQTTVal     string `props:"mqtt_val"`
-		HelloXXXVal string `props:"hello_xxx_val"`
+		StrVal        string
+		IntVal        int
+		DurationVal   time.Duration
+		BoolVal       bool
+		MQTTVal       string `props:"mqtt_val"`
+		HelloXXXVal   string `props:"hello_xxx_val"`
+		ServerPort    string `props:"server_port"`
+		serverPortVal string `props:"server_port_val"`
 	}
 	ps := NewMapProperties()
 	ps.Set("ums.strVal", STR_VAL)
@@ -32,6 +34,8 @@ func TestStruct(t *testing.T) {
 	ps.Set("ums.boolVal", BOOL_VAL_STR)
 	ps.Set("ums.mqtt_val", BOOL_VAL_STR)
 	ps.Set("ums.hello_xxx_val", BOOL_VAL_STR)
+	ps.Set("ums.serverPort", BOOL_VAL_STR)
+	ps.Set("ums.serverPortVal", BOOL_VAL_STR)
 
 	Convey("TestStructUnmarshal", t, func() {
 

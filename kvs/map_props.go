@@ -2,7 +2,6 @@ package kvs
 
 import (
 	"errors"
-	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"reflect"
@@ -18,6 +17,7 @@ const (
 	FIELD_DEFAULT_VALUE_TAG = "val"
 )
 
+var fieldConfigNameTags = [...]string{"props", "yaml", "yam", "json", "ini", "toml"}
 var _ ConfigSource = new(MapProperties)
 
 type UnmarshalListener struct {
@@ -322,8 +322,9 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) (err 
 		if sf.Name == PREFIX_FIELD {
 			continue
 		}
-		configKey := sf.Tag.Get(FIELD_CONFIG_NAME_TAG)
-		ks := toKeys(sf.Name, configKey)
+		//configKey := sf.Tag.Get(FIELD_CONFIG_NAME_TAG)
+		//ks := toKeys1(sf.Name, configKey)
+		ks := toKeys(sf)
 		//fmt.Println(ks)
 		keys := make([]string, 0)
 		if sf.Anonymous {
@@ -347,7 +348,7 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) (err 
 				}
 			}
 		}
-		fmt.Println(keys)
+		//fmt.Println(keys)
 		//key1 := strings.Join([]string{prefix, keys[0]}, ".")
 		//key2 := strings.Join([]string{prefix, keys[1]}, ".")
 		//fmt.Println(sf.ConfName)
@@ -368,12 +369,19 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) (err 
 				defVal = value.String()
 			}
 			val := defVal
+
 			for _, key := range keys {
-				val1 := p.GetDefault(key, defVal)
-				if val1 != "" {
+				//val1 := p.GetDefault(key, defVal)
+				//if val1 != "" {
+				//	val = val1
+				//}
+				val1, err := p.Get(key)
+				//fmt.Printf("key: %s, val1: %s, err: %v\n", key, val1, err)
+				if err == nil && val1 != "" {
 					val = val1
 				}
 			}
+
 			value.SetString(val)
 			break
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
@@ -394,11 +402,15 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) (err 
 				}
 				val := defaultValue
 				for _, key := range keys {
-					val1 := p.GetDurationDefault(key, defaultValue)
-					if val1 >= 0 {
+					//val1 := p.GetDurationDefault(key, defaultValue)
+					val1, err := p.GetDuration(key)
+					//fmt.Printf("key: %s, val1: %d, err: %v\n", key, val1, err)
+					if err == nil && val1 >= 0 {
 						val = val1
 					}
+
 				}
+
 				value.SetInt(val.Nanoseconds())
 
 			} else {
@@ -427,9 +439,15 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) (err 
 			}
 
 			val := defaultValue
+
 			for _, key := range keys {
-				val1 := p.GetFloat64Default(key, defaultValue)
-				if val1 != 0 {
+				//val1 := p.GetFloat64Default(key, defaultValue)
+				//if val1 != 0 {
+				//	val = val1
+				//}
+				val1, err := p.GetFloat64(key)
+				//fmt.Printf("key: %s, val1: %f, err: %v\n", key, val1, err)
+				if err == nil {
 					val = val1
 				}
 			}
@@ -446,8 +464,13 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) (err 
 
 			val := defaultValue
 			for _, key := range keys {
-				val1 := p.GetBoolDefault(key, defaultValue)
-				if val1 {
+				//val1 := p.GetBoolDefault(key, defaultValue)
+				//if val1 {
+				//	val = val1
+				//}
+				val1, err := p.GetBool(key)
+				//fmt.Printf("key: %s, val1: %v, err: %v\n", key, val1, err)
+				if err == nil {
 					val = val1
 				}
 			}
@@ -517,17 +540,24 @@ func getInt(p ConfigSource, keys []string, originValue int64, defVal string) int
 	}
 
 	val := defaultValue
+
 	for _, key := range keys {
-		val1 := p.GetIntDefault(key, int(defaultValue))
-		if val1 != 0 {
+		//val1 := p.GetIntDefault(key, int(defaultValue))
+		//if val1 != 0 {
+		//	val = int64(val1)
+		//}
+		val1, err := p.GetInt(key)
+		//fmt.Printf("key: %s, val1: %d, err: %v\n", key, val1, err)
+		if err == nil {
 			val = int64(val1)
 		}
 	}
+
 	return int(val)
 
 }
 
-func toKeys(str string, configKey string) [3]string {
+func toKeys1(str string, configKey string) [3]string {
 	keys := [3]string{"", ""}
 	keys[1] = strings.ToLower(str[0:1]) + str[1:]
 	keys[2] = configKey
@@ -544,5 +574,50 @@ func toKeys(str string, configKey string) [3]string {
 		}
 	}
 	//     }
+	return keys
+}
+
+// 比如：`ServerPort` 可以映射为 `server_port` 、`ServerPort`、 `serverPort` 、 `server-port`、 `SERVER_PORT` 、 `SERVER-PORT` 等
+func toKeys(field reflect.StructField) []string {
+	keys := make([]string, 0)
+	str := field.Name
+
+	//if len(keys) >= 3 {
+	//	return keys
+	//}
+	r := []rune(str)
+	//     if strings.Index(str, "-") >= 0 {
+	keys0 := [4]string{}
+
+	for i := 0; i < len(str); i++ {
+		if i == 0 {
+			keys0[0] += strings.ToUpper(string(r[i])) // + string(vv[i+1])
+			keys0[1] += strings.ToUpper(string(r[i]))
+			keys0[2] += strings.ToLower(string(r[i]))
+			keys0[3] += strings.ToLower(string(r[i]))
+		} else {
+			if r[i] >= 65 && r[i] < 91 {
+				keys0[2] += "_"
+				keys0[3] += "-"
+				keys0[0] += "_"
+				keys0[1] += "-"
+			}
+			keys0[0] += strings.ToUpper(string(r[i]))
+			keys0[1] += strings.ToUpper(string(r[i]))
+			keys0[2] += strings.ToLower(string(r[i]))
+			keys0[3] += strings.ToLower(string(r[i]))
+		}
+	}
+	keys = append(keys, keys0[:]...)
+	keys = append(keys, str)
+	keys = append(keys, strings.ToLower(str[0:1])+str[1:])
+	for _, tag := range fieldConfigNameTags {
+		configKey := field.Tag.Get(tag)
+		if configKey != "" {
+			keys = append(keys, configKey)
+		}
+	}
+
+	//fmt.Println("keys: ", keys)
 	return keys
 }

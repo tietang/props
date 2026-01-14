@@ -51,6 +51,14 @@ Unmarshal从配置中抽出struct；支持上下文环境变量的eval，${}形�
 ### 其他特性
 
 - Unmarshal支持
+- 多种key隐射支持
+    - 比如：`ServerPort` 可以映射为 `server_port` 、`ServerPort`、 `serverPort` 、 `server-port`、 `SERVER_PORT` 、 `SERVER-PORT` 等
+    - 存在多个key时，按照如下顺序，越靠后优先级越高：SERVER_PORT_VAL SERVER-PORT-VAL server_port_val server-port-val serverPortVal serverPortVal server_port_val
+- 支持tag
+  - 自定义key tag：props ，比如：MQTTVal, props:"mqtt_val"
+  - 支持多种key tag：yaml,yam,ini,json
+  - 默认值tag: val
+  - 结构体tag: prefix
 - 上下文变量eval支持，`${}`形式
 - 支持多配置源组合
 - 默认添加了系统环境变量，优先级最低
