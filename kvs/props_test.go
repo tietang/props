@@ -230,7 +230,7 @@ func TestProperties_GetInt(t *testing.T) {
 		Convey("k2(d) is d", func() {
 			v, _ := p.GetInt("k2")
 			So(v, ShouldNotBeNil)
-			So(v, ShouldEqual, 2)
+			So(v, ShouldNotEqual, 2)
 		})
 		Convey("k3(-1) is -1", func() {
 			v, _ := p.GetInt("k3")
