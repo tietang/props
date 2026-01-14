@@ -2,6 +2,7 @@ package kvs
 
 import (
 	"errors"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"reflect"
@@ -13,6 +14,7 @@ import (
 const (
 	PREFIX_FIELD            = "_prefix"
 	STRUCT_PREFIX_TAG       = "prefix"
+	FIELD_CONFIG_NAME_TAG   = "props"
 	FIELD_DEFAULT_VALUE_TAG = "val"
 )
 
@@ -313,13 +315,15 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) (err 
 		prefix = sf.Tag.Get(STRUCT_PREFIX_TAG)
 		//fmt.Println("prefix: ", prefix)
 	}
+
 	prefix = strings.TrimSpace(prefix)
 	for i := 0; i < num; i++ {
 		sf := t.Field(i)
 		if sf.Name == PREFIX_FIELD {
 			continue
 		}
-		ks := toKeys(sf.Name)
+		configKey := sf.Tag.Get(FIELD_CONFIG_NAME_TAG)
+		ks := toKeys(sf.Name, configKey)
 		//fmt.Println(ks)
 		keys := make([]string, 0)
 		if sf.Anonymous {
@@ -339,12 +343,11 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) (err 
 					} else {
 						keys = append(keys, k)
 					}
-					//fmt.Println(keys)
 
 				}
 			}
 		}
-
+		fmt.Println(keys)
 		//key1 := strings.Join([]string{prefix, keys[0]}, ".")
 		//key2 := strings.Join([]string{prefix, keys[1]}, ".")
 		//fmt.Println(sf.ConfName)
@@ -524,9 +527,10 @@ func getInt(p ConfigSource, keys []string, originValue int64, defVal string) int
 
 }
 
-func toKeys(str string) [2]string {
-	keys := [2]string{"", ""}
+func toKeys(str string, configKey string) [3]string {
+	keys := [3]string{"", ""}
 	keys[1] = strings.ToLower(str[0:1]) + str[1:]
+	keys[2] = configKey
 	r := []rune(str)
 	//     if strings.Index(str, "-") >= 0 {
 	for i := 0; i < len(str); i++ {

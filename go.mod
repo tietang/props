@@ -1,6 +1,6 @@
 module github.com/tietang/props/v3
 
-go 1.19
+go 1.25
 
 //被墙的原因，替换golang.org源为github.com源
 replace (
@@ -10,7 +10,7 @@ replace (
 	golang.org/x/crypto => github.com/golang/crypto v0.0.0-20190325154230-a5d413f7728c
 	golang.org/x/exp => github.com/golang/exp v0.0.0-20190321205749-f0864edee7f3
 	golang.org/x/image => github.com/golang/image v0.0.0-20190321063152-3fc05d484e9f
-	golang.org/x/lint => github.com/golang/lint v0.0.0-20190313153728-d0100b6bd8b3
+	//golang.org/x/lint => github.com/golang/lint v0.0.0-20190313153728-d0100b6bd8b3
 	golang.org/x/mobile => github.com/golang/mobile v0.0.0-20190319155245-9487ef54b94a
 	golang.org/x/net => github.com/golang/net v0.0.0-20190327025741-74e053c68e29
 	golang.org/x/oauth2 => github.com/golang/oauth2 v0.0.0-20190319182350-c85d3e98c914
@@ -19,7 +19,7 @@ replace (
 	//golang.org/x/sys => github.com/golang/sys v0.0.0-20190322080309-f49334f85ddc
 	golang.org/x/text => github.com/golang/text v0.3.0
 	golang.org/x/time => github.com/golang/time v0.0.0-20190308202827-9d24e82272b4
-	golang.org/x/tools => github.com/golang/tools v0.0.0-20190327011446-79af862e6737
+	//golang.org/x/tools => github.com/golang/tools v0.0.0-20190327011446-79af862e6737
 	google.golang.org/api => github.com/googleapis/google-api-go-client v0.3.0
 	google.golang.org/appengine => github.com/golang/appengine v1.5.0
 	google.golang.org/genproto => github.com/google/go-genproto v0.0.0-20190321212433-e79c0c59cdb5
