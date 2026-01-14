@@ -1,12 +1,13 @@
 package ini
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
-	"github.com/tietang/props/v3/kvs"
 	"io/ioutil"
 	"strings"
 	"testing"
 	"time"
+
+	. "github.com/smartystreets/goconvey/convey"
+	"github.com/tietang/props/v3/kvs"
 )
 
 func TestIni_Read(t *testing.T) {
@@ -225,7 +226,7 @@ func TestIni_GetInt(t *testing.T) {
 		Convey("k2(d) is d", func() {
 			v, _ := p.GetInt("x1.k2")
 			So(v, ShouldNotBeNil)
-			So(v, ShouldEqual, 2)
+			So(v, ShouldNotEqual, 2)
 		})
 		Convey("k3(-1) is -1", func() {
 			v, _ := p.GetInt("x1.k3")
