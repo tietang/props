@@ -5,16 +5,18 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func ToDuration(v string) (time.Duration, error) {
@@ -71,23 +73,20 @@ func ExecCommand(commandName string, params ...string) bool {
 }
 
 func GetCurrentFilePath(fileName string, skip int) string {
+
 	dir1, _ := os.Getwd()
-	dir2 := func() string {
-		abs, err := filepath.Abs(os.Args[0])
-		if err != nil {
-			log.Fatal(err)
-		}
-		dir := filepath.Dir(abs)
-		return dir
-	}()
+	dir2 := FilePath()
 
-	dir3 := func() string {
-		//获取当前函数Caller reports，取得当前调用对应的文件
-		_, f, _, _ := runtime.Caller(skip)
-		//解析出所在目录
-		return filepath.Dir(f)
-	}()
-
+	//dir3 := func() string {
+	//	//获取当前函数Caller reports，取得当前调用对应的文件
+	//	_, f, _, _ := runtime.Caller(2)
+	//	//解析出所在目录
+	//	return filepath.Dir(f)
+	//}()
+	dir3 := CurrentFile()
+	//fmt.Println("dir1:", dir1)
+	//fmt.Println("dir2:", dir2)
+	//fmt.Println("dir3:", dir3)
 	//默认当前文件夹，如果运行时的二进制和当前工作文件夹一样，说明是通过二进制运行的，返回二进制当前目录
 	dir := dir1
 	//如果运行时的二进制和当前工作文件夹不一样，说明是通过go run运行的，使用runtime.Caller 路径
@@ -96,6 +95,29 @@ func GetCurrentFilePath(fileName string, skip int) string {
 	}
 	//组装配置文件路径
 	file := filepath.Join(dir, fileName)
+	return file
+}
+
+func FilePath() string {
+	abs, err := filepath.Abs(os.Args[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+	dir := filepath.Dir(abs)
+	return dir
+}
+
+// 获取当前文件的详细路径
+func CurrentFile() string {
+	buf := make([]byte, 1024)
+	n := runtime.Stack(buf, false)
+	lines := bytes.Lines(buf[:n])
+	var lastLine string
+	for line := range lines {
+		lastLine = string(line)
+		//fmt.Println(lastLine)
+	}
+	file := path.Dir(strings.TrimSpace(lastLine))
 	return file
 }
 

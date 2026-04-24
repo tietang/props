@@ -1,0 +1,32 @@
+
+
+nested_array_of_ints = [ [ 1, 2 ], [3, 4, 5] ]
+nested_mixed_array = [ [ 1, 2 ], ["a", "b", "c"] ]
+
+
+contributors = [
+    "Foo Bar <foo@example.com>",
+    { name = "Baz Qux", email = "bazqux@example.com", url = "https://example.com/bazqux" }
+]
+ 
+
+
+[[bin]]
+name = "digital_input2"
+path = "./src/bin/main.rs"
+test = false
+bench = false
+harness = false
+
+[x]
+[[y]]
+z=1
+v=0
+numbers = [ 0.1, 0.2, 0.5, 1, 2, 5 ]
+
+[[y]]
+z=11
+v="01"
+numbers = [ 0.1, 0.2, 0.5, 1, 2, 5 ]
+
+

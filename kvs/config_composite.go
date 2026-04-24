@@ -2,14 +2,15 @@ package kvs
 
 import (
 	"errors"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cast"
-	"github.com/valyala/fasttemplate"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
+	"github.com/valyala/fasttemplate"
 )
 
 var _ ConfigSource = new(CompositeConfigSource)
@@ -111,8 +112,8 @@ func (ccs *CompositeConfigSource) Size() int {
 	return len(ccs.ConfigSources)
 }
 
-func (ccs *CompositeConfigSource) Add(css ...ConfigSource) {
-	for _, conf := range css {
+func (ccs *CompositeConfigSource) Add(configSources ...ConfigSource) {
+	for _, conf := range configSources {
 		for i := len(ccs.ConfigSources) - 1; i >= 0; i-- {
 			s := ccs.ConfigSources[i]
 			if conf.Name() == s.Name() {
@@ -146,7 +147,7 @@ func (ccs *CompositeConfigSource) KeyValue(key string) *KeyValue {
 	var kv *KeyValue
 	defer func() {
 		if kv != nil && kv.err != nil {
-			log.Warnf("for `%s` err: %s ", key, kv.err.Error())
+			log.Debugf("for `%s` err: %s ", key, kv.err.Error())
 		}
 	}()
 	if __reg.MatchString(val) {

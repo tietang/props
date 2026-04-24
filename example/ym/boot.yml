@@ -1,0 +1,7 @@
+config.import:
+  - config.yml
+  - config.dev.yml
+  - config.prod.yml
+  - config.test.yml
+  - config.local.yml
+ 

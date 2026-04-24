@@ -2,12 +2,13 @@ package kvs
 
 import (
 	"errors"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cast"
 	"reflect"
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 )
 
 const (
@@ -484,20 +485,22 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) (err 
 			if value.IsNil() || !value.IsValid() {
 				value.Set(reflect.MakeMap(value.Type()))
 			}
+
 			for _, key := range p.Keys() {
 				for _, k := range keys {
 					if strings.HasPrefix(key, k) {
 						mk := strings.TrimPrefix(key, k+".")
 						mv := p.GetDefault(key, defVal)
 						kv := NewKeyValue(mk, mv)
+
 						v, err := marshalSimple(kv, typ)
 						if err == nil {
-
 							value.SetMapIndex(reflect.ValueOf(mk), reflect.ValueOf(v))
 						}
 					}
 				}
 			}
+
 			break
 		case reflect.Struct:
 			//fmt.Println("---")
@@ -508,6 +511,37 @@ func unmarshalInner(p ConfigSource, v reflect.Value, parentKeys ...string) (err 
 		}
 	}
 	return err
+}
+
+func unmarshalSimple(p ConfigSource, kv *KeyValue, typ reflect.Type) (interface{}, error) {
+	switch typ.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		if typ.Name() == "Duration" {
+			return kv.Duration()
+		} else {
+			return kv.Int64()
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		return kv.Uint64()
+	case reflect.Float32, reflect.Float64:
+		return kv.Float64()
+	case reflect.String:
+		return kv.String(), nil
+	case reflect.Bool:
+		return kv.Bool()
+		//case reflect.Map:
+		//
+		//	err := unmarshalInnerMap(p, , keys...)
+		//	if err != nil {
+		//		return "", err
+		//	}
+		//case reflect.Struct:
+		//	err := unmarshalInner(p, value, keys...)
+		//	if err != nil {
+		//		return "", err
+		//	}
+	}
+	return "", nil
 }
 
 func marshalSimple(kv *KeyValue, typ reflect.Type) (interface{}, error) {
@@ -527,6 +561,7 @@ func marshalSimple(kv *KeyValue, typ reflect.Type) (interface{}, error) {
 	case reflect.Bool:
 		return kv.Bool()
 	}
+
 	return "", nil
 }
 
