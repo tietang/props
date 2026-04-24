@@ -1,0 +1,47 @@
+
+key1 = ""
+key2 = "d"
+
+key = "value"
+bare_key = "value"
+bare-key = "value"
+1234 = "value"
+integers = [ 1, 2, 3 ]
+colors = [ "红", "黄", "绿" ]
+nested_array_of_ints = [ [ 1, 2 ], [3, 4, 5] ]
+nested_mixed_array = [ [ 1, 2 ], ["a", "b", "c"] ]
+string_array = [ "所有的", '字符串', """是相同的""", '''类型''' ]
+# 坐标日期时刻
+odt1 = 1979-05-27T07:32:00Z
+odt2 = 1979-05-27T00:32:00-07:00
+odt3 = 1979-05-27T00:32:00.999999-07:00
+# 允许混合类型的数组
+numbers = [ 0.1, 0.2, 0.5, 1, 2, 5 ]
+contributors = [
+    "Foo Bar <foo@example.com>",
+    { name = "Baz Qux", email = "bazqux@example.com", url = "https://example.com/bazqux" }
+]
+[application]
+name = "go-jiebaexample"
+port =  19002
+
+
+[[bin]]
+name = "digital_input2"
+path = "./src/bin/main.rs"
+test = false
+bench = false
+harness = false
+
+[x]
+[[y]]
+z=1
+v=0
+numbers = [ 0.1, 0.2, 0.5, 1, 2, 5 ]
+
+[[y]]
+z=11
+v="01"
+numbers = [ 0.1, 0.2, 0.5, 1, 2, 5 ]
+
+

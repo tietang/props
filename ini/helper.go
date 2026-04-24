@@ -1,14 +1,15 @@
 package ini
 
 import (
+	"io"
+	"strings"
+
 	"github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/kvs"
-	"io/ioutil"
-	"strings"
 )
 
 func ByIni(content string) *kvs.MapProperties {
-	props, err := ReadIni(ioutil.NopCloser(strings.NewReader(content)))
+	props, err := ReadIni(io.NopCloser(strings.NewReader(content)))
 	if err != nil {
 		logrus.Error(err)
 		return nil

@@ -1,0 +1,228 @@
+# 选择使用的模块
+default_module:
+  asr: DoubaoASR
+  tts: EdgeTTS
+  llm: ChatGLMLLM
+  vllm: ChatGLMVLLM
+
+# ASR配置
+ASR:
+  DoubaoASR:
+    # 火山 流式语音识别大模型-小时版， https://console.volcengine.com/ark/region:ark+cn-beijing/tts/speechRecognition
+    # 开通功能，有20小时免费额度
+    name: "豆包VeArk"
+    type: doubao
+    appid: "api-key-20260115163519"
+    access_token: 688748d3-ae6b-4c54-a49f-a61a9017ba6b
+    output_dir: tmp/
+    end_window_size: 300 # 结束窗口大小，单位毫秒，默认400ms，最小200ms
+
+  GoSherpaASR:
+    name: "GoSherpa(Remote)"
+    type: gosherpa
+    addr: "ws://127.0.0.1:8848/asr"
+
+  DeepgramSST:
+    name: "Deepgram"
+    type: deepgram
+    addr: "wss://api.deepgram.com/v1/listen"
+    api_key: 你的api_key
+    lang: "zh-CN"
+    output_dir: tmp/
+
+  StepASR:
+    name: "StepFun"
+    # https://platform.stepfun.com/docs/llm/realtime
+    type: stepfun
+    api_key: 你的api_key
+    model: "step-audio-2-mini"
+    voice: "qingchunshaonv"
+    prompt: 你是由阶跃星辰提供的AI聊天助手，你擅长中文、英文及多语种对话。
+  SherpaASR:
+    name: "GoSherpa(Local)"
+    type: gosherpa
+    addr: "ws://127.0.0.1:8848/asr"
+
+# TTS配置
+TTS:
+  # EdgeTTS 是微软的语音合成服务，免费使用，容易合成失败，并发未测试
+  EdgeTTS:
+    name: "EdgeTTS"
+    type: edge
+    voice: zh-CN-XiaoxiaoNeural
+    output_dir: "tmp/"
+    supported_voices:
+      [
+        {
+          name: "zh-CN-XiaoxiaoNeural",
+          display_name: "晓晓",
+          sex: "女",
+          description: "商务知性风格，音色成熟清晰，适合新闻播报、专业内容朗读",
+          audio_url: "",
+        },
+        {
+          name: "zh-CN-XiaoyiNeural",
+          display_name: "晓伊",
+          sex: "女",
+          description: "柔和温暖风格，带自然呼吸感，适合故事叙述或客服场景",
+          audio_url: "",
+        },
+        {
+          name: "zh-CN-YunjianNeural",
+          display_name: "云健",
+          sex: "男",
+          description: "沉稳磁性男声，权威感强，适合男性角色配音或严肃内容",
+          audio_url: "",
+        },
+        {
+          name: "zh-CN-YunxiNeural",
+          display_name: "云希",
+          sex: "男",
+          description: "年轻活力风格，语速轻快，适合青少年角色或轻松场景",
+          audio_url: "",
+        },
+        {
+          name: "zh-CN-YunxiaNeural",
+          display_name: "云夏",
+          sex: "男",
+          description: "方言特色（东北腔），幽默接地气，适合娱乐内容",
+          audio_url: "",
+        },
+        {
+          name: "zh-CN-YunyangNeural",
+          display_name: "云扬",
+          sex: "男",
+          description: "明亮自信风格，中气十足，适合广告宣传或公开演讲",
+          audio_url: "",
+        },
+        {
+          name: "zh-CN-liaoning-XiaobeiNeural",
+          display_name: "晓北（辽宁）",
+          sex: "女",
+          description: "带东北方言特色，亲切直率，适合地方化内容",
+          audio_url: "",
+        },
+        {
+          name: "zh-CN-shaanxi-XiaoniNeural",
+          display_name: "晓妮（陕西）",
+          sex: "女",
+          description: "陕西口音风格，质朴热情，适合方言文化场景",
+          audio_url: "",
+        },
+      ]
+
+  DoubaoTTS:
+    # 火山语音合成大模型 https://console.volcengine.com/ark/region:ark+cn-beijing/tts/speechSynthesis
+    name: "豆包VeTTS"
+    type: doubao
+    voice: zh_female_wanwanxiaohe_moon_bigtts # 湾湾小何
+    output_dir: "tmp/"
+    appid: "你的appid"
+    token: 你的access_token
+    cluster: 你的cluster
+  GoSherpaTTS:
+    name: "GoSherpa(Local)"
+    type: gosherpa
+    cluster: "ws://127.0.0.1:8848/tts"
+    output_dir: "tmp/"
+  DeepgramTTS:
+    name: "Deepgram"
+    type: deepgram
+    voice: aura-2-zeus-en
+    cluster: "wss://api.deepgram.com/v1/speak"
+    token: 你的token
+    output_dir: "tmp/"
+    sample_rate: 16000
+
+# LLM配置
+LLM:
+  ChatGLMLLM:
+    name: "ChatGLM"
+    # 定义LLM API类型
+    type: openai
+    # glm-4-flash 是免费的，但是还是需要注册填写api_key的
+    # 可在这里找到你的api key https://bigmodel.cn/usercenter/proj-mgmt/apikeys
+    model_name: glm-4.5-flash
+    url: https://open.bigmodel.cn/api/paas/v4/
+    api_key: 0b63546842ad4009b7097fd42850562f.eHwjTeI0RxYVhhHs
+  DeepseekLLM:
+    name: "deepseek-chat"
+    # 定义LLM API类型
+    type: openai
+    # 可在这里找到你的api： https://platform.deepseek.com/api_keys
+    model_name: deepseek-chat
+    url: https://api.deepseek.com/chat/completions
+    api_key: sk-fe532ec7f8314e3d8f81e323f130908f
+  OllamaLLM:
+    name: "Ollama"
+    # 定义LLM API类型
+    type: ollama
+    model_name: qwen3 #  使用的模型名称，需要预先使用ollama pull下载
+    url: http://localhost:11434 # Ollama服务地址
+  DoubaoLLM:
+    name: "豆包VeLLM"
+    # 定义LLM API类型
+    type: doubao
+    # doubao-seed-1.6-251015 是豆包深度思考模型 deepseek-v3-1-terminus效果比较好
+    # 可在这里找到你的api key https://console.volcengine.com/ark
+    model_name: doubao-seed-1.6-251015
+    url: https://ark.cn-beijing.volces.com/api/v3
+    api_key: 你的api_key
+    thinking: disabled # 思考模式: disabled(关闭思考) 或 enabled(启用思考)
+    max_tokens: 4000
+  CozeLLM:
+    name: "Coze"
+    # 定义LLM API类型
+    type: coze
+    bot_id: 你的bot_id
+    user_id: 你的user_id
+    # 正式环境
+    # 可以在这里创建一个 OAuth服务类应用，得到client_id、public_key、private_key：https://www.coze.cn/open/oauth/apps
+    client_id: 你的coze clientId
+    public_key: 你的coze 公钥
+    private_key: 你的coze 私钥
+    # 个人测试，填了client_id、public_key、private_key此项就不用填了
+    # 可在这里找到你的personal_access_token：https://www.coze.cn/open/oauth/pats
+    personal_access_token: 你的coze个人令牌
+    url: "https://api.coze.cn" # Coze服务地址
+
+# 退出指令
+CMD_exit:
+  - "退出"
+  - "关闭"
+
+# VLLLM配置（视觉语言大模型）
+VLLLM:
+  ChatGLMVLLM:
+    name: "ChatGLM-V"
+    type: openai
+    model_name: glm-4.6v-flash # 智谱AI的视觉模型
+    url: https://open.bigmodel.cn/api/paas/v4/
+    api_key: 0b63546842ad4009b7097fd42850562f.eHwjTeI0RxYVhhHs
+    max_tokens: 4096
+    temperature: 0.7
+    top_p: 0.9
+    security: # 图片安全配置
+      max_file_size: 10485760 # 10MB
+      max_pixels: 16777216 # 16M像素
+      max_width: 4096
+      max_height: 4096
+      allowed_formats: ["jpeg", "jpg", "png", "webp", "gif"]
+      enable_deep_scan: true
+      validation_timeout: 10s
+  OllamaVLLM:
+    name: "Ollama-V"
+    type: ollama
+    model_name: qwen2.5vl # 本地视觉模型
+    url: http://localhost:11434
+    max_tokens: 4096
+    temperature: 0.7
+    top_p: 0.9
+    security: # 图片安全配置
+      max_file_size: 10485760 # 10MB
+      max_pixels: 16777216 # 16M像素
+      max_width: 4096
+      max_height: 4096
+      allowed_formats: ["jpeg", "jpg", "png", "webp", "gif"]
+      enable_deep_scan: true
+      validation_timeout: 10s

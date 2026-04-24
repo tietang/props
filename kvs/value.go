@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	_DEPTH_VALUES = 99
+	_DEPTH_VALUES  = 99
+	DEFAULT_DELIMS = ", "
 )
 
 // 参考了go-ini/ini中的key.go源码，做了一些默认操作的修改

@@ -2,11 +2,12 @@ package yam
 
 import (
 	"fmt"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/tietang/props/v3/kvs"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
+
 	"io"
-	"io/ioutil"
 	"os"
 	"reflect"
 )
@@ -48,7 +49,7 @@ func ReadYamlFile(f string) (*YamlProperties, error) {
 
 func (p *YamlProperties) Load(r io.Reader) error {
 
-	data, err := ioutil.ReadAll(r)
+	data, err := io.ReadAll(r)
 	maps := make(map[string]interface{}, 0)
 	err = yaml.Unmarshal([]byte(data), maps)
 	if err != nil {
@@ -69,6 +70,33 @@ func (p *YamlProperties) kv(mapv reflect.Value, parentPath string) {
 			path := fmt.Sprintf("%s.%v", parentPath, k)
 			p.kv(valv, path)
 			continue
+		} else if valv.Kind() == reflect.Slice {
+			key := fmt.Sprintf("%s.%v", parentPath, k)
+			var vals string
+			for i := 0; i < valv.Len(); i++ {
+				v := valv.Index(i)
+				if v.Kind() == reflect.Slice {
+					log.Warn("nested slice not supported:", key)
+					continue
+				}
+				if v.Kind() == reflect.Map {
+					log.Warn("A slice nested within a map is not supported:", key)
+					continue
+				}
+				if v.Kind() == reflect.Interface && v.Elem().Kind() == reflect.Map {
+					log.Warn("nested slice not supported:", key)
+					continue
+				}
+				if v.Kind() == reflect.Interface && v.Elem().Kind() == reflect.Slice {
+					log.Warn("A slice nested within a map is not supported:", key)
+					continue
+				}
+				vals += fmt.Sprintf("%s%v", kvs.DEFAULT_DELIMS, v)
+			}
+			if vals == "" {
+				continue
+			}
+			p.Values[key[1:]] = vals[1:]
 		} else {
 			key := fmt.Sprintf("%s.%v", parentPath, k)[1:]
 			value := fmt.Sprintf("%v", val)
